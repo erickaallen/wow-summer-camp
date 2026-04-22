@@ -1,0 +1,25 @@
+import React from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { MoreStackParamList } from '../types';
+import MoreScreen from '../screens/MoreScreen';
+import SponsorsScreen from '../screens/SponsorsScreen';
+import CheckInScreen from '../screens/CheckInScreen';
+import { colors } from '../theme';
+
+const Stack = createNativeStackNavigator<MoreStackParamList>();
+
+export default function MoreStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.background },
+        headerTintColor: colors.primary,
+        headerTitleStyle: { fontWeight: '800', color: colors.primary },
+      }}
+    >
+      <Stack.Screen name="MoreMenu" component={MoreScreen} options={{ title: 'More' }} />
+      <Stack.Screen name="Sponsors" component={SponsorsScreen} options={{ title: 'Sponsors' }} />
+      <Stack.Screen name="CheckIn" component={CheckInScreen} options={{ title: 'Check In' }} />
+    </Stack.Navigator>
+  );
+}
