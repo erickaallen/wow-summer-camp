@@ -12,9 +12,9 @@ export default function MoreStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.background },
+        headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
         headerTintColor: colors.primary,
-        headerTitleStyle: { fontWeight: '800', color: colors.primary },
+        headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
       }}
     >
       <Stack.Screen name="MoreMenu" component={MoreScreen} options={{ title: 'More' }} />
