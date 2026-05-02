@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Notifications from 'expo-notifications';
 import { Session, CampfireSlot } from '../types';
 import { getReminderDate, getReminderDateFromSlot } from '../utils/sessionTime';
 
@@ -9,15 +8,27 @@ const REMINDERS_KEY = '@wow_camp_reminders';
 // Map of id (sessionId or counselorSessionId) → expo notification identifier
 type ReminderMap = Record<string, string>;
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// expo-notifications was removed from Expo Go in SDK 53.
+// Use a try-catch require so the app loads cleanly in Expo Go and
+// works fully in development builds and production.
+type NotificationsModule = typeof import('expo-notifications');
+let Notifs: NotificationsModule | null = null;
+
+try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  Notifs = require('expo-notifications') as NotificationsModule;
+  Notifs.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+      shouldShowBanner: true,
+      shouldShowList: true,
+    }),
+  });
+} catch {
+  Notifs = null;
+}
 
 export function useReminders() {
   const [reminderMap, setReminderMap] = useState<ReminderMap>({});
@@ -43,24 +54,38 @@ export function useReminders() {
     async (id: string, reminderDate: Date | null, title: string, body: string) => {
       if (!reminderDate) return 'past' as const;
 
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== 'granted') return 'denied' as const;
+      // No notifications module available (Expo Go) — store state so UI reflects it
+      if (!Notifs) {
+        setReminderMap((prev) => {
+          const next = { ...prev, [id]: 'unavailable' };
+          persist(next);
+          return next;
+        });
+        return 'scheduled' as const;
+      }
 
-      const notifId = await Notifications.scheduleNotificationAsync({
-        content: { title, body, data: { id } },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.DATE,
-          date: reminderDate,
-        },
-      });
+      try {
+        const { status } = await Notifs.requestPermissionsAsync();
+        if (status !== 'granted') return 'denied' as const;
 
-      setReminderMap((prev) => {
-        const next = { ...prev, [id]: notifId };
-        persist(next);
-        return next;
-      });
+        const notifId = await Notifs.scheduleNotificationAsync({
+          content: { title, body, data: { id } },
+          trigger: {
+            type: Notifs.SchedulableTriggerInputTypes.DATE,
+            date: reminderDate,
+          },
+        });
 
-      return 'scheduled' as const;
+        setReminderMap((prev) => {
+          const next = { ...prev, [id]: notifId };
+          persist(next);
+          return next;
+        });
+
+        return 'scheduled' as const;
+      } catch {
+        return 'denied' as const;
+      }
     },
     [persist],
   );
@@ -98,8 +123,12 @@ export function useReminders() {
   const cancelReminder = useCallback(
     async (id: string) => {
       const notifId = reminderMap[id];
-      if (notifId) {
-        await Notifications.cancelScheduledNotificationAsync(notifId);
+      if (notifId && Notifs && notifId !== 'unavailable') {
+        try {
+          await Notifs.cancelScheduledNotificationAsync(notifId);
+        } catch {
+          // ignore
+        }
       }
       setReminderMap((prev) => {
         const next = { ...prev };

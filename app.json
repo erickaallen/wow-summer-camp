@@ -10,11 +10,14 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#A8E0DC"
+      "backgroundColor": "#F03E8C"
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.womanownedwallet.wowsummercamp",
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": []
+      },
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "We use your location to show you where you are on the venue map."
       }
@@ -22,7 +25,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#A8E0DC"
+        "backgroundColor": "#F03E8C"
       },
       "package": "com.womanownedwallet.wowsummercamp",
       "permissions": [
@@ -55,7 +58,8 @@
     "extra": {
       "eas": {
         "projectId": "9b5aa04c-c366-4ebe-a859-9181968fdd66"
-      }
+      },
+      "privacyPolicyUrl": "https://www.womanownedwallet.com/policies/privacy-policy"
     },
     "owner": "higher-realms-digital"
   }

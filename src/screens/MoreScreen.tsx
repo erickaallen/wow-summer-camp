@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Linking } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { MoreStackParamList } from '../types';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+
+const PRIVACY_URL = 'https://www.womanownedwallet.com/policies/privacy-policy';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 
@@ -57,6 +59,17 @@ export default function MoreScreen({ navigation }: Props) {
           </TouchableOpacity>
         ))}
 
+        {/* Privacy Policy link */}
+        <TouchableOpacity
+          style={styles.linkRow}
+          onPress={() => Linking.openURL(PRIVACY_URL)}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="shield-checkmark-outline" size={16} color={colors.textMuted} />
+          <Text style={styles.linkText}>Privacy Policy</Text>
+          <Ionicons name="open-outline" size={14} color={colors.textMuted} />
+        </TouchableOpacity>
+
         <View style={styles.footer}>
           <Text style={styles.footerText}>Woman Owned Wallet</Text>
           <Text style={styles.footerSub}>womanownedwallet.com</Text>
@@ -109,7 +122,20 @@ const styles = StyleSheet.create({
   menuText: { flex: 1 },
   menuLabel: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.bold },
   menuDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2 },
-  footer: { alignItems: 'center', marginTop: spacing.xl },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.lg,
+    paddingVertical: spacing.sm,
+  },
+  linkText: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+  },
+  footer: { alignItems: 'center', marginTop: spacing.md },
   footerText: { color: colors.primary, fontWeight: fontWeight.heavy, fontSize: fontSize.sm },
   footerSub: { color: colors.teal, fontSize: fontSize.xs, marginTop: 2 },
 });
