@@ -1,8 +1,10 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
+import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CounselorsStackParamList } from '../types';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
 
 type Props = NativeStackScreenProps<CounselorsStackParamList, 'CounselorDetail'>;
 
@@ -16,7 +18,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export default function CounselorDetailScreen({ route, navigation }: Props) {
   const { counselor } = route.params;
-  const categoryColor = CATEGORY_COLORS[counselor.category] ?? colors.teal;
+  const categoryColor = CATEGORY_COLORS[counselor.category] ?? colors.primary;
 
   React.useLayoutEffect(() => {
     navigation.setOptions({ title: counselor.name });
@@ -30,52 +32,84 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={[styles.heroCard, { borderColor: categoryColor }]}>
-          <View style={[styles.categoryBadge, { backgroundColor: categoryColor }]}>
-            <Text style={styles.categoryText}>{counselor.category.toUpperCase()}</Text>
+    <SafeAreaView style={styles.safe} edges={[]}>
+      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+
+        {/* ── Hero card with headshot ── */}
+        <View style={[styles.heroCard, shadow.md]}>
+          {/* Category colour strip across the top */}
+          <View style={[styles.heroStrip, { backgroundColor: categoryColor }]} />
+
+          <View style={styles.heroBody}>
+            {/* Headshot */}
+            <View style={{ marginBottom: spacing.md }}>
+              <HeadshotAvatar
+                source={counselor.headshot}
+                name={counselor.name}
+                size={120}
+                borderColor={categoryColor}
+                borderWidth={3}
+              />
+            </View>
+
+            {/* Category badge */}
+            <View style={[styles.categoryBadge, { backgroundColor: categoryColor }]}>
+              <Text style={styles.categoryText}>{counselor.category.toUpperCase()}</Text>
+            </View>
+
+            <Text style={styles.name}>{counselor.name}</Text>
+
+            {counselor.instagram && (
+              <TouchableOpacity onPress={handleInstagram} style={styles.instagramRow}>
+                <Text style={styles.instagram}>{counselor.instagram}</Text>
+              </TouchableOpacity>
+            )}
           </View>
-          <Text style={styles.name}>{counselor.name}</Text>
-          {counselor.instagram && (
-            <TouchableOpacity onPress={handleInstagram}>
-              <Text style={styles.instagram}>{counselor.instagram}</Text>
-            </TouchableOpacity>
-          )}
         </View>
 
-        <View style={styles.topicCard}>
+        {/* ── Session topic ── */}
+        <View style={[styles.topicCard, shadow.sm]}>
           <Text style={styles.topicLabel}>🔥 CAMPFIRE SESSION TOPIC</Text>
           <Text style={styles.topicText}>{counselor.sessionTopic}</Text>
         </View>
 
+        {/* ── Bio (when available) ── */}
         {counselor.bio ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionLabel}>ABOUT</Text>
+          <View style={[styles.bioCard, shadow.sm]}>
+            <Text style={styles.bioLabel}>ABOUT</Text>
             <Text style={styles.bio}>{counselor.bio}</Text>
           </View>
         ) : null}
+
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { padding: spacing.md },
+  safe:   { flex: 1, backgroundColor: colors.background },
+  scroll: { padding: spacing.md, paddingBottom: spacing.xxl, gap: spacing.md },
+
+  // ── Hero ──
   heroCard: {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.white,
     borderRadius: radius.lg,
-    borderWidth: 3,
-    padding: spacing.xl,
+    overflow: 'hidden',
+  },
+  heroStrip: { height: 8 },
+  heroBody: {
     alignItems: 'center',
+    padding: spacing.lg,
+    paddingTop: spacing.xl,
+  },
+  headshot: {
     marginBottom: spacing.md,
   },
   categoryBadge: {
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   categoryText: {
     color: colors.white,
@@ -84,28 +118,30 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   name: {
-    color: colors.primary,
+    color: colors.textDark,
     fontSize: fontSize.xl,
     fontWeight: fontWeight.heavy,
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
+  instagramRow: { marginTop: spacing.xs },
   instagram: {
-    color: colors.teal,
+    color: colors.primary,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.bold,
     textDecorationLine: 'underline',
   },
+
+  // ── Topic ──
   topicCard: {
-    backgroundColor: colors.accent,
+    backgroundColor: colors.white,
     borderRadius: radius.md,
-    borderWidth: 2,
-    borderColor: colors.teal,
     padding: spacing.md,
-    marginBottom: spacing.sm,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
   },
   topicLabel: {
-    color: colors.teal,
+    color: colors.primary,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.heavy,
     letterSpacing: 1,
@@ -117,17 +153,19 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.bold,
     lineHeight: 24,
   },
-  section: {
+
+  // ── Bio ──
+  bioCard: {
     backgroundColor: colors.white,
     borderRadius: radius.md,
     padding: spacing.md,
   },
-  sectionLabel: {
-    color: colors.teal,
+  bioLabel: {
+    color: colors.textMuted,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.heavy,
     letterSpacing: 2,
     marginBottom: spacing.sm,
   },
-  bio: { color: '#444', fontSize: fontSize.md, lineHeight: 24 },
+  bio: { color: colors.textDark, fontSize: fontSize.md, lineHeight: 24 },
 });

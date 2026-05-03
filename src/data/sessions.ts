@@ -98,7 +98,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'First round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf1',
+    campfireRotationId: 'r1',
   },
   {
     id: 's10',
@@ -119,7 +119,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Second round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf2',
+    campfireRotationId: 'r2',
   },
   {
     id: 's12',
@@ -140,7 +140,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Third round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf3',
+    campfireRotationId: 'r3',
   },
   {
     id: 's14',
@@ -161,7 +161,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Fourth round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf4',
+    campfireRotationId: 'r4',
   },
   {
     id: 's16',
@@ -182,7 +182,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Fifth round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf5',
+    campfireRotationId: 'r5',
   },
   {
     id: 's18',
@@ -203,7 +203,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Sixth round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf6',
+    campfireRotationId: 'r6',
   },
   {
     id: 's20',
@@ -224,7 +224,7 @@ export const sessions: Session[] = [
     location: 'Breakout Areas',
     description: 'Seventh round of counselor-led roundtable sessions. Choose your campfire!',
     category: 'campfire',
-    campfireSlotId: 'cf7',
+    campfireRotationId: 'r7',
   },
   {
     id: 's22',

@@ -1,17 +1,24 @@
+/**
+ * CampfireSlotScreen — kept for reference but no longer in the navigation stack.
+ * Campfire sessions are now shown inline in ScheduleScreen as horizontal scroll cards.
+ *
+ * If a standalone "all sessions in a rotation" view is needed in the future,
+ * re-add this to ScheduleStack and add CampfireRotation: { rotation: CampfireRotation }
+ * back to ScheduleStackParamList.
+ */
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import {
   View, Text, FlatList, TouchableOpacity,
-  StyleSheet, SafeAreaView,
+  StyleSheet,
 } from 'react-native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ScheduleStackParamList } from '../types';
 import { counselorSessions } from '../data/counselorSessions';
+import { campfireLocations } from '../data/campfireLocations';
 import { counselors } from '../data/counselors';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
 import { Ionicons } from '@expo/vector-icons';
-
-type Props = NativeStackScreenProps<ScheduleStackParamList, 'CampfireSlot'>;
+import { CampfireRotation } from '../types';
 
 const CATEGORY_COLORS: Record<string, string> = {
   'Movement': '#4DBFBF',
@@ -21,65 +28,44 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Leadership': '#27AE60',
 };
 
-export default function CampfireSlotScreen({ route, navigation }: Props) {
-  const { slot } = route.params;
+// Standalone usage (not in nav stack — props passed directly if needed)
+export default function CampfireSlotScreen({ rotation }: { rotation: CampfireRotation }) {
   const { isSaved } = useAgendaContext();
 
   const slotSessions = counselorSessions.filter(
-    (cs) => cs.campfireSlotId === slot.id,
+    (cs) => cs.rotationId === rotation.id,
   );
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: `Campfire Session #${slot.slotNumber}`,
-    });
-  }, [navigation, slot]);
-
   return (
-    <SafeAreaView style={styles.safe}>
-      {/* Slot header */}
+    <SafeAreaView style={styles.safe} edges={[]}>
       <View style={styles.slotHeader}>
-        <Text style={styles.slotTitle}>🔥 Campfire Session #{slot.slotNumber}</Text>
-        <Text style={styles.slotTime}>{slot.startTime} – {slot.endTime}</Text>
+        <Text style={styles.slotTitle}>🔥 Rotation #{rotation.rotationNumber}</Text>
+        <Text style={styles.slotTime}>{rotation.startTime} – {rotation.endTime}</Text>
         <Text style={styles.slotSubtitle}>Choose the session you'd like to attend</Text>
       </View>
 
       {slotSessions.length === 0 ? (
-        /* ── Empty state: assignments not yet available ── */
         <View style={styles.empty}>
           <Text style={styles.emptyIcon}>🏕️</Text>
-          <Text style={styles.emptyTitle}>Session Assignments Coming Soon</Text>
+          <Text style={styles.emptyTitle}>No Sessions This Rotation</Text>
           <Text style={styles.emptyBody}>
-            Counselor-to-session assignments and room locations will be posted here
-            closer to camp day. Check back soon!
-          </Text>
-          <Text style={styles.emptyHint}>
-            In the meantime, browse the Counselors tab to see all 27 session topics.
+            No campfire sessions are scheduled during this time window.
           </Text>
         </View>
       ) : (
-        /* ── Session list ── */
         <FlatList
           data={slotSessions}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => {
             const counselor = counselors.find((c) => c.id === item.counselorId);
+            const loc = campfireLocations.find((l) => l.id === item.locationId);
             if (!counselor) return null;
             const saved = isSaved(item.id);
             const catColor = CATEGORY_COLORS[counselor.category] ?? colors.teal;
 
             return (
-              <TouchableOpacity
-                style={[styles.card, saved && styles.cardSaved]}
-                onPress={() =>
-                  navigation.navigate('CounselorSessionDetail', {
-                    counselorSession: item,
-                    slot,
-                  })
-                }
-                activeOpacity={0.8}
-              >
+              <View style={[styles.card, saved && styles.cardSaved]}>
                 <View style={[styles.categoryBar, { backgroundColor: catColor }]} />
                 <View style={styles.cardContent}>
                   <Text style={styles.counselorName}>{counselor.name}</Text>
@@ -89,7 +75,7 @@ export default function CampfireSlotScreen({ route, navigation }: Props) {
                       {counselor.category}
                     </Text>
                     <Text style={styles.dot}> · </Text>
-                    <Text style={styles.location}>📍 {item.location}</Text>
+                    <Text style={styles.location}>📍 {loc?.name ?? '—'}</Text>
                   </View>
                 </View>
                 {saved ? (
@@ -97,7 +83,7 @@ export default function CampfireSlotScreen({ route, navigation }: Props) {
                 ) : (
                   <Ionicons name="chevron-forward" size={20} color={colors.teal} style={styles.bookmark} />
                 )}
-              </TouchableOpacity>
+              </View>
             );
           }}
         />
@@ -143,10 +129,7 @@ const styles = StyleSheet.create({
     borderColor: colors.surface,
     overflow: 'hidden',
   },
-  cardSaved: {
-    borderColor: colors.primary,
-    borderWidth: 2,
-  },
+  cardSaved: { borderColor: colors.primary, borderWidth: 2 },
   categoryBar: { width: 5, alignSelf: 'stretch' },
   cardContent: { flex: 1, padding: spacing.md },
   counselorName: {
@@ -155,23 +138,13 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.heavy,
     marginBottom: 2,
   },
-  topic: {
-    color: '#555',
-    fontSize: fontSize.sm,
-    lineHeight: 18,
-    marginBottom: spacing.xs,
-  },
+  topic: { color: '#555', fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
   metaRow: { flexDirection: 'row', alignItems: 'center' },
   category: { fontSize: fontSize.xs, fontWeight: fontWeight.bold },
   dot: { color: '#ccc' },
   location: { color: '#888', fontSize: fontSize.xs },
   bookmark: { paddingHorizontal: spacing.sm },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-  },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   emptyIcon: { fontSize: 56, marginBottom: spacing.md },
   emptyTitle: {
     color: colors.primary,
@@ -180,17 +153,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: spacing.sm,
   },
-  emptyBody: {
-    color: '#555',
-    fontSize: fontSize.sm,
-    textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: spacing.md,
-  },
-  emptyHint: {
-    color: colors.teal,
-    fontSize: fontSize.xs,
-    textAlign: 'center',
-    fontWeight: fontWeight.semibold,
-  },
+  emptyBody: { color: '#555', fontSize: fontSize.sm, textAlign: 'center', lineHeight: 22 },
 });

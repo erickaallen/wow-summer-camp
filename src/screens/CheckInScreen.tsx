@@ -1,10 +1,11 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
 
 export default function CheckInScreen() {
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <View style={styles.container}>
         <View style={styles.card}>
           <Text style={styles.icon}>📲</Text>

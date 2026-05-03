@@ -1,11 +1,16 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'react-native';
+
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { MoreStackParamList } from '../types';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
 
-const PRIVACY_URL = 'https://www.womanownedwallet.com/policies/privacy-policy';
+const PRIVACY_URL  = 'https://www.womanownedwallet.com/policies/privacy-policy';
+const WOW_URL      = 'https://www.womanownedwallet.com';
+const SHOP_URL      = 'https://www.womanownedwallet.com/collections/shop-all';
+const DIRECTORY_URL = 'https://www.womanownedwallet.com/products/wow-directory-posting?_pos=3&_sid=8de28d22e&_ss=r';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 
@@ -15,6 +20,28 @@ type MenuItem = {
   screen: keyof Pick<MoreStackParamList, 'Sponsors' | 'CheckIn'>;
   description: string;
 };
+
+type ExternalItem = {
+  label: string;
+  icon: React.ComponentProps<typeof Ionicons>['name'];
+  url: string;
+  description: string;
+};
+
+const EXTERNAL_ITEMS: ExternalItem[] = [
+  {
+    label: 'Shop Woman-Owned Wallet',
+    icon: 'bag-handle-outline',
+    url: SHOP_URL,
+    description: 'Browse the Woman Owned Wallet shop.',
+  },
+  {
+    label: 'Join the W.O.W. Directory',
+    icon: 'people-circle-outline',
+    url: DIRECTORY_URL,
+    description: 'Get listed in the Woman Owned Wallet business directory.',
+  },
+];
 
 const MENU_ITEMS: MenuItem[] = [
   {
@@ -33,14 +60,8 @@ const MENU_ITEMS: MenuItem[] = [
 
 export default function MoreScreen({ navigation }: Props) {
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={styles.banner}>
-          <Text style={styles.bannerTag}>TROOP 502</Text>
-          <Text style={styles.bannerTitle}>WOW Summer Camp</Text>
-          <Text style={styles.bannerDate}>May 26–27, 2026</Text>
-        </View>
-
         {MENU_ITEMS.map((item) => (
           <TouchableOpacity
             key={item.screen}
@@ -59,22 +80,39 @@ export default function MoreScreen({ navigation }: Props) {
           </TouchableOpacity>
         ))}
 
-        {/* Privacy Policy link */}
+        {EXTERNAL_ITEMS.map((item) => (
+          <TouchableOpacity
+            key={item.url}
+            style={styles.menuItem}
+            onPress={() => Linking.openURL(item.url)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.iconWrap}>
+              <Ionicons name={item.icon} size={28} color={colors.primary} />
+            </View>
+            <View style={styles.menuText}>
+              <Text style={styles.menuLabel}>{item.label}</Text>
+              <Text style={styles.menuDesc}>{item.description}</Text>
+            </View>
+            <Ionicons name="open-outline" size={18} color={colors.teal} />
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* ── Pinned footer ── */}
+      <View style={styles.footer}>
         <TouchableOpacity
           style={styles.linkRow}
           onPress={() => Linking.openURL(PRIVACY_URL)}
           activeOpacity={0.7}
         >
-          <Ionicons name="shield-checkmark-outline" size={16} color={colors.textMuted} />
+          <Ionicons name="shield-checkmark-outline" size={14} color={colors.textMuted} />
           <Text style={styles.linkText}>Privacy Policy</Text>
-          <Ionicons name="open-outline" size={14} color={colors.textMuted} />
         </TouchableOpacity>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Woman Owned Wallet</Text>
-          <Text style={styles.footerSub}>womanownedwallet.com</Text>
-        </View>
-      </ScrollView>
+        <TouchableOpacity onPress={() => Linking.openURL(WOW_URL)} activeOpacity={0.7}>
+          <Text style={styles.footerBrand}>Woman Owned Wallet</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -119,23 +157,30 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: spacing.md,
   },
-  menuText: { flex: 1 },
-  menuLabel: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.bold },
-  menuDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2 },
+  menuText: { flex: 1, flexShrink: 1, marginRight: spacing.sm },
+  menuLabel: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.bold, flexWrap: 'wrap' },
+  menuDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2, flexWrap: 'wrap' },
+  footer: {
+    alignItems: 'center',
+    paddingVertical: spacing.md,
+    gap: spacing.xs,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
+  },
   linkRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing.xs,
-    marginTop: spacing.lg,
-    paddingVertical: spacing.sm,
   },
   linkText: {
     color: colors.textMuted,
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     fontWeight: fontWeight.semibold,
   },
-  footer: { alignItems: 'center', marginTop: spacing.md },
-  footerText: { color: colors.primary, fontWeight: fontWeight.heavy, fontSize: fontSize.sm },
-  footerSub: { color: colors.teal, fontSize: fontSize.xs, marginTop: 2 },
+  footerBrand: {
+    color: colors.primary,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.heavy,
+  },
 });

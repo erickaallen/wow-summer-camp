@@ -1,5 +1,7 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CounselorsStackParamList, CounselorCategory } from '../types';
 import { counselors } from '../data/counselors';
@@ -39,15 +41,15 @@ export default function CounselorsScreen({ navigation }: Props) {
     : counselors.filter((c) => c.category === activeCategory);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
         ListHeaderComponent={
           <View>
-            <Text style={styles.heading}>CAMP COUNSELORS</Text>
-            <Text style={styles.subheading}>{counselors.length} counselors · 5 campfire tracks</Text>
+            {/* <Text style={styles.heading}>CAMP COUNSELORS</Text>
+            <Text style={styles.subheading}>{counselors.length} counselors · 5 campfire tracks</Text> */}
             <FlatList
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -75,6 +77,17 @@ export default function CounselorsScreen({ navigation }: Props) {
             activeOpacity={0.8}
           >
             <View style={[styles.categoryBar, { backgroundColor: CATEGORY_COLORS[item.category] }]} />
+
+            {/* Headshot */}
+            <View style={{ marginLeft: spacing.sm }}>
+              <HeadshotAvatar
+                source={item.headshot}
+                name={item.name}
+                size={56}
+                borderColor={CATEGORY_COLORS[item.category]}
+              />
+            </View>
+
             <View style={styles.cardContent}>
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.topic} numberOfLines={2}>{item.sessionTopic}</Text>
@@ -103,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   subheading: {
-    color: colors.teal,
+    color: colors.textMuted,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.semibold,
     marginBottom: spacing.md,
@@ -114,13 +127,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.full,
     borderWidth: 2,
-    borderColor: colors.teal,
+    borderColor: colors.border,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     marginRight: spacing.xs,
   },
   chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipText: { color: colors.teal, fontWeight: fontWeight.bold, fontSize: fontSize.xs },
+  chipText: { color: colors.textMuted, fontWeight: fontWeight.bold, fontSize: fontSize.xs },
   chipTextActive: { color: colors.white },
   card: {
     flexDirection: 'row',
@@ -129,13 +142,16 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     marginBottom: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.surface,
+    borderColor: colors.border,
     overflow: 'hidden',
   },
-  categoryBar: { width: 5, alignSelf: 'stretch' },
+  categoryBar: { width: 4, alignSelf: 'stretch' },
+  avatar: {
+    marginLeft: spacing.sm,
+  },
   cardContent: { flex: 1, padding: spacing.md },
   name: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.heavy, marginBottom: 2 },
-  topic: { color: '#555', fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
+  topic: { color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
   categoryPill: {
     alignSelf: 'flex-start',
     backgroundColor: colors.background,
@@ -143,6 +159,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: 2,
   },
-  categoryText: { color: colors.teal, fontSize: fontSize.xs, fontWeight: fontWeight.bold },
+  categoryText: { color: colors.textMuted, fontSize: fontSize.xs, fontWeight: fontWeight.bold },
   chevron: { color: colors.primary, fontSize: 22, fontWeight: fontWeight.bold, paddingRight: spacing.sm },
 });

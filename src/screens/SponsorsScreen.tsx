@@ -1,5 +1,6 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { sponsors } from '../data/sponsors';
 import { Sponsor } from '../types';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
@@ -22,7 +23,7 @@ const TIER_ORDER: Sponsor['tier'][] = ['platinum', 'gold', 'silver', 'community'
 
 export default function SponsorsScreen() {
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={styles.heading}>THANK YOU TO OUR SPONSORS</Text>
         {TIER_ORDER.map((tier) => {

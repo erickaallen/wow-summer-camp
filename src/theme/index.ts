@@ -1,59 +1,63 @@
-// ─── Core brand ──────────────────────────────────────────────────────────────
+// ─── Brand colors (from WOW Summer Camp brand board) ─────────────────────────
 export const colors = {
-  // Primary brand (hot pink — unchanged)
-  primary:      '#F03E8C',
-  primaryDark:  '#C0236A',
+  // Primary pink — hero CTA, primary actions, highlights
+  primary:      '#F84D90',
+  primaryDark:  '#C4296D',
 
-  // Tie-dye pastel palette (extracted from counselor shirts)
-  skyBlue:      '#A0D4F0',
-  lavender:     '#B8A8E4',
-  softPink:     '#F4B8D0',
-  peach:        '#FFB894',
-  paleYellow:   '#F4E494',
-  mint:         '#B8E8D0',
+  // Teal family
+  teal:         '#00B7B7',   // primary teal — headers, badges, accents
+  tealLight:    '#ADE8E8',   // soft teal — surfaces, chips, backgrounds
+  tealDark:     '#006666',   // dark teal — deep text on teal, dark badges
 
-  // Surfaces
-  background:   '#FBF8FF',   // near-white with faint lavender warmth
-  surface:      '#F9C5D5',   // soft pink (kept from v1)
+  // Yellow
+  yellow:       '#FFD972',   // warm camp yellow — accent, highlights
+
+  // Blush
+  blush:        '#FFD0E0',   // light pink — subtle backgrounds, surface tints
+
+  // Surfaces & backgrounds
+  background:   '#FFFFFF',
   cardBg:       '#FFFFFF',
   white:        '#FFFFFF',
+  surface:      '#FFD0E0',   // blush — matches brand board
 
   // Text
-  text:         '#F03E8C',
-  textDark:     '#3D2645',   // deep plum — readable on pastels, on-brand
-  textMuted:    '#8A7A94',
-
-  // Accents
-  teal:         '#4DBFBF',
-  accent:       '#FFE566',
-  orange:       '#FF7043',   // from the pen in the promo photo — great for CTAs
+  textDark:     '#006666',   // dark teal — on-brand dark text
+  textMuted:    '#4A9B9B',   // mid teal for secondary text
+  text:         '#F84D90',
 
   // Navigation
   tabBar:       '#FFFFFF',
-  tabBarActive: '#F03E8C',
-  tabBarInactive: '#C4B0CC',
+  tabBarActive: '#F84D90',
+  tabBarInactive: '#00B7B7',
 
   // Utility
-  border:       '#E8D8F0',
-  success:      '#27AE60',
-  error:        '#E74C3C',
+  border:       '#ADE8E8',   // light teal border
+  success:      '#00B7B7',
+  error:        '#F84D90',
+
+  // Legacy aliases kept so existing screens don't break
+  accent:       '#FFD972',
+  orange:       '#F84D90',
+  skyBlue:      '#ADE8E8',
+  lavender:     '#ADE8E8',
+  softPink:     '#FFD0E0',
+  peach:        '#FFD972',
+  paleYellow:   '#FFD972',
+  mint:         '#ADE8E8',
 };
 
 /**
- * The 5-stop tie-dye gradient — diagonal top-left (blue) → bottom-right (yellow).
- * Mimics the pastel spiral on the counselor shirts.
+ * Brand gradient — teal → yellow → pink (mirrors pennant / badge palette)
  */
 export const tieDyeGradient = {
-  colors: ['#A0D4F0', '#B8A8E4', '#F4B8D0', '#FFB894', '#F4E494'] as const,
+  colors: ['#00B7B7', '#FFD972', '#F84D90'] as const,
   start:  { x: 0, y: 0 },
   end:    { x: 1, y: 1 },
 };
 
-/**
- * A subtler 3-stop version for smaller elements (cards, badges, pills).
- */
 export const tieDyeMiniGradient = {
-  colors: ['#B8A8E4', '#F4B8D0', '#FFB894'] as const,
+  colors: ['#ADE8E8', '#FFD972', '#FFD0E0'] as const,
   start:  { x: 0, y: 0 },
   end:    { x: 1, y: 1 },
 };
@@ -94,24 +98,24 @@ export const fontWeight = {
   heavy:    '900' as const,
 };
 
-// ─── Shadows (iOS + Android) ──────────────────────────────────────────────────
+// ─── Shadows ─────────────────────────────────────────────────────────────────
 export const shadow = {
   sm: {
-    shadowColor: '#3D2645',
+    shadowColor: '#006666',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: '#3D2645',
+    shadowColor: '#006666',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.12,
     shadowRadius: 8,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#3D2645',
+    shadowColor: '#006666',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.16,
     shadowRadius: 16,

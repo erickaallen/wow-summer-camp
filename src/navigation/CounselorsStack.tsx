@@ -16,7 +16,7 @@ export default function CounselorsStack() {
         headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
       }}
     >
-      <Stack.Screen name="CounselorList" component={CounselorsScreen} options={{ title: 'Counselors' }} />
+      <Stack.Screen name="CounselorList" component={CounselorsScreen} options={{ title: 'Camp Counselors' }} />
       <Stack.Screen name="CounselorDetail" component={CounselorDetailScreen} options={{ title: 'Counselor' }} />
     </Stack.Navigator>
   );

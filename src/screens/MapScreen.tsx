@@ -1,9 +1,9 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   Linking,
   Image,
@@ -91,25 +91,9 @@ export default function MapScreen() {
   const MAP_W = width;
   const MAP_H = Math.round(width * (580 / 750));
 
-  return (
-    <SafeAreaView style={styles.safe}>
 
-      {/* ── Header ── */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.venueName}>Progress Park</Text>
-          <Text style={styles.venueAddress}>Louisville, Kentucky</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <TouchableOpacity style={styles.iconBtn} onPress={() => setLegendVisible(true)}>
-            <Ionicons name="list" size={20} color={colors.primary} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.directionsBtn} onPress={openDirections}>
-            <Ionicons name="navigate" size={14} color={colors.white} />
-            <Text style={styles.directionsBtnText}>Directions</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+  return (
+    <SafeAreaView style={styles.safe} edges={[]}>
 
       {/* ── Zoomable Map (iOS native scroll zoom, Android basic scroll) ── */}
       <ScrollView
@@ -142,7 +126,7 @@ export default function MapScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setLegendVisible(false)}
       >
-        <SafeAreaView style={styles.legendSafe}>
+        <SafeAreaView style={styles.legendSafe} edges={[]}>
           <View style={styles.legendHeader}>
             <Text style={styles.legendTitle}>MAP LEGEND</Text>
             <TouchableOpacity onPress={() => setLegendVisible(false)}>
@@ -169,41 +153,6 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#111' },
 
-  // ── Header ──
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  venueName: {
-    color: colors.textDark,
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
-  },
-  venueAddress: {
-    color: colors.textMuted,
-    fontSize: fontSize.xs,
-  },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  iconBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.full,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
   directionsBtn: {
     flexDirection: 'row',
     alignItems: 'center',

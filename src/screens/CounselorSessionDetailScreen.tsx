@@ -1,12 +1,14 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
 import {
-  View, Text, ScrollView, StyleSheet, SafeAreaView,
+  View, Text, ScrollView, StyleSheet,
   TouchableOpacity, Alert, Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScheduleStackParamList } from '../types';
 import { counselors } from '../data/counselors';
+import { campfireLocations } from '../data/campfireLocations';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { getReminderDateFromSlot } from '../utils/sessionTime';
 import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
@@ -22,8 +24,9 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function CounselorSessionDetailScreen({ route, navigation }: Props) {
-  const { counselorSession, slot } = route.params;
+  const { counselorSession, rotation } = route.params;
   const counselor = counselors.find((c) => c.id === counselorSession.counselorId);
+  const location = campfireLocations.find((l) => l.id === counselorSession.locationId);
 
   const {
     isSaved, toggleSession,
@@ -38,7 +41,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
   const catColor = CATEGORY_COLORS[counselor.category] ?? colors.teal;
   const saved = isSaved(counselorSession.id);
   const reminded = hasReminder(counselorSession.id);
-  const canRemind = !!getReminderDateFromSlot(slot);
+  const canRemind = !!getReminderDateFromSlot(rotation);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -71,7 +74,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
     if (!saved) toggleSession(counselorSession.id);
     const result = await scheduleCounselorReminder(
       counselorSession.id,
-      slot,
+      rotation,
       counselor.name,
       counselor.sessionTopic,
     );
@@ -106,7 +109,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView contentContainerStyle={styles.scroll}>
 
         {/* Counselor hero */}
@@ -128,10 +131,10 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
           <Text style={styles.topic}>{counselor.sessionTopic}</Text>
           <View style={styles.metaRow}>
             <Ionicons name="time-outline" size={14} color={colors.teal} />
-            <Text style={styles.metaText}> {slot.startTime} – {slot.endTime}</Text>
+            <Text style={styles.metaText}> {rotation.startTime} – {rotation.endTime}</Text>
             <Text style={styles.metaDot}>  ·  </Text>
             <Ionicons name="location-outline" size={14} color={colors.teal} />
-            <Text style={styles.metaText}> {counselorSession.location}</Text>
+            <Text style={styles.metaText}> {location?.name ?? 'Campfire'}</Text>
           </View>
         </View>
 

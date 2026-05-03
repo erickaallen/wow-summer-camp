@@ -10,17 +10,30 @@ export interface Session {
   location: string;
   description: string;
   category: 'keynote' | 'campfire' | 'break' | 'social' | 'activity' | 'checkin';
-  /** Links a campfire schedule entry to its CampfireSlot definition */
-  campfireSlotId?: string;
+  /** Links a campfire schedule entry to its CampfireRotation */
+  campfireRotationId?: string;
 }
 
-/** One of the 7 concurrent-session time blocks on May 27 */
-export interface CampfireSlot {
-  id: string;           // 'cf1' … 'cf7'
-  slotNumber: number;   // 1 … 7
+/** One of 7 timed rotation windows on May 27 (attendees move between them) */
+export interface CampfireRotation {
+  id: string;            // 'r1' … 'r7'
+  rotationNumber: number;
   day: EventDay;
   startTime: string;
   endTime: string;
+}
+
+/** @deprecated Use CampfireRotation. Kept as alias so existing utility functions compile unchanged. */
+export type CampfireSlot = CampfireRotation;
+
+/** One of 14 fixed physical spaces where campfire sessions take place all day */
+export interface CampfireLocation {
+  id: string;               // 'loc1' … 'loc14'
+  locationNumber: number;   // 1 … 14
+  name: string;             // display name, e.g. 'Airstream Trio'
+  mapLabel: string;         // map marker reference, e.g. '33-35'
+  primaryCounselorId: string;
+  secondaryCounselorId?: string;
 }
 
 export type CounselorCategory =
@@ -38,21 +51,19 @@ export interface Counselor {
   bio: string;
   instagram?: string;
   email?: string;
+  headshot?: number; // require() image source
   confirmed: boolean;
 }
 
 /**
- * A specific counselor presenting in a specific campfire slot at a specific location.
+ * One counselor leading their session at a specific location during a specific rotation.
  * This is the unit attendees save to their personal agenda.
- *
- * TO ADD REAL DATA: populate src/data/counselorSessions.ts with entries
- * once Amanda sends slot assignments and room locations.
  */
 export interface CounselorSession {
-  id: string;             // e.g. 'cs_cf1_c3'
-  counselorId: string;    // references Counselor.id
-  campfireSlotId: string; // references CampfireSlot.id
-  location: string;       // room or area name, e.g. 'Breakout Room A'
+  id: string;          // e.g. 'cs_r1_loc1'
+  counselorId: string; // references Counselor.id (the leader for this slot)
+  rotationId: string;  // references CampfireRotation.id
+  locationId: string;  // references CampfireLocation.id
 }
 
 export interface Sponsor {
@@ -68,7 +79,10 @@ export interface Announcement {
   id: string;
   title: string;
   body: string;
-  timestamp: string;
+  /** ISO string — when this announcement becomes visible. Omit to show immediately. */
+  visibleFrom?: string;
+  /** ISO string — when this announcement stops showing. Omit to show indefinitely. */
+  visibleUntil?: string;
 }
 
 export interface VenueArea {
@@ -92,8 +106,7 @@ export type RootTabParamList = {
 export type ScheduleStackParamList = {
   ScheduleList: undefined;
   SessionDetail: { session: Session };
-  CampfireSlot: { slot: CampfireSlot };
-  CounselorSessionDetail: { counselorSession: CounselorSession; slot: CampfireSlot };
+  CounselorSessionDetail: { counselorSession: CounselorSession; rotation: CampfireRotation };
 };
 
 export type CounselorsStackParamList = {
@@ -105,4 +118,8 @@ export type MoreStackParamList = {
   MoreMenu: undefined;
   Sponsors: undefined;
   CheckIn: undefined;
+};
+
+export type MapStackParamList = {
+  MapMain: undefined;
 };

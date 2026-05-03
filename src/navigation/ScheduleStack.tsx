@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ScheduleStackParamList } from '../types';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import SessionDetailScreen from '../screens/SessionDetailScreen';
-import CampfireSlotScreen from '../screens/CampfireSlotScreen';
 import CounselorSessionDetailScreen from '../screens/CounselorSessionDetailScreen';
 import { colors } from '../theme';
 
@@ -20,7 +19,6 @@ export default function ScheduleStack() {
     >
       <Stack.Screen name="ScheduleList" component={ScheduleScreen} options={{ title: 'Schedule' }} />
       <Stack.Screen name="SessionDetail" component={SessionDetailScreen} options={{ title: 'Session' }} />
-      <Stack.Screen name="CampfireSlot" component={CampfireSlotScreen} options={{ title: 'Choose Your Campfire' }} />
       <Stack.Screen name="CounselorSessionDetail" component={CounselorSessionDetailScreen} options={{ title: 'Session Detail' }} />
     </Stack.Navigator>
   );

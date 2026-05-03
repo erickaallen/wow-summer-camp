@@ -1,21 +1,20 @@
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   ScrollView,
   StyleSheet,
-  SafeAreaView,
   TouchableOpacity,
   Linking,
-  ImageBackground,
 } from 'react-native';
+
+const BANNER = require('../../assets/images/wow-banner.png');
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import TieDyeGradient from '../components/TieDyeGradient';
 import { announcements } from '../data/announcements';
 import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
-
-const TIE_DYE_BG = require('../../assets/images/tiedye-bg.png');
 
 const EVENT_START = new Date('2026-05-26T09:00:00');
 const HASHTAG = 'wowsummercamp';
@@ -39,6 +38,15 @@ function getTimeLeft(target: Date) {
   return { days, hours, minutes, seconds };
 }
 
+function getDirections() {
+  const query = encodeURIComponent('Progress Park, 4501 Progress Blvd, Louisville, KY 40218');
+  const appleUrl = `maps:?q=${query}`;
+  const googleUrl = `https://www.google.com/maps/search/?api=1&query=${query}`;
+  Linking.canOpenURL(appleUrl).then((supported) =>
+    Linking.openURL(supported ? appleUrl : googleUrl),
+  );
+}
+
 function openInstagram() {
   const appUrl = `instagram://tag/${HASHTAG}`;
   const webUrl = `https://www.instagram.com/explore/tags/${HASHTAG}/`;
@@ -47,25 +55,47 @@ function openInstagram() {
   );
 }
 
+function getActiveAnnouncements() {
+  const now = new Date();
+  return announcements.filter((a) => {
+    if (a.visibleFrom  && new Date(a.visibleFrom)  > now) return false;
+    if (a.visibleUntil && new Date(a.visibleUntil) < now) return false;
+    return true;
+  });
+}
+
 export default function HomeScreen() {
   const countdown = useCountdown(EVENT_START);
+  const activeAnnouncements = getActiveAnnouncements();
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* ── Hero: real tie-dye texture ── */}
-        <ImageBackground source={TIE_DYE_BG} style={styles.hero} resizeMode="cover">
-          {/* Soft dark overlay so white text stays readable */}
-          <View style={styles.heroOverlay} />
-
-          <Text style={styles.troopTag}>✦ TROOP 502 ✦</Text>
-          <Text style={styles.heroTitle}>w.o.w.{'\n'}Summer Camp</Text>
-          <Text style={styles.heroDate}>MAY 26–27, 2026  ·  LOUISVILLE, KY</Text>
-
-          {/* Countdown inside the hero */}
+        {/* ── Banner graphic ── */}
+        <View style={styles.bannerSection}>
+          <Image
+            source={BANNER}
+            style={styles.bannerImage}
+            resizeMode="contain"
+          />
+        </View>
+        {/* ── Venue card ── */}
+        <View style={styles.venueCard}>
+          <Text style={styles.venueEyebrow}>✦ TROOP 502 ✦</Text>
+          <Text style={styles.venueName}>Progress Park</Text>
+          <Text style={styles.venueDetail}>Louisville, Kentucky</Text>
+          <View style={styles.venueDivider} />
+          <Text style={styles.venueDate}>May 26 – 27, 2026</Text>
+          <TouchableOpacity style={styles.directionsBtn} onPress={getDirections} activeOpacity={0.8}>
+            <Ionicons name="navigate-outline" size={15} color={colors.teal} />
+            <Text style={styles.directionsBtnText}>Get Directions</Text>
+          </TouchableOpacity>
+        </View>
+        {/* ── Countdown card ── */}
+        <View style={[styles.card, styles.countdownCard]}>
           {countdown ? (
-            <View style={styles.countdownBox}>
+            <>
               <Text style={styles.countdownLabel}>CAMP STARTS IN</Text>
               <View style={styles.countdownRow}>
                 <CountUnit value={countdown.days}    label="DAYS" />
@@ -76,60 +106,65 @@ export default function HomeScreen() {
                 <Text style={styles.colon}>:</Text>
                 <CountUnit value={countdown.seconds} label="SEC" />
               </View>
-            </View>
+            </>
           ) : (
-            <View style={styles.countdownBox}>
-              <Text style={styles.liveText}>🔥 CAMP IS LIVE!</Text>
-            </View>
+            <Text style={styles.liveText}>🔥 CAMP IS LIVE!</Text>
           )}
-        </ImageBackground>
-
-        <View style={styles.body}>
-
-          {/* ── Announcements ── */}
-          {announcements.length > 0 && (
-            <View style={styles.section}>
-              <View style={styles.sectionHeader}>
-                <View style={styles.sectionDot} />
-                <Text style={styles.sectionTitle}>ANNOUNCEMENTS</Text>
-              </View>
-              {announcements.map((a) => (
-                <View key={a.id} style={[styles.card, shadow.sm]}>
-                  <View style={styles.announcementAccent} />
-                  <View style={styles.announcementBody}>
-                    <Text style={styles.announcementTitle}>{a.title}</Text>
-                    <Text style={styles.announcementText}>{a.body}</Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* ── Instagram CTA ── */}
-          <TouchableOpacity style={styles.instagramBtn} onPress={openInstagram} activeOpacity={0.85}>
-            <LinearGradient
-              colors={['#F77737', '#C13584', '#833AB4']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={styles.instagramGradient}
-            >
-              <Ionicons name="logo-instagram" size={18} color={colors.white} />
-              <Text style={styles.instagramText}>#WOWSummerCamp on Instagram</Text>
-              <Ionicons name="open-outline" size={14} color={colors.white} />
-            </LinearGradient>
-          </TouchableOpacity>
-
-          {/* ── Venue card ── */}
-          <TieDyeGradient mini style={[styles.venueCard, shadow.sm]}>
-            <Text style={styles.venueEmoji}>🏕️</Text>
-            <View>
-              <Text style={styles.venueName}>Progress Park</Text>
-              <Text style={styles.venueDetail}>Louisville, Kentucky</Text>
-              <Text style={styles.venueDetail}>May 26–27, 2026</Text>
-            </View>
-          </TieDyeGradient>
-
         </View>
+
+        {/* ── Announcements card ── */}
+        {activeAnnouncements.length > 0 && (
+          <View style={styles.card}>
+            {activeAnnouncements.map((a, i) => (
+              <View
+                key={a.id}
+                style={[
+                  styles.announcementRow,
+                  i < activeAnnouncements.length - 1 && styles.announcementDivider,
+                ]}
+              >
+                <View style={styles.announcementAccent} />
+                <View style={styles.announcementBody}>
+                  <Text style={styles.announcementTitle}>{a.title}</Text>
+                  <Text style={styles.announcementText}>{a.body}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+
+
+        {/* ── Instagram live feed card ── */}
+        <LinearGradient
+          colors={['#F77737', '#C13584', '#833AB4']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.instagramBorder}
+        >
+          <View style={styles.instagramCard}>
+            <View style={styles.cardHeader}>
+              <Ionicons name="logo-instagram" size={14} color={colors.primary} />
+              <Text style={styles.cardTitle}>LIVE FEED</Text>
+            </View>
+            <Text style={styles.instagramBody}>
+              Share your camp moments in real time! Tag your photos and videos with our event hashtag and you'll be part of our shared live feed.
+            </Text>
+            <Text style={styles.instagramHashtag}>#WOWSummerCamp</Text>
+            <TouchableOpacity onPress={openInstagram} activeOpacity={0.85} style={styles.instagramBtn}>
+              <LinearGradient
+                colors={['#F77737', '#C13584', '#833AB4']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.instagramBtnGradient}
+              >
+                <Ionicons name="logo-instagram" size={20} color={colors.white} />
+                <Text style={styles.instagramBtnText}>View on Instagram</Text>
+                <Ionicons name="open-outline" size={14} color={colors.white} />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -139,118 +174,45 @@ function CountUnit({ value, label }: { value: number; label: string }) {
   return (
     <View style={styles.countUnit}>
       <Text style={styles.countValue}>{String(value).padStart(2, '0')}</Text>
-      <Text style={styles.countLabel}>{label}</Text>
+      <Text style={styles.countUnitLabel}>{label}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
-  scroll: { paddingBottom: spacing.xxl },
+  scroll: { padding: spacing.md, gap: spacing.md, paddingBottom: spacing.xxl },
 
-  // ── Hero ──
-  hero: {
-    paddingTop: spacing.xl + spacing.md,
-    paddingBottom: spacing.xl,
-    paddingHorizontal: spacing.lg,
+  // ── Banner ──
+  bannerSection: {
     alignItems: 'center',
-    minHeight: 320,
-    overflow: 'hidden',
-    justifyContent: 'center',
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.xs,
   },
-  // Semi-transparent overlay so text stays crisp over the texture
-  heroOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(61,38,69,0.18)',
-  },
-  troopTag: {
-    color: colors.white,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 3,
-    marginBottom: spacing.sm,
-    textShadowColor: 'rgba(61,38,69,0.4)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  heroTitle: {
-    color: colors.white,
-    fontSize: 42,
-    fontWeight: fontWeight.heavy,
-    textAlign: 'center',
-    lineHeight: 46,
-    textShadowColor: 'rgba(61,38,69,0.55)',
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 8,
+  bannerImage: {
+    width: '100%',
+    height: 120,
   },
   heroDate: {
-    color: colors.white,
+    color: colors.textMuted,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.bold,
     letterSpacing: 1.5,
-    marginTop: spacing.sm,
-    opacity: 0.9,
+    marginTop: spacing.xs,
   },
 
-  // ── Countdown ──
-  countdownBox: {
-    marginTop: spacing.lg,
-    backgroundColor: 'rgba(255,255,255,0.3)',
+  // ── Base card ──
+  card: {
+    backgroundColor: colors.white,
     borderRadius: radius.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.xl,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.5)',
-  },
-  countdownLabel: {
-    color: colors.white,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 2,
-    marginBottom: spacing.sm,
-  },
-  countdownRow: { flexDirection: 'row', alignItems: 'center' },
-  countUnit:    { alignItems: 'center', minWidth: 52 },
-  countValue: {
-    color: colors.white,
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
-    textShadowColor: 'rgba(61,38,69,0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
-  },
-  countLabel: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
-    letterSpacing: 1,
-  },
-  colon: {
-    color: colors.white,
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
-    marginBottom: spacing.md,
-    opacity: 0.8,
-  },
-  liveText: {
-    color: colors.white,
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 2,
-  },
-
-  // ── Body ──
-  body: {
     padding: spacing.md,
-    gap: spacing.md,
+    ...shadow.sm,
   },
-  section: { gap: spacing.sm },
-  sectionHeader: {
+  cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.md,
   },
   sectionDot: {
     width: 8,
@@ -258,28 +220,65 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: colors.primary,
   },
-  sectionTitle: {
+  cardTitle: {
     color: colors.textDark,
     fontSize: fontSize.xs,
     fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
 
-  // ── Cards ──
-  card: {
-    backgroundColor: colors.cardBg,
-    borderRadius: radius.md,
+  // ── Countdown ──
+  countdownCard: {
+    alignItems: 'center',
+    paddingVertical: spacing.lg,
+  },
+  countdownLabel: {
+    color: colors.primary,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 2,
+    marginBottom: spacing.sm,
+  },
+  countdownRow: { flexDirection: 'row', alignItems: 'center' },
+  countUnit:    { alignItems: 'center', minWidth: 56 },
+  countValue: {
+    color: colors.textDark,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.heavy,
+  },
+  countUnitLabel: {
+    color: colors.textMuted,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
+    letterSpacing: 1,
+  },
+  colon: {
+    color: colors.primary,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.heavy,
+    marginBottom: spacing.md,
+  },
+  liveText: {
+    color: colors.primary,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 2,
+  },
+
+  // ── Announcements ──
+  announcementRow: {
     flexDirection: 'row',
     overflow: 'hidden',
+    borderRadius: radius.sm,
   },
-  announcementAccent: {
-    width: 4,
-    backgroundColor: colors.primary,
+  announcementDivider: {
+    marginBottom: spacing.sm,
+    paddingBottom: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
-  announcementBody: {
-    flex: 1,
-    padding: spacing.md,
-  },
+  announcementAccent: { width: 4, backgroundColor: colors.primary, borderRadius: 2 },
+  announcementBody:   { flex: 1, paddingLeft: spacing.sm },
   announcementTitle: {
     color: colors.textDark,
     fontSize: fontSize.md,
@@ -292,13 +291,95 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // ── Instagram ──
-  instagramBtn: {
-    borderRadius: radius.full,
-    overflow: 'hidden',
+  // ── Venue ──
+  venueCard: {
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    alignItems: 'center',
     ...shadow.sm,
   },
-  instagramGradient: {
+  venueEyebrow: {
+    color: colors.primary,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 3,
+    marginBottom: spacing.sm,
+  },
+  venueName: {
+    color: colors.textDark,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.heavy,
+    textAlign: 'center',
+  },
+  venueDetail: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  venueDivider: {
+    width: 32,
+    height: 2,
+    backgroundColor: colors.tealLight,
+    borderRadius: 1,
+    marginVertical: spacing.sm,
+  },
+  venueDate: {
+    color: colors.teal,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  directionsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginTop: spacing.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.full,
+    borderWidth: 2,
+    borderColor: colors.teal,
+  },
+  directionsBtnText: {
+    color: colors.teal,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 0.5,
+  },
+
+  // ── Instagram ──
+  instagramBorder: {
+    borderRadius: radius.lg + 2,
+    padding: 2,
+    ...shadow.sm,
+  },
+  instagramCard: {
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  instagramBody: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    lineHeight: 21,
+  },
+  instagramHashtag: {
+    color: colors.primary,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 0.5,
+  },
+  instagramBtn: {
+    borderRadius: radius.md,
+    overflow: 'hidden',
+    marginTop: spacing.xs,
+  },
+  instagramBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -306,35 +387,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
   },
-  instagramText: {
+  instagramBtnText: {
     color: colors.white,
     fontSize: fontSize.sm,
     fontWeight: fontWeight.heavy,
     flex: 1,
     textAlign: 'center',
-  },
-
-  // ── Venue ──
-  venueCard: {
-    borderRadius: radius.lg,
-    padding: spacing.lg,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  venueEmoji: { fontSize: 36 },
-  venueName: {
-    color: colors.white,
-    fontSize: fontSize.lg,
-    fontWeight: fontWeight.heavy,
-    textShadowColor: 'rgba(61,38,69,0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
-  },
-  venueDetail: {
-    color: 'rgba(255,255,255,0.9)',
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
-    marginTop: 2,
   },
 });

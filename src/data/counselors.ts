@@ -9,6 +9,7 @@ export const counselors: Counselor[] = [
     category: 'Movement',
     bio: '',
     instagram: '@simplyfitness1',
+    headshot: require('../../assets/images/headshots/EricaWeddle.jpg'),
     confirmed: true,
   },
   {
@@ -18,6 +19,7 @@ export const counselors: Counselor[] = [
     category: 'Movement',
     bio: '',
     instagram: '@endlesssummerpaddle',
+    headshot: require('../../assets/images/headshots/MeganSmith.jpg'),
     confirmed: true,
   },
 
@@ -29,6 +31,7 @@ export const counselors: Counselor[] = [
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@abbykamen',
+    headshot: require('../../assets/images/headshots/AbbyKamen.jpg'),
     confirmed: true,
   },
   {
@@ -38,6 +41,7 @@ export const counselors: Counselor[] = [
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@whitneyfallon0',
+    headshot: require('../../assets/images/headshots/WhitneyFallon.jpg'),
     confirmed: true,
   },
   {
@@ -47,6 +51,7 @@ export const counselors: Counselor[] = [
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@hausofsolky',
+    headshot: require('../../assets/images/headshots/CarmelliaJacksonHurley.jpg'),
     confirmed: true,
   },
   {
@@ -56,15 +61,17 @@ export const counselors: Counselor[] = [
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@meganhaleco',
+    headshot: require('../../assets/images/headshots/MeganHale.png'),
     confirmed: true,
   },
   {
     id: 'c7',
-    name: 'Cece Steveson',
+    name: 'Cece Stevenson',
     sessionTopic: 'Regulated to Revenue',
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@elevatedwith_cece',
+    headshot: require('../../assets/images/headshots/CeceStevenson.jpg'),
     confirmed: false,
   },
   {
@@ -74,6 +81,7 @@ export const counselors: Counselor[] = [
     category: 'Mindset & Storytelling',
     bio: '',
     instagram: '@ari.farley',
+    headshot: require('../../assets/images/headshots/AriFarley.jpg'),
     confirmed: true,
   },
   {
@@ -82,17 +90,19 @@ export const counselors: Counselor[] = [
     sessionTopic: 'The Hidden Architecture of Anxiety and What to Do About It',
     category: 'Mindset & Storytelling',
     bio: '',
+    headshot: require('../../assets/images/headshots/TaliLindberg.jpg'),
     confirmed: true,
   },
 
   // ─── Craft & Connect ─────────────────────────────────────────────────────
   {
     id: 'c10',
-    name: 'Kylie Fischback',
+    name: 'Kylie Fischbach',
     sessionTopic: 'Friendship Bracelet-Making',
     category: 'Craft & Connect',
     bio: '',
     instagram: '@All_This_Drama',
+    headshot: require('../../assets/images/headshots/KylieFischbach.jpg'),
     confirmed: true,
   },
   {
@@ -102,6 +112,7 @@ export const counselors: Counselor[] = [
     category: 'Craft & Connect',
     bio: '',
     instagram: '@cottagecoremel',
+    headshot: require('../../assets/images/headshots/MelissaWurth.jpg'),
     confirmed: true,
   },
   {
@@ -111,6 +122,7 @@ export const counselors: Counselor[] = [
     category: 'Craft & Connect',
     bio: '',
     instagram: '@authorleahbomar',
+    headshot: require('../../assets/images/headshots/LeahBomar.jpg'),
     confirmed: true,
   },
   {
@@ -120,26 +132,29 @@ export const counselors: Counselor[] = [
     category: 'Craft & Connect',
     bio: '',
     instagram: '@flygirlcandles',
+    headshot: require('../../assets/images/headshots/DierdreBarnes.jpg'),
     confirmed: true,
   },
 
   // ─── Business & Branding ─────────────────────────────────────────────────
   {
     id: 'c14',
-    name: 'Holly Hartmann',
+    name: 'Holly Hartman',
     sessionTopic: 'From AI-Anxious to AI-Ready',
     category: 'Business & Branding',
     bio: '',
     instagram: '@the_holly_hartman',
+    headshot: require('../../assets/images/headshots/HollyHartman.jpg'),
     confirmed: true,
   },
   {
     id: 'c15',
-    name: 'Pattie Weiter',
+    name: 'Patti Weiter',
     sessionTopic: "Don't Wait for a New Job — Remix the One You've Got",
     category: 'Business & Branding',
     bio: '',
-    instagram: '@shinepyschology',
+    instagram: '@shinepsychology',
+    headshot: require('../../assets/images/headshots/PattiWeiter.jpg'),
     confirmed: true,
   },
   {
@@ -149,6 +164,7 @@ export const counselors: Counselor[] = [
     category: 'Business & Branding',
     bio: '',
     instagram: '@sydneyinkentucky',
+    headshot: require('../../assets/images/headshots/SydneyCatinna.jpg'),
     confirmed: true,
   },
   {
@@ -157,6 +173,7 @@ export const counselors: Counselor[] = [
     sessionTopic: 'Get Found or Get Forgotten: SEO and Online Visibility',
     category: 'Business & Branding',
     bio: '',
+    headshot: require('../../assets/images/headshots/JessicaColliersmith.jpg'),
     confirmed: true,
   },
   {
@@ -165,7 +182,8 @@ export const counselors: Counselor[] = [
     sessionTopic: "The Skills No One Tells You You'll Need to Run a Woman-Owned Business",
     category: 'Business & Branding',
     bio: '',
-    instagram: '@bonnieknownsbreast',
+    instagram: '@bonnieknowsbreast',
+    headshot: require('../../assets/images/headshots/BonnieLogsdon.jpg'),
     confirmed: true,
   },
   {
@@ -175,15 +193,17 @@ export const counselors: Counselor[] = [
     category: 'Business & Branding',
     bio: '',
     instagram: '@cynlee08',
+    headshot: require('../../assets/images/headshots/CynthiaLee.jpg'),
     confirmed: true,
   },
   {
     id: 'c20',
-    name: 'Danielle Meadows-Stinnet',
+    name: 'Danielle Meadows-Stinnett',
     sessionTopic: 'Social Media Growth Board Game',
     category: 'Business & Branding',
     bio: '',
     instagram: '@kycreatives',
+    headshot: require('../../assets/images/headshots/DanielleMeadows-Stinnett.jpg'),
     confirmed: false,
   },
   {
@@ -193,6 +213,7 @@ export const counselors: Counselor[] = [
     category: 'Business & Branding',
     bio: '',
     instagram: '@kravchenko_styling',
+    headshot: require('../../assets/images/headshots/KateKravchenko.jpg'),
     confirmed: true,
   },
 
@@ -204,6 +225,7 @@ export const counselors: Counselor[] = [
     category: 'Leadership',
     bio: '',
     instagram: '@ofwloumetro',
+    headshot: require('../../assets/images/headshots/GretchenHunt.jpg'),
     confirmed: false,
   },
   {
@@ -213,6 +235,7 @@ export const counselors: Counselor[] = [
     category: 'Leadership',
     bio: '',
     instagram: '@cierra.brent',
+    headshot: require('../../assets/images/headshots/CierraBrent.jpg'),
     confirmed: true,
   },
   {
@@ -222,15 +245,17 @@ export const counselors: Counselor[] = [
     category: 'Leadership',
     bio: '',
     instagram: '@lifewithlesliehall',
+    headshot: require('../../assets/images/headshots/LeslieHall.jpg'),
     confirmed: true,
   },
   {
     id: 'c25',
     name: 'Davonna Saier',
-    sessionTopic: 'Self-Care Is Not Selfish... It\'s Strategy',
+    sessionTopic: "Self-Care Is Not Selfish... It's Strategy",
     category: 'Leadership',
     bio: '',
     instagram: '@davonnainclusive',
+    headshot: require('../../assets/images/headshots/DavonnaSaier.jpg'),
     confirmed: false,
   },
   {
@@ -249,6 +274,7 @@ export const counselors: Counselor[] = [
     category: 'Leadership',
     bio: '',
     instagram: '@the_development_edge',
+    headshot: require('../../assets/images/headshots/AnnBrown.jpg'),
     confirmed: true,
   },
 ];

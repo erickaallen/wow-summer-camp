@@ -1,12 +1,13 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootTabParamList } from '../types';
 import { colors, shadow } from '../theme';
 import HomeScreen from '../screens/HomeScreen';
 import ScheduleStack from './ScheduleStack';
 import CounselorsStack from './CounselorsStack';
-import MapScreen from '../screens/MapScreen';
+import MapStack from './MapStack';
 import MoreStack from './MoreStack';
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -22,6 +23,9 @@ const TAB_ICONS: Record<string, { active: IoniconsName; inactive: IoniconsName }
 };
 
 export default function RootNavigator() {
+  const insets = useSafeAreaInsets();
+  const tabBarHeight = 60 + insets.bottom;
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -32,9 +36,9 @@ export default function RootNavigator() {
           backgroundColor: colors.tabBar,
           borderTopWidth: 0,
           ...shadow.md,
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 4,
+          height: tabBarHeight,
+          paddingBottom: insets.bottom + 4,
+          paddingTop: 8,
         },
         tabBarLabelStyle: {
           fontWeight: '700',
@@ -53,11 +57,11 @@ export default function RootNavigator() {
         },
       })}
     >
-      <Tab.Screen name="Home"       component={HomeScreen}    />
+      <Tab.Screen name="Home"       component={HomeScreen} />
       <Tab.Screen name="Schedule"   component={ScheduleStack} />
       <Tab.Screen name="Counselors" component={CounselorsStack} />
-      <Tab.Screen name="Map"        component={MapScreen}     options={{ headerShown: false }} />
-      <Tab.Screen name="More"       component={MoreStack}     />
+      <Tab.Screen name="Map"        component={MapStack} />
+      <Tab.Screen name="More"       component={MoreStack} />
     </Tab.Navigator>
   );
 }
