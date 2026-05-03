@@ -1,5 +1,5 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,19 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  Alert,
 } from 'react-native';
 
 const BANNER = require('../../assets/images/wow-banner.png');
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { RootTabParamList } from '../types';
 import { announcements } from '../data/announcements';
+import { useProfile } from '../hooks/useProfile';
+import { useChecklist } from '../hooks/useChecklist';
+import { shareVCard } from '../utils/vcard';
 import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
 
 const EVENT_START = new Date('2026-05-26T09:00:00');
@@ -65,8 +72,38 @@ function getActiveAnnouncements() {
 }
 
 export default function HomeScreen() {
+  const navigation = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const countdown = useCountdown(EVENT_START);
   const activeAnnouncements = getActiveAnnouncements();
+  const { profile, reload, isComplete } = useProfile();
+  const { checks, toggle } = useChecklist();
+  const [sharing, setSharing] = useState(false);
+
+  const doneCount = [isComplete, checks.adventure, checks.instagram].filter(Boolean).length;
+
+  // Stay in sync with profile changes made on the Profile screen
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload])
+  );
+
+  const handleShare = async () => {
+    if (!isComplete) {
+      Alert.alert(
+        'Profile Not Set Up',
+        'Add your contact info in More → My Profile, then come back to share.',
+      );
+      return;
+    }
+    setSharing(true);
+    try {
+      await shareVCard(profile!);
+    } catch {
+      Alert.alert('Error', 'Could not share contact. Please try again.');
+    }
+    setSharing(false);
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -92,6 +129,38 @@ export default function HomeScreen() {
             <Text style={styles.directionsBtnText}>Get Directions</Text>
           </TouchableOpacity>
         </View>
+        {/* ── Prep for Camp checklist ── */}
+        <View style={styles.card}>
+          <View style={styles.checklistHeader}>
+            <Text style={styles.checklistTitle}>🏕 PREP FOR CAMP</Text>
+            <Text style={styles.checklistProgress}>{doneCount} / 3</Text>
+          </View>
+
+          {/* Item 1: Create your profile — auto-checks from isComplete */}
+          <CheckItem
+            checked={isComplete}
+            label="Create your profile"
+            onNavigate={() => navigation.navigate('More', { screen: 'Profile', params: { fromHome: true } })}
+            readonly
+          />
+
+          {/* Item 2: Plan your trail adventure */}
+          <CheckItem
+            checked={checks.adventure}
+            label="Plan your trail adventure"
+            onToggle={() => toggle('adventure')}
+            onNavigate={() => navigation.navigate('Schedule')}
+          />
+
+          {/* Item 3: Say hey on Instagram */}
+          <CheckItem
+            checked={checks.instagram}
+            label="Say hey on IG and make some friends before camp starts #wowsummercamp"
+            onToggle={() => toggle('instagram')}
+            onNavigate={openInstagram}
+          />
+        </View>
+
         {/* ── Countdown card ── */}
         <View style={[styles.card, styles.countdownCard]}>
           {countdown ? (
@@ -134,6 +203,19 @@ export default function HomeScreen() {
         )}
 
 
+        {/* ── Share my contact ── */}
+        <TouchableOpacity
+          style={[styles.shareContactBtn, !isComplete && styles.shareContactBtnDisabled]}
+          onPress={handleShare}
+          activeOpacity={0.85}
+          disabled={sharing || !isComplete}
+        >
+          <Ionicons name="person-add-outline" size={20} color={colors.white} />
+          <Text style={styles.shareContactText}>
+            {sharing ? 'Opening Share Sheet…' : 'Share My Contact'}
+          </Text>
+        </TouchableOpacity>
+
         {/* ── Instagram live feed card ── */}
         <LinearGradient
           colors={['#F77737', '#C13584', '#833AB4']}
@@ -167,6 +249,46 @@ export default function HomeScreen() {
 
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function CheckItem({
+  checked,
+  label,
+  onToggle,
+  onNavigate,
+  readonly = false,
+}: {
+  checked: boolean;
+  label: string;
+  onToggle?: () => void;
+  onNavigate: () => void;
+  readonly?: boolean;
+}) {
+  return (
+    <View style={styles.checkRow}>
+      {/* Left: checkbox + label — toggles only */}
+      <TouchableOpacity
+        style={styles.checkToggle}
+        onPress={onToggle}
+        activeOpacity={0.7}
+        disabled={readonly || !onToggle}
+      >
+        <Ionicons
+          name={checked ? 'checkmark-circle' : 'ellipse-outline'}
+          size={24}
+          color={checked ? colors.teal : colors.tealLight}
+        />
+        <Text style={[styles.checkLabel, checked && styles.checkLabelDone]}>
+          {label}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Right: arrow — navigates only */}
+      <TouchableOpacity onPress={onNavigate} activeOpacity={0.7} hitSlop={8}>
+        <Ionicons name="chevron-forward" size={20} color={colors.teal} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -225,6 +347,49 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     fontWeight: fontWeight.heavy,
     letterSpacing: 2,
+  },
+
+  // ── Checklist ──
+  checklistHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: spacing.sm,
+  },
+  checklistTitle: {
+    color: colors.textDark,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 1.5,
+  },
+  checklistProgress: {
+    color: colors.teal,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.heavy,
+  },
+  checkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border,
+  },
+  checkToggle: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingRight: spacing.sm,
+  },
+  checkLabel: {
+    flex: 1,
+    color: colors.textDark,
+    fontSize: fontSize.sm,
+    lineHeight: 20,
+  },
+  checkLabelDone: {
+    color: colors.textMuted,
+    textDecorationLine: 'line-through',
   },
 
   // ── Countdown ──
@@ -349,6 +514,29 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     fontWeight: fontWeight.heavy,
     letterSpacing: 0.5,
+  },
+
+  // ── Share contact ──
+  shareContactBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    ...shadow.sm,
+  },
+  shareContactBtnDisabled: {
+    backgroundColor: colors.tealLight,
+    shadowOpacity: 0,
+    elevation: 0,
+  },
+  shareContactText: {
+    color: colors.white,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.heavy,
   },
 
   // ── Instagram ──

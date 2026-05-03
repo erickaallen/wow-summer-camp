@@ -17,7 +17,7 @@ type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 type MenuItem = {
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
-  screen: keyof Pick<MoreStackParamList, 'Sponsors' | 'CheckIn'>;
+  screen: keyof Pick<MoreStackParamList, 'Sponsors' | 'CheckIn' | 'Profile'>;
   description: string;
 };
 
@@ -45,16 +45,22 @@ const EXTERNAL_ITEMS: ExternalItem[] = [
 
 const MENU_ITEMS: MenuItem[] = [
   {
-    label: 'Sponsors',
-    icon: 'ribbon-outline',
-    screen: 'Sponsors',
-    description: 'Meet the sponsors making WOW Summer Camp possible.',
+    label: 'My Profile',
+    icon: 'person-circle-outline',
+    screen: 'Profile',
+    description: 'Set up your contact info and networking card.',
   },
   {
     label: 'Check In',
     icon: 'qr-code-outline',
     screen: 'CheckIn',
-    description: 'Scan your QR code to check in at the event.',
+    description: 'Show your QR code at the registration table.',
+  },
+  {
+    label: 'Sponsors',
+    icon: 'ribbon-outline',
+    screen: 'Sponsors',
+    description: 'Meet the sponsors making WOW Summer Camp possible.',
   },
 ];
 

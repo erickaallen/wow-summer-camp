@@ -13,7 +13,7 @@ export default function ScheduleStack() {
     <Stack.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
-        headerTintColor: colors.primary,
+        headerTintColor: colors.textDark,
         headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
       }}
     >

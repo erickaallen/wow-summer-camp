@@ -1,3 +1,5 @@
+import { NavigatorScreenParams } from '@react-navigation/native';
+
 export type EventDay = 'day1' | 'day2';
 
 export interface Session {
@@ -66,6 +68,25 @@ export interface CounselorSession {
   locationId: string;  // references CampfireLocation.id
 }
 
+export interface UserProfile {
+  // ── Check-in ──────────────────────────────────────────────────
+  /** Email used to purchase the ticket — encoded into the check-in QR code */
+  ticketEmail: string;
+
+  // ── Networking / vCard ────────────────────────────────────────
+  firstName: string;
+  lastName: string;
+  /** Contact email shared with other campers — may differ from ticketEmail */
+  networkingEmail?: string;
+  businessName?: string;
+  jobTitle?: string;
+  phone?: string;
+  instagram?: string;
+  website?: string;
+  /** Base64-encoded JPEG profile photo, embedded in the vCard when sharing */
+  photo?: string;
+}
+
 export interface Sponsor {
   id: string;
   name: string;
@@ -100,7 +121,7 @@ export type RootTabParamList = {
   Schedule: undefined;
   Counselors: undefined;
   Map: undefined;
-  More: undefined;
+  More: NavigatorScreenParams<MoreStackParamList> | undefined;
 };
 
 export type ScheduleStackParamList = {
@@ -118,6 +139,7 @@ export type MoreStackParamList = {
   MoreMenu: undefined;
   Sponsors: undefined;
   CheckIn: undefined;
+  Profile: { fromHome?: boolean } | undefined;
 };
 
 export type MapStackParamList = {

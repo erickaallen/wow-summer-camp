@@ -1,29 +1,107 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import React, { useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useFocusEffect } from '@react-navigation/native';
+import { MoreStackParamList } from '../types';
+import { useProfile } from '../hooks/useProfile';
+import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
 
-export default function CheckInScreen() {
+type Props = NativeStackScreenProps<MoreStackParamList, 'CheckIn'>;
+
+export default function CheckInScreen({ navigation }: Props) {
+  const { profile, loaded, reload, isComplete } = useProfile();
+
+  // Re-read from storage every time this screen comes into focus so that
+  // completing a profile on the Profile screen is immediately reflected here.
+  useFocusEffect(
+    useCallback(() => {
+      reload();
+    }, [reload])
+  );
+
+  if (!loaded) {
+    return (
+      <SafeAreaView style={styles.safe} edges={[]}>
+        <ActivityIndicator style={{ marginTop: spacing.xxl }} color={colors.primary} />
+      </SafeAreaView>
+    );
+  }
+
+  // ── Profile not set up yet ──────────────────────────────────────────────────
+  if (!isComplete) {
+    return (
+      <SafeAreaView style={styles.safe} edges={[]}>
+        <View style={styles.emptyState}>
+          <Ionicons name="person-circle-outline" size={72} color={colors.tealLight} />
+          <Text style={styles.emptyTitle}>Set Up Your Profile First</Text>
+          <Text style={styles.emptyBody}>
+            Your check-in QR code is generated from your ticket email. Add your profile to get your code.
+          </Text>
+          <TouchableOpacity
+            style={styles.setupBtn}
+            onPress={() => navigation.navigate('Profile')}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="person-add-outline" size={18} color={colors.white} />
+            <Text style={styles.setupBtnText}>Set Up Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // ── Profile complete — show QR code ─────────────────────────────────────────
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
-      <View style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.icon}>📲</Text>
-          <Text style={styles.title}>QR Check-In</Text>
-          <Text style={styles.subtitle}>Coming Soon</Text>
-          <Text style={styles.body}>
-            Scan your ticket QR code at the registration desk to check in. This feature will be
-            available closer to the event date.
+      <View style={styles.content}>
+
+        <View style={styles.qrCard}>
+          <Text style={styles.qrLabel}>SHOW THIS TO CHECK IN</Text>
+          <View style={styles.qrBox}>
+            <QRCode
+              value={profile!.ticketEmail}
+              size={220}
+              color={colors.textDark}
+              backgroundColor={colors.white}
+            />
+          </View>
+          <Text style={styles.qrEmail}>{profile!.ticketEmail}</Text>
+          <Text style={styles.qrHint}>
+            A staff member will scan this code to verify your registration.
           </Text>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoIcon}>📍</Text>
-          <Text style={styles.infoText}>Registration & Check-in · Main Entrance</Text>
+
+        <View style={styles.nameCard}>
+          {profile!.photo ? (
+            <Image
+              source={{ uri: profile!.photo }}
+              style={styles.nameAvatar}
+            />
+          ) : (
+            <View style={styles.nameAvatarPlaceholder}>
+              <Ionicons name="person" size={32} color={colors.tealLight} />
+            </View>
+          )}
+          <Text style={styles.nameText}>
+            {profile!.firstName} {profile!.lastName}
+          </Text>
+          {!!profile!.businessName && (
+            <Text style={styles.businessText}>{profile!.businessName}</Text>
+          )}
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoIcon}>🕗</Text>
-          <Text style={styles.infoText}>Check-in opens at 8:00 AM on May 26th</Text>
-        </View>
+
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => navigation.navigate('Profile')}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="pencil-outline" size={16} color={colors.teal} />
+          <Text style={styles.editBtnText}>Edit Profile</Text>
+        </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
@@ -31,35 +109,127 @@ export default function CheckInScreen() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  container: { flex: 1, padding: spacing.md, justifyContent: 'center' },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    borderWidth: 3,
-    borderColor: colors.primary,
-    padding: spacing.xl,
+  content: { flex: 1, padding: spacing.md, gap: spacing.md },
+
+  // ── Empty state ──
+  emptyState: {
+    flex: 1,
     alignItems: 'center',
-    marginBottom: spacing.md,
+    justifyContent: 'center',
+    padding: spacing.xl,
+    gap: spacing.md,
   },
-  icon: { fontSize: 56, marginBottom: spacing.md },
-  title: { color: colors.primary, fontSize: fontSize.xl, fontWeight: fontWeight.heavy },
-  subtitle: {
-    color: colors.teal,
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
-    letterSpacing: 1,
-    marginTop: spacing.xs,
-    marginBottom: spacing.md,
+  emptyTitle: {
+    color: colors.textDark,
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.heavy,
+    textAlign: 'center',
   },
-  body: { color: '#555', fontSize: fontSize.sm, textAlign: 'center', lineHeight: 22 },
-  infoRow: {
+  emptyBody: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  setupBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    marginTop: spacing.sm,
+  },
+  setupBtnText: {
+    color: colors.white,
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.heavy,
+  },
+
+  // ── QR card ──
+  qrCard: {
+    backgroundColor: colors.white,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    alignItems: 'center',
+    gap: spacing.md,
+    ...shadow.md,
+  },
+  qrLabel: {
+    color: colors.primary,
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.heavy,
+    letterSpacing: 2,
+  },
+  qrBox: {
+    padding: spacing.md,
+    backgroundColor: colors.white,
+    borderRadius: radius.md,
+    borderWidth: 3,
+    borderColor: colors.tealLight,
+  },
+  qrEmail: {
+    color: colors.textDark,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.bold,
+  },
+  qrHint: {
+    color: colors.textMuted,
+    fontSize: fontSize.xs,
+    textAlign: 'center',
+    lineHeight: 18,
+  },
+
+  // ── Name card ──
+  nameCard: {
     backgroundColor: colors.white,
     borderRadius: radius.md,
     padding: spacing.md,
-    marginBottom: spacing.sm,
+    alignItems: 'center',
+    gap: spacing.xs,
+    ...shadow.sm,
   },
-  infoIcon: { fontSize: 20, marginRight: spacing.sm },
-  infoText: { color: colors.textDark, fontSize: fontSize.sm, fontWeight: fontWeight.semibold, flex: 1 },
+  nameAvatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    borderColor: colors.tealLight,
+    marginBottom: spacing.xs,
+  },
+  nameAvatarPlaceholder: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.surface,
+    borderWidth: 3,
+    borderColor: colors.tealLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  nameText: {
+    color: colors.textDark,
+    fontSize: fontSize.xl,
+    fontWeight: fontWeight.heavy,
+  },
+  businessText: {
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    marginTop: 4,
+  },
+
+  // ── Edit link ──
+  editBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
+  },
+  editBtnText: {
+    color: colors.teal,
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+  },
 });
