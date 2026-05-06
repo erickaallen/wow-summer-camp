@@ -38,5 +38,32 @@ export function useAgenda() {
     [savedIds],
   );
 
-  return { savedIds, isSaved, toggleSession, loaded };
+  /**
+   * Returns the saved counselor session ID for a given rotation, if any.
+   * Counselor session IDs follow the pattern: cs_{rotationId}_{locationId}
+   */
+  const getSavedForRotation = useCallback(
+    (rotationId: string): string | undefined =>
+      [...savedIds].find((id) => id.startsWith(`cs_${rotationId}_`)),
+    [savedIds],
+  );
+
+  /**
+   * Atomically removes oldId and adds newId — used when switching
+   * campfire sessions within the same rotation.
+   */
+  const replaceSession = useCallback(
+    (oldId: string, newId: string) => {
+      setSavedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(oldId);
+        next.add(newId);
+        persist(next);
+        return next;
+      });
+    },
+    [persist],
+  );
+
+  return { savedIds, isSaved, toggleSession, getSavedForRotation, replaceSession, loaded };
 }

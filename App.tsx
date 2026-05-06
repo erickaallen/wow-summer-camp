@@ -10,7 +10,7 @@ import {
   Raleway_600SemiBold,
   Raleway_700Bold,
 } from '@expo-google-fonts/raleway';
-import { Barlow_500Medium } from '@expo-google-fonts/barlow';
+import { Barlow_500Medium, Barlow_700Bold } from '@expo-google-fonts/barlow';
 import RootNavigator from './src/navigation/RootNavigator';
 import { AgendaProvider } from './src/hooks/AgendaContext';
 import SplashOverlay from './src/components/SplashOverlay';
@@ -23,6 +23,7 @@ export default function App() {
     Raleway_600SemiBold,
     Raleway_700Bold,
     Barlow_500Medium,
+    Barlow_700Bold,
   });
 
   useEffect(() => {

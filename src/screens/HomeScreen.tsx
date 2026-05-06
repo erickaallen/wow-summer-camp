@@ -9,11 +9,14 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
+  Dimensions,
 } from 'react-native';
 
-const BANNER = require('../../assets/images/wow-banner.png');
+const SCREEN_W = Dimensions.get('window').width;
+
+const BANNER      = require('../../assets/images/wow-banner.png');
+const HEART_HANDS = require('../../assets/home-screen-heart-hands.png');
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList } from '../types';
@@ -129,37 +132,6 @@ export default function HomeScreen() {
             <Text style={styles.directionsBtnText}>Get Directions</Text>
           </TouchableOpacity>
         </View>
-        {/* ── Prep for Camp checklist ── */}
-        <View style={styles.card}>
-          <View style={styles.checklistHeader}>
-            <Text style={styles.checklistTitle}>🏕 PREP FOR CAMP</Text>
-            <Text style={styles.checklistProgress}>{doneCount} / 3</Text>
-          </View>
-
-          {/* Item 1: Create your profile — auto-checks from isComplete */}
-          <CheckItem
-            checked={isComplete}
-            label="Create your profile"
-            onNavigate={() => navigation.navigate('More', { screen: 'Profile', params: { fromHome: true } })}
-            readonly
-          />
-
-          {/* Item 2: Plan your trail adventure */}
-          <CheckItem
-            checked={checks.adventure}
-            label="Plan your trail adventure"
-            onToggle={() => toggle('adventure')}
-            onNavigate={() => navigation.navigate('Schedule')}
-          />
-
-          {/* Item 3: Say hey on Instagram */}
-          <CheckItem
-            checked={checks.instagram}
-            label="Say hey on IG and make some friends before camp starts #wowsummercamp"
-            onToggle={() => toggle('instagram')}
-            onNavigate={openInstagram}
-          />
-        </View>
 
         {/* ── Countdown card ── */}
         <View style={[styles.card, styles.countdownCard]}>
@@ -181,9 +153,45 @@ export default function HomeScreen() {
           )}
         </View>
 
+        {/* ── Prep for Camp checklist ── */}
+        <View style={styles.card}>
+          <View style={styles.checklistHeader}>
+            <Text style={styles.checklistTitle}>🏕 PREP FOR CAMP</Text>
+            <Text style={styles.checklistProgress}>{doneCount} / 3</Text>
+          </View>
+
+          {/* Item 1: Create your profile — auto-checks from isComplete */}
+          <CheckItem
+            checked={isComplete}
+            label="Create your profile"
+            onNavigate={() => navigation.navigate('More', { screen: 'Profile', params: { fromHome: true } })}
+            readonly
+          />
+
+          {/* Item 2: Plan your adventure */}
+          <CheckItem
+            checked={checks.adventure}
+            label="Plan your adventure"
+            onToggle={() => toggle('adventure')}
+            onNavigate={() => navigation.navigate('Schedule')}
+          />
+
+          {/* Item 3: Say hey on Instagram */}
+          <CheckItem
+            checked={checks.instagram}
+            label="Say hey on Instagram"
+            onToggle={() => toggle('instagram')}
+            onNavigate={openInstagram}
+          />
+        </View>
+
         {/* ── Announcements card ── */}
         {activeAnnouncements.length > 0 && (
-          <View style={styles.card}>
+          <View style={[styles.card, styles.announcementCard]}>
+            <View style={styles.cardHeader}>
+              <Ionicons name="megaphone-outline" size={14} color={colors.primary} />
+              <Text style={styles.cardTitle}>ANNOUNCEMENTS</Text>
+            </View>
             {activeAnnouncements.map((a, i) => (
               <View
                 key={a.id}
@@ -192,7 +200,6 @@ export default function HomeScreen() {
                   i < activeAnnouncements.length - 1 && styles.announcementDivider,
                 ]}
               >
-                <View style={styles.announcementAccent} />
                 <View style={styles.announcementBody}>
                   <Text style={styles.announcementTitle}>{a.title}</Text>
                   <Text style={styles.announcementText}>{a.body}</Text>
@@ -202,27 +209,35 @@ export default function HomeScreen() {
           </View>
         )}
 
-
-        {/* ── Share my contact ── */}
-        <TouchableOpacity
-          style={[styles.shareContactBtn, !isComplete && styles.shareContactBtnDisabled]}
-          onPress={handleShare}
-          activeOpacity={0.85}
-          disabled={sharing || !isComplete}
-        >
-          <Ionicons name="person-add-outline" size={20} color={colors.white} />
-          <Text style={styles.shareContactText}>
-            {sharing ? 'Opening Share Sheet…' : 'Share My Contact'}
+        {/* ── Share my contact card ── */}
+        <View style={[styles.card, styles.shareCard]}>
+          <View style={styles.cardHeader}>
+            <Ionicons name="people-outline" size={14} color={colors.teal} />
+            <Text style={[styles.cardTitle, { color: colors.teal }]}>STAY CONNECTED</Text>
+          </View>
+          <Text style={styles.shareBlurb}>
+            Meet a new business bestie? Share your contact in one tap — your name, email, phone, and socials go straight to their phone.
           </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.shareSubtleBtn, (!isComplete || sharing) && styles.shareSubtleBtnDisabled]}
+            onPress={handleShare}
+            activeOpacity={0.8}
+            disabled={sharing || !isComplete}
+          >
+            <Ionicons name="person-add-outline" size={16} color={isComplete ? colors.teal : colors.border} />
+            <Text style={[styles.shareSubtleBtnText, !isComplete && styles.shareSubtleBtnTextDisabled]}>
+              {sharing ? 'Opening Share Sheet…' : 'Share My Contact'}
+            </Text>
+          </TouchableOpacity>
+          {!isComplete && (
+            <Text style={styles.shareIncompleteHint}>
+              Complete your profile in More → My Profile to unlock sharing.
+            </Text>
+          )}
+        </View>
 
         {/* ── Instagram live feed card ── */}
-        <LinearGradient
-          colors={['#F77737', '#C13584', '#833AB4']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.instagramBorder}
-        >
+        <View style={[styles.card, styles.instagramBorder]}>
           <View style={styles.instagramCard}>
             <View style={styles.cardHeader}>
               <Ionicons name="logo-instagram" size={14} color={colors.primary} />
@@ -232,20 +247,20 @@ export default function HomeScreen() {
               Share your camp moments in real time! Tag your photos and videos with our event hashtag and you'll be part of our shared live feed.
             </Text>
             <Text style={styles.instagramHashtag}>#WOWSummerCamp</Text>
-            <TouchableOpacity onPress={openInstagram} activeOpacity={0.85} style={styles.instagramBtn}>
-              <LinearGradient
-                colors={['#F77737', '#C13584', '#833AB4']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.instagramBtnGradient}
-              >
-                <Ionicons name="logo-instagram" size={20} color={colors.white} />
-                <Text style={styles.instagramBtnText}>View on Instagram</Text>
-                <Ionicons name="open-outline" size={14} color={colors.white} />
-              </LinearGradient>
+            <TouchableOpacity onPress={openInstagram} activeOpacity={0.8} style={styles.instagramBtn}>
+              <Ionicons name="logo-instagram" size={16} color={colors.primary} />
+              <Text style={styles.instagramBtnText}>View on Instagram</Text>
+              <Ionicons name="open-outline" size={14} color={colors.primary} />
             </TouchableOpacity>
           </View>
-        </LinearGradient>
+        </View>
+
+        {/* ── Bottom illustration ── */}
+        <Image
+          source={HEART_HANDS}
+          style={styles.heartHandsImage}
+          resizeMode="cover"
+        />
 
       </ScrollView>
     </SafeAreaView>
@@ -303,7 +318,7 @@ function CountUnit({ value, label }: { value: number; label: string }) {
 
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
-  scroll: { padding: spacing.md, gap: spacing.md, paddingBottom: spacing.xxl },
+  scroll: { padding: spacing.md, gap: spacing.md, paddingBottom: 0 },
 
   // ── Banner ──
   bannerSection: {
@@ -442,6 +457,60 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border,
   },
+  announcementCard: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  shareCard: {
+    borderWidth: 2,
+    borderColor: colors.teal,
+    shadowColor: colors.teal,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  shareBlurb: {
+    fontFamily: fontFamily.body,
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    lineHeight: 20,
+    marginBottom: spacing.md,
+  },
+  shareSubtleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    alignSelf: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.full,
+    borderWidth: 1.5,
+    borderColor: colors.teal,
+  },
+  shareSubtleBtnDisabled: {
+    borderColor: colors.border,
+  },
+  shareSubtleBtnText: {
+    fontFamily: fontFamily.bodySemi,
+    color: colors.teal,
+    fontSize: fontSize.sm,
+  },
+  shareSubtleBtnTextDisabled: {
+    color: colors.textMuted,
+  },
+  shareIncompleteHint: {
+    fontFamily: fontFamily.body,
+    color: colors.textMuted,
+    fontSize: fontSize.xs,
+    textAlign: 'center',
+    marginTop: spacing.sm,
+  },
   announcementAccent: { width: 4, backgroundColor: colors.primary, borderRadius: 2 },
   announcementBody:   { flex: 1, paddingLeft: spacing.sm },
   announcementTitle: {
@@ -461,7 +530,8 @@ const styles = StyleSheet.create({
   venueCard: {
     backgroundColor: colors.white,
     borderRadius: 0,
-    padding: spacing.lg,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
     alignItems: 'center',
     ...shadow.sm,
   },
@@ -470,32 +540,32 @@ const styles = StyleSheet.create({
     color: colors.primary,
     fontSize: fontSize.xs,
     letterSpacing: 3,
-    marginBottom: spacing.sm,
+    marginBottom: 2,
   },
   venueName: {
     fontFamily: fontFamily.display,
     color: colors.textDark,
-    fontSize: fontSize.xl,
+    fontSize: fontSize.md,
     textAlign: 'center',
   },
   venueDetail: {
-    fontFamily: fontFamily.bodySemi,
+    fontFamily: fontFamily.body,
     color: colors.textMuted,
     fontSize: fontSize.sm,
     textAlign: 'center',
-    marginTop: 2,
+    marginTop: 1,
   },
   venueDivider: {
-    width: 32,
+    width: 24,
     height: 2,
     backgroundColor: colors.tealLight,
     borderRadius: 1,
-    marginVertical: spacing.sm,
+    marginVertical: spacing.xs,
   },
   venueDate: {
     fontFamily: fontFamily.subheading,
     color: colors.teal,
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     letterSpacing: 1,
     textAlign: 'center',
   },
@@ -503,18 +573,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    marginTop: spacing.md,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    marginTop: spacing.sm,
+    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.full,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: colors.teal,
   },
   directionsBtnText: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.bodySemi,
     color: colors.teal,
-    fontSize: fontSize.sm,
+    fontSize: fontSize.xs,
     letterSpacing: 0.5,
+  },
+
+  // ── Bottom illustration ──
+  heartHandsImage: {
+    width: SCREEN_W,
+    height: 180,
+    marginHorizontal: -spacing.md,
+    marginTop: spacing.md - 5,
+    marginBottom: -spacing.md,
   },
 
   // ── Share contact ──
@@ -542,14 +621,15 @@ const styles = StyleSheet.create({
 
   // ── Instagram ──
   instagramBorder: {
-    borderRadius: 0,
-    padding: 2,
-    ...shadow.sm,
+    borderWidth: 2,
+    borderColor: colors.accent,
+    shadowColor: colors.accent,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
   instagramCard: {
-    backgroundColor: colors.white,
-    borderRadius: 0,
-    padding: spacing.md,
     gap: spacing.sm,
   },
   instagramBody: {
@@ -559,29 +639,26 @@ const styles = StyleSheet.create({
     lineHeight: 21,
   },
   instagramHashtag: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.md,
     letterSpacing: 0.5,
   },
   instagramBtn: {
-    borderRadius: 0,
-    overflow: 'hidden',
-    marginTop: spacing.xs,
-  },
-  instagramBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    gap: spacing.xs,
+    alignSelf: 'center',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: radius.full,
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    marginTop: spacing.xs,
   },
   instagramBtnText: {
-    fontFamily: fontFamily.bodyBold,
-    color: colors.white,
+    fontFamily: fontFamily.bodySemi,
+    color: colors.primary,
     fontSize: fontSize.sm,
-    flex: 1,
-    textAlign: 'center',
   },
 });

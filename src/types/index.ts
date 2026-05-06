@@ -93,7 +93,8 @@ export interface Sponsor {
   name: string;
   tier: 'presenting' | 'gold' | 'silver' | 'pink';
   description: string;
-  logoPlaceholder: string;
+  logoPlaceholder?: string;
+  logo?: number; // require() image source
   website?: string;
 }
 
@@ -134,6 +135,7 @@ export type ScheduleStackParamList = {
 export type CounselorsStackParamList = {
   CounselorList: undefined;
   CounselorDetail: { counselor: Counselor };
+  CounselorSessionDetail: { counselorSession: CounselorSession; rotation: CampfireRotation };
 };
 
 export type MoreStackParamList = {

@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'r
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { MoreStackParamList } from '../types';
-import { colors, spacing, fontSize, fontFamily } from '../theme';
+import { colors, spacing, fontSize, fontFamily, shadow } from '../theme';
 
 const PRIVACY_URL  = 'https://www.womanownedwallet.com/policies/privacy-policy';
 const WOW_URL      = 'https://www.womanownedwallet.com';
@@ -152,8 +152,7 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     padding: spacing.md,
     marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.surface,
+    ...shadow.sm,
   },
   iconWrap: {
     width: 48,

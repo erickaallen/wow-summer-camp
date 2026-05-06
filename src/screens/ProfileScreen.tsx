@@ -110,7 +110,7 @@ export default function ProfileScreen({ navigation, route }: Props) {
       headerLeft: (props) => (
         <HeaderBackButton
           {...props}
-          label="Home"
+          // label="Home"
           onPress={() => {
             navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'MoreMenu' }] }));
             (navigation.getParent() as BottomTabNavigationProp<RootTabParamList>)
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 3,
-    borderColor: colors.tealLight,
+    borderColor: colors.primary,
   },
   avatarPlaceholder: {
     width: 100,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: colors.surface,
     borderWidth: 3,
-    borderColor: colors.tealLight,
+    borderColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },

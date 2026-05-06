@@ -14,16 +14,28 @@ import { Announcement } from '../types';
 export const announcements: Announcement[] = [
 
   // ── TEST: visible right now (remove before launch) ───────────────────────
-  {
-    id: 'test1',
-    title: '👋 Announcement Test',
-    body: 'This card is visible right now so you can see the time-based display working. It expires May 26 at 8 AM.',
-    visibleUntil: '2026-05-26T08:00:00',
-  },
+  // {
+  //   id: 'test1',
+  //   title: '👋 Announcement Test',
+  //   body: 'This card is visible right now so you can see the time-based display working. It expires May 26 at 8 AM.',
+  //   visibleUntil: '2026-05-26T08:00:00',
+  // },
 
   // ── Pre-camp (app is live, event hasn't started yet) ─────────────────────
   {
     id: 'pre1',
+    title: 'Registration Is Now Open',
+    body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
+    visibleUntil: '2026-05-26T09:00:00',
+  },
+    {
+    id: 'pre2',
+    title: 'Registration Is Now Open',
+    body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
+    visibleUntil: '2026-05-26T09:00:00',
+  },
+    {
+    id: 'pre3',
     title: 'Registration Is Now Open',
     body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
     visibleUntil: '2026-05-26T09:00:00',

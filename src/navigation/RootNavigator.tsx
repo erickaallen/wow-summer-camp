@@ -1,9 +1,11 @@
 import React from 'react';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootTabParamList } from '../types';
 import { colors, shadow, fontFamily } from '../theme';
+import BeadedBorder from '../components/BeadedBorder';
 import HomeScreen from '../screens/HomeScreen';
 import ScheduleStack from './ScheduleStack';
 import CounselorsStack from './CounselorsStack';
@@ -24,7 +26,7 @@ const TAB_ICONS: Record<string, { active: IoniconsName; inactive: IoniconsName }
 
 export default function RootNavigator() {
   const insets = useSafeAreaInsets();
-  const tabBarHeight = 60 + insets.bottom;
+  const tabBarHeight = 65 + insets.bottom;
 
   return (
     <Tab.Navigator
@@ -32,16 +34,21 @@ export default function RootNavigator() {
         headerShown: false,
         tabBarActiveTintColor: colors.tabBarActive,
         tabBarInactiveTintColor: colors.tabBarInactive,
+        tabBarBackground: () => (
+          <View style={{ flex: 1, backgroundColor: colors.tabBar }}>
+            <BeadedBorder />
+          </View>
+        ),
         tabBarStyle: {
-          backgroundColor: colors.tabBar,
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
           ...shadow.md,
           height: tabBarHeight,
           paddingBottom: insets.bottom + 4,
-          paddingTop: 8,
+          paddingTop: 21,
         },
         tabBarLabelStyle: {
-          fontFamily: fontFamily.bodySemi,
+          fontFamily: fontFamily.subheading,
           fontSize: 10,
           letterSpacing: 0.3,
         },

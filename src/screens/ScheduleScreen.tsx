@@ -1,14 +1,18 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
+  Image,
   FlatList,
   ScrollView,
   TouchableOpacity,
   StyleSheet,
+  Animated,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Svg, { Path } from 'react-native-svg';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
   ScheduleStackParamList,
@@ -58,7 +62,102 @@ const DAY_LABELS: Record<EventDay, { short: string; long: string }> = {
   day2: { short: 'MAY 27', long: 'TUESDAY, MAY 27' },
 };
 
-const BOOKMARKABLE: Session['category'][] = ['keynote', 'campfire', 'social', 'activity'];
+
+const DAY_CONFIG: Record<EventDay, {
+  title: string;
+  date: string;
+  image: any;
+  tiltInactive: string;
+  tiltActive: string;
+  imageStyle: object;
+}> = {
+  day1: {
+    title: 'Kickoff Party',
+    date: 'May 26',
+    image: require('../../assets/images/mocktails.png'),
+    tiltInactive: '-20deg',
+    tiltActive: '-8deg',
+    imageStyle: { top: 2, left: 6 },
+  },
+  day2: {
+    title: 'Camp\nDay',
+    date: 'May 27',
+    image: require('../../assets/images/smores.png'),
+    tiltInactive: '20deg',
+    tiltActive: '8deg',
+    imageStyle: { top: 2, right: 6 },
+  },
+};
+
+// ─── Day selector button ─────────────────────────────────────────────────────
+function DaySelectorBtn({ day, isActive, onPress }: {
+  day: EventDay;
+  isActive: boolean;
+  onPress: () => void;
+}) {
+  const cfg = DAY_CONFIG[day];
+  const anim = useRef(new Animated.Value(isActive ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.spring(anim, {
+      toValue: isActive ? 1 : 0,
+      useNativeDriver: true,
+      friction: 6,
+      tension: 80,
+    }).start();
+  }, [isActive]);
+
+  const imageOpacity  = anim.interpolate({ inputRange: [0, 1], outputRange: [0.35, 1] });
+  const imageScale    = anim.interpolate({ inputRange: [0, 1], outputRange: [0.78, 1.08] });
+  const imageTranslateY = anim.interpolate({ inputRange: [0, 1], outputRange: [4, -4] });
+  const imageRotate   = anim.interpolate({ inputRange: [0, 1], outputRange: [cfg.tiltInactive, cfg.tiltActive] });
+
+  return (
+    <TouchableOpacity style={styles.daySelectorBtn} onPress={onPress} activeOpacity={0.85}>
+      {isActive && (
+        <Svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 180 90"
+          preserveAspectRatio="xMidYMid meet"
+          style={[StyleSheet.absoluteFill, { transform: [{ rotate: '-2deg' }] }]}
+        >
+          <Path d="M 3 12 Q 46 8 90 11 Q 138 14 177 10 L 175 34 Q 128 38 84 36 Q 40 34 5 37 Z" fill="#FFD972" fillOpacity={0.5} />
+          <Path d="M 8 35 Q 54 31 96 34 Q 142 37 174 33 L 172 61 Q 124 65 80 62 Q 36 59 10 63 Z" fill="#FFD972" fillOpacity={0.5} />
+          <Path d="M 146 9 Q 164 8 179 11 L 177 60 Q 162 62 144 60 Z" fill="#FFD972" fillOpacity={0.45} />
+          <Path d="M 2 18 Q 14 15 22 17 L 20 55 Q 10 57 1 54 Z" fill="#FFD972" fillOpacity={0.3} />
+          <Path d="M 30 65 Q 74 62 110 65 Q 144 67 156 64 L 154 81 Q 118 84 82 82 Q 46 80 28 83 Z" fill="#FFD972" fillOpacity={0.5} />
+          <Path d="M 138 63 Q 156 62 167 65 L 165 82 Q 152 84 136 82 Z" fill="#FFD972" fillOpacity={0.45} />
+          <Path d="M 27 68 Q 38 66 46 68 L 44 80 Q 32 82 25 80 Z" fill="#FFD972" fillOpacity={0.3} />
+        </Svg>
+      )}
+
+      {/* Graphic */}
+      <Animated.Image
+        source={cfg.image}
+        style={[
+          styles.daySelectorImage,
+          cfg.imageStyle,
+          {
+            opacity: imageOpacity,
+            transform: [
+              { scale: imageScale },
+              { translateY: imageTranslateY },
+              { rotate: imageRotate },
+            ],
+          },
+        ]}
+      />
+
+      <Text style={[styles.daySelectorTitle, isActive && styles.daySelectorTitleActive]}>
+        {cfg.title}
+      </Text>
+      <Text style={[styles.daySelectorDate, isActive && styles.daySelectorDateActive]}>
+        {cfg.date}
+      </Text>
+    </TouchableOpacity>
+  );
+}
 
 // ─── Campfire card (horizontal scroll) ───────────────────────────────────────
 function CampfireCard({
@@ -70,13 +169,34 @@ function CampfireCard({
   rotation: CampfireRotation;
   onPress: () => void;
 }) {
-  const { isSaved, toggleSession } = useAgendaContext();
+  const { isSaved, toggleSession, getSavedForRotation, replaceSession } = useAgendaContext();
   const counselor = counselors.find((c) => c.id === cs.counselorId);
   const loc = campfireLocations.find((l) => l.id === cs.locationId);
   if (!counselor) return null;
 
   const catColor = COUNSELOR_CATEGORY_COLORS[counselor.category] ?? colors.teal;
   const saved = isSaved(cs.id);
+
+  const handleBookmark = () => {
+    if (saved) {
+      // Already saved — just toggle off
+      toggleSession(cs.id);
+      return;
+    }
+    const existingId = getSavedForRotation(cs.rotationId);
+    if (existingId && existingId !== cs.id) {
+      Alert.alert(
+        'Time Slot Conflict',
+        'You already have a campfire session saved for this rotation. Switch to this one instead?',
+        [
+          { text: 'Keep Current', style: 'cancel' },
+          { text: 'Switch', onPress: () => replaceSession(existingId, cs.id) },
+        ],
+      );
+      return;
+    }
+    toggleSession(cs.id);
+  };
 
   return (
     <TouchableOpacity style={styles.campfireCard} onPress={onPress} activeOpacity={0.8}>
@@ -100,7 +220,7 @@ function CampfireCard({
       </View>
       <TouchableOpacity
         style={styles.campfireBookmarkBtn}
-        onPress={() => toggleSession(cs.id)}
+        onPress={handleBookmark}
         hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
         <Ionicons
@@ -117,14 +237,54 @@ function CampfireCard({
 function CampfireBlock({
   session,
   navigation,
+  myAgendaOnly,
+  onBrowse,
 }: {
   session: Session;
   navigation: Props['navigation'];
+  myAgendaOnly: boolean;
+  onBrowse: () => void;
 }) {
+  const { getSavedForRotation } = useAgendaContext();
   const rotation = campfireRotations.find((r) => r.id === session.campfireRotationId);
   if (!rotation) return null;
 
   const rotationSessions = counselorSessions.filter((cs) => cs.rotationId === rotation.id);
+  const savedId = myAgendaOnly ? getSavedForRotation(rotation.id) : undefined;
+
+  // ── My Agenda: gap card — no session chosen yet ──
+  if (myAgendaOnly && !savedId) {
+    return (
+      <View style={styles.campfireBlock}>
+        <View style={styles.campfireBlockHeader}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.campfireBlockTime}>
+              {session.startTime} – {session.endTime}
+            </Text>
+            <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
+          </View>
+        </View>
+        <TouchableOpacity
+          style={styles.campfireGap}
+          onPress={onBrowse}
+          activeOpacity={0.75}
+        >
+          <View style={styles.campfireGapIconRow}>
+            <Ionicons name="alert-circle-outline" size={20} color={colors.primary} />
+            <Text style={styles.campfireGapTitle}>No session selected</Text>
+          </View>
+          <Text style={styles.campfireGapBody}>
+            You haven't chosen a campfire session for this rotation yet. Tap to browse your options.
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  // ── My Agenda: show only the saved card ──
+  const visibleSessions = myAgendaOnly && savedId
+    ? rotationSessions.filter((cs) => cs.id === savedId)
+    : rotationSessions;
 
   return (
     <View style={styles.campfireBlock}>
@@ -134,19 +294,21 @@ function CampfireBlock({
             {session.startTime} – {session.endTime}
           </Text>
           <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
-          <Text style={styles.campfireBlockMeta}>
-            Rotation #{rotation.rotationNumber}  ·  {rotationSessions.length} sessions
-          </Text>
+          {!myAgendaOnly && (
+            <Text style={styles.campfireBlockMeta}>
+              Rotation #{rotation.rotationNumber}  ·  {rotationSessions.length} sessions
+            </Text>
+          )}
         </View>
       </View>
 
-      {rotationSessions.length > 0 ? (
+      {visibleSessions.length > 0 ? (
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.campfireScroll}
         >
-          {rotationSessions.map((cs) => (
+          {visibleSessions.map((cs) => (
             <CampfireCard
               key={cs.id}
               cs={cs}
@@ -171,15 +333,27 @@ function CampfireBlock({
 export default function ScheduleScreen({ navigation }: Props) {
   const [activeDay, setActiveDay] = useState<EventDay>('day1');
   const [myAgendaOnly, setMyAgendaOnly] = useState(false);
-  const { isSaved, toggleSession, loaded } = useAgendaContext();
+  const { getSavedForRotation, loaded } = useAgendaContext();
 
   const daySessions = sessions.filter((s) => s.day === activeDay);
-  const filtered = myAgendaOnly
-    ? daySessions.filter((s) => isSaved(s.id))
-    : daySessions;
+  // In My Agenda mode all sessions are shown — campfire blocks handle their own
+  // "selected" vs "gap" rendering based on whether a session has been chosen.
+  const filtered = daySessions;
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
+
+      {/* ── Day selector ── */}
+      <View style={styles.daySelectorRow}>
+        {(['day1', 'day2'] as EventDay[]).map((day) => (
+          <DaySelectorBtn
+            key={day}
+            day={day}
+            isActive={activeDay === day}
+            onPress={() => setActiveDay(day)}
+          />
+        ))}
+      </View>
 
       {/* ── All Sessions / My Agenda toggle ── */}
       <View style={styles.toggle}>
@@ -201,26 +375,6 @@ export default function ScheduleScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      {/* ── Day selector ── */}
-      <View style={styles.dayRow}>
-        {(['day1', 'day2'] as EventDay[]).map((day) => (
-          <TouchableOpacity
-            key={day}
-            style={[styles.dayChip, activeDay === day && styles.dayChipActive]}
-            onPress={() => setActiveDay(day)}
-          >
-            <Text style={[styles.dayChipText, activeDay === day && styles.dayChipTextActive]}>
-              {DAY_LABELS[day].short}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      {/* ── Date section header ── */}
-      <View style={styles.dateHeader}>
-        <Text style={styles.dateHeaderText}>{DAY_LABELS[activeDay].long}</Text>
-      </View>
-
       {/* ── Session list ── */}
       <FlatList
         data={filtered}
@@ -238,11 +392,16 @@ export default function ScheduleScreen({ navigation }: Props) {
         }
         renderItem={({ item }) => {
           if (item.category === 'campfire') {
-            return <CampfireBlock session={item} navigation={navigation} />;
+            return (
+              <CampfireBlock
+                session={item}
+                navigation={navigation}
+                myAgendaOnly={myAgendaOnly}
+                onBrowse={() => setMyAgendaOnly(false)}
+              />
+            );
           }
 
-          const bookmarkable = BOOKMARKABLE.includes(item.category);
-          const saved = isSaved(item.id);
           const catColor = CATEGORY_COLORS[item.category];
 
           return (
@@ -262,19 +421,6 @@ export default function ScheduleScreen({ navigation }: Props) {
                 </Text>
                 {item.leadName && <Text style={styles.rowLead}>👤 {item.leadName}</Text>}
               </View>
-              {bookmarkable && loaded && (
-                <TouchableOpacity
-                  onPress={() => toggleSession(item.id)}
-                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                  style={styles.rowBookmark}
-                >
-                  <Ionicons
-                    name={saved ? 'bookmark' : 'bookmark-outline'}
-                    size={22}
-                    color={saved ? colors.primary : '#CCC'}
-                  />
-                </TouchableOpacity>
-              )}
             </TouchableOpacity>
           );
         }}
@@ -311,37 +457,44 @@ const styles = StyleSheet.create({
   },
   toggleTextActive: { color: colors.white },
 
-  // ── Day chips ──
-  dayRow: {
+  // ── Day selector ──
+  daySelectorRow: {
     flexDirection: 'row',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  dayChip: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.md,
-    borderRadius: radius.full,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.white,
-  },
-  dayChipActive: { backgroundColor: colors.textDark, borderColor: colors.textDark },
-  dayChipText: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.xs, letterSpacing: 0.5 },
-  dayChipTextActive: { color: colors.white },
-
-  // ── Date header bar ──
-  dateHeader: {
-    backgroundColor: colors.textDark,
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     paddingVertical: spacing.sm,
-    marginBottom: 0,
   },
-  dateHeaderText: {
+  daySelectorBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
+    minHeight: 72,
+  },
+  daySelectorTitle: {
+    fontFamily: fontFamily.display,
+    color: colors.textMuted,
+    fontSize: fontSize.lg,
+    textAlign: 'center',
+  },
+  daySelectorTitleActive: {
+    color: colors.textDark,
+  },
+  daySelectorDate: {
     fontFamily: fontFamily.subheading,
-    color: colors.white,
+    color: colors.textMuted,
     fontSize: fontSize.sm,
-    letterSpacing: 1.5,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  daySelectorDateActive: {
+    color: colors.textDark,
+  },
+  daySelectorImage: {
+    position: 'absolute',
+    width: 62,
+    height: 62,
+    resizeMode: 'contain',
   },
 
   // ── Session list ──
@@ -366,7 +519,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   rowTitle: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.barlowBold,
     color: colors.textDark,
     fontSize: fontSize.md,
     lineHeight: 22,
@@ -379,8 +532,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   rowLead: { fontFamily: fontFamily.body, color: colors.teal, fontSize: fontSize.xs, marginTop: 3 },
-  rowBookmark: { justifyContent: 'center', paddingLeft: spacing.sm },
-
   // ── Campfire block ──
   campfireBlock: {
     backgroundColor: colors.white,
@@ -424,6 +575,35 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     padding: spacing.md,
     fontStyle: 'italic',
+  },
+
+  // ── Campfire gap (My Agenda — no session chosen) ──
+  campfireGap: {
+    margin: spacing.md,
+    marginTop: spacing.xs,
+    backgroundColor: '#FFF3F8',
+    borderWidth: 1.5,
+    borderColor: colors.primary,
+    borderStyle: 'dashed',
+    borderRadius: 0,
+    padding: spacing.md,
+  },
+  campfireGapIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
+  campfireGapTitle: {
+    fontFamily: fontFamily.bodyBold,
+    color: colors.primary,
+    fontSize: fontSize.sm,
+  },
+  campfireGapBody: {
+    fontFamily: fontFamily.body,
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    lineHeight: 20,
   },
 
   // ── Campfire card ──

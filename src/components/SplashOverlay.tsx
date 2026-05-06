@@ -1,32 +1,40 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Image, StyleSheet, Dimensions } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { Animated, StyleSheet } from 'react-native';
+import { useVideoPlayer, VideoView } from 'expo-video';
 
-const SPLASH = require('../../assets/splash-icon.png');
-const { width, height } = Dimensions.get('window');
+const SPLASH_VIDEO = require('../../assets/splash-screen-animation.mp4');
 
 interface Props {
   onDone: () => void;
-  duration?: number; // ms to show before fading — default 2000
 }
 
-export default function SplashOverlay({ onDone, duration = 2000 }: Props) {
+export default function SplashOverlay({ onDone }: Props) {
   const opacity = useRef(new Animated.Value(1)).current;
+  const player = useVideoPlayer(SPLASH_VIDEO, p => {
+    p.muted = true;
+    p.loop = false;
+    p.play();
+  });
 
   useEffect(() => {
-    const showTimer = setTimeout(() => {
+    const sub = player.addListener('playToEnd', () => {
       Animated.timing(opacity, {
         toValue: 0,
         duration: 400,
         useNativeDriver: true,
       }).start(() => onDone());
-    }, duration);
-
-    return () => clearTimeout(showTimer);
-  }, []);
+    });
+    return () => sub.remove();
+  }, [player]);
 
   return (
     <Animated.View style={[styles.container, { opacity }]}>
-      <Image source={SPLASH} style={styles.image} resizeMode="cover" />
+      <VideoView
+        player={player}
+        style={styles.video}
+        contentFit="cover"
+        nativeControls={false}
+      />
     </Animated.View>
   );
 }
@@ -35,10 +43,9 @@ const styles = StyleSheet.create({
   container: {
     ...StyleSheet.absoluteFillObject,
     zIndex: 999,
-    backgroundColor: '#7DCEF0',
+    backgroundColor: '#000',
   },
-  image: {
-    width,
-    height,
+  video: {
+    ...StyleSheet.absoluteFillObject,
   },
 });

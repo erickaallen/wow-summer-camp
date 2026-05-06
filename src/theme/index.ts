@@ -129,6 +129,7 @@ export const fontFamily = {
   bodyBold:    'Raleway_700Bold',
   display:     'Corben_700Bold',
   subheading:  'Barlow_500Medium',
+  barlowBold:  'Barlow_700Bold',
 };
 
 const theme = { colors, tieDyeGradient, tieDyeMiniGradient, spacing, radius, fontSize, fontWeight, fontFamily, shadow };

@@ -1,9 +1,9 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
 import { sponsors } from '../data/sponsors';
 import { Sponsor } from '../types';
-import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 const TIER_LABELS: Record<Sponsor['tier'], string> = {
   presenting: 'PRESENTING',
@@ -13,10 +13,17 @@ const TIER_LABELS: Record<Sponsor['tier'], string> = {
 };
 
 const TIER_COLORS: Record<Sponsor['tier'], string> = {
-  presenting: '#B0C4DE',
+  presenting: colors.tealDark,
   gold: colors.accent,
-  silver: '#D3D3D3',
+  silver: '#ADE8E8',
   pink: colors.surface,
+};
+
+const TIER_TEXT_COLORS: Record<Sponsor['tier'], string> = {
+  presenting: colors.white,
+  gold: colors.textDark,
+  silver: colors.textDark,
+  pink: colors.textDark,
 };
 
 const TIER_ORDER: Sponsor['tier'][] = ['presenting', 'gold', 'silver', 'pink'];
@@ -25,18 +32,21 @@ export default function SponsorsScreen() {
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={styles.heading}>THANK YOU TO OUR SPONSORS</Text>
+        <Text style={styles.heading}>THANK YOU TO OUR SPONSORS!</Text>
         {TIER_ORDER.map((tier) => {
           const tierSponsors = sponsors.filter((s) => s.tier === tier);
           if (tierSponsors.length === 0) return null;
           return (
             <View key={tier} style={styles.tierSection}>
               <View style={[styles.tierBadge, { backgroundColor: TIER_COLORS[tier] }]}>
-                <Text style={styles.tierLabel}>{TIER_LABELS[tier]}</Text>
+                <Text style={[styles.tierLabel, { color: TIER_TEXT_COLORS[tier] }]}>{TIER_LABELS[tier]}</Text>
               </View>
               {tierSponsors.map((sponsor) => (
                 <View key={sponsor.id} style={styles.sponsorCard}>
-                  <Text style={styles.logo}>{sponsor.logoPlaceholder}</Text>
+                  {sponsor.logo
+                    ? <Image source={sponsor.logo} style={styles.logoImage} resizeMode="contain" />
+                    : <Text style={styles.logo}>{sponsor.logoPlaceholder}</Text>
+                  }
                   <View style={styles.sponsorInfo}>
                     <Text style={styles.sponsorName}>{sponsor.name}</Text>
                     <Text style={styles.sponsorDesc}>{sponsor.description}</Text>
@@ -69,13 +79,11 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     alignSelf: 'flex-start',
     marginBottom: spacing.sm,
-    borderWidth: 2,
-    borderColor: colors.teal,
   },
   tierLabel: {
     fontFamily: fontFamily.subheading,
     color: colors.textDark,
-    fontSize: fontSize.xs,
+    fontSize: fontSize.sm,
     letterSpacing: 2,
   },
   sponsorCard: {
@@ -85,10 +93,10 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     padding: spacing.md,
     marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.surface,
+    ...shadow.sm,
   },
-  logo: { fontSize: 36, marginRight: spacing.md },
+  logo: { fontSize: 36, marginRight: spacing.md, width: 56, textAlign: 'center' },
+  logoImage: { width: 56, height: 56, marginRight: spacing.md },
   sponsorInfo: { flex: 1 },
   sponsorName: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md },
   sponsorDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2 },

@@ -36,9 +36,10 @@ const CATEGORY_COLORS: Record<CounselorCategory, string> = {
 export default function CounselorsScreen({ navigation }: Props) {
   const [activeCategory, setActiveCategory] = useState<CounselorCategory | 'All'>('All');
 
-  const filtered = activeCategory === 'All'
+  const filtered = (activeCategory === 'All'
     ? counselors
-    : counselors.filter((c) => c.category === activeCategory);
+    : counselors.filter((c) => c.category === activeCategory)
+  ).slice().sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
@@ -101,7 +102,7 @@ export default function CounselorsScreen({ navigation }: Props) {
               <HeadshotAvatar
                 source={item.headshot}
                 name={item.name}
-                size={72}
+                size={62}
                 borderColor={CATEGORY_COLORS[item.category]}
               />
             </View>
@@ -139,14 +140,14 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     marginBottom: spacing.md,
   },
-  filterList: { marginBottom: spacing.md },
-  filterRow: { gap: spacing.xs, paddingRight: spacing.md },
+  filterList: { marginBottom: spacing.md, marginHorizontal: -spacing.md },
+  filterRow: { gap: spacing.xs, paddingHorizontal: spacing.md },
   chip: {
     backgroundColor: colors.white,
     borderRadius: radius.full,
     borderWidth: 2,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 5,
     marginRight: spacing.xs,
   },
   chipInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   },
   cardContent: { flex: 1, padding: spacing.md },
   name: { color: colors.textDark, fontFamily: 'Corben_700Bold', fontSize: fontSize.md, marginBottom: 2 },
-  topic: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.xs },
+  topic: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing.xs },
   categoryPill: {
     alignSelf: 'flex-start',
     backgroundColor: colors.background,

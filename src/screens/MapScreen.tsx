@@ -5,19 +5,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Linking,
   Image,
   ScrollView,
   Modal,
-  Platform,
   useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 const VENUE_MAP = require('../../assets/images/venue-map.pdf');
-const DIRECTIONS_URL_IOS     = 'https://maps.apple.com/?daddr=Progress+Park+Louisville+KY&dirflg=d';
-const DIRECTIONS_URL_ANDROID = 'https://www.google.com/maps/dir/?api=1&destination=Progress+Park+Louisville+KY';
 
 // All 56 numbered locations from the venue map
 const LOCATIONS = [
@@ -79,9 +75,6 @@ const LOCATIONS = [
   { n: 56, label: 'Handicap Accessible Parking' },
 ];
 
-function openDirections() {
-  Linking.openURL(Platform.OS === 'ios' ? DIRECTIONS_URL_IOS : DIRECTIONS_URL_ANDROID);
-}
 
 export default function MapScreen() {
   const { width } = useWindowDimensions();
@@ -115,7 +108,7 @@ export default function MapScreen() {
 
       {/* Hint pill */}
       <View style={styles.hintPill} pointerEvents="none">
-        <Ionicons name="hand-left-outline" size={12} color={colors.textMuted} />
+        <Ionicons name="hand-left-outline" size={18} color={colors.textMuted} />
         <Text style={styles.hintText}>Pinch to zoom</Text>
       </View>
 
@@ -182,14 +175,14 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     backgroundColor: 'rgba(255,255,255,0.85)',
     borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
     ...shadow.sm,
   },
   hintText: {
     fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
-    fontSize: fontSize.xs,
+    fontSize: fontSize.sm,
   },
 
   // ── Legend Modal ──
