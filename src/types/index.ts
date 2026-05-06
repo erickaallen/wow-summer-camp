@@ -49,6 +49,7 @@ export interface Counselor {
   id: string;
   name: string;
   sessionTopic: string;
+  sessionDescription?: string;
   category: CounselorCategory;
   bio: string;
   instagram?: string;
@@ -90,7 +91,7 @@ export interface UserProfile {
 export interface Sponsor {
   id: string;
   name: string;
-  tier: 'platinum' | 'gold' | 'silver' | 'community';
+  tier: 'presenting' | 'gold' | 'silver' | 'pink';
   description: string;
   logoPlaceholder: string;
   website?: string;

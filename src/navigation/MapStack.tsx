@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MapStackParamList } from '../types';
 import MapScreen from '../screens/MapScreen';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<MapStackParamList>();
 
@@ -13,7 +13,7 @@ export default function MapStack() {
         headerStyle: { backgroundColor: colors.background },
         headerShadowVisible: false,
         headerTintColor: colors.textDark,
-        headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
+        headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
       }}
     >
       <Stack.Screen

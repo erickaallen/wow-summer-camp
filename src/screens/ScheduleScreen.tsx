@@ -23,7 +23,7 @@ import { campfireLocations } from '../data/campfireLocations';
 import { counselorSessions } from '../data/counselorSessions';
 import { counselors } from '../data/counselors';
 import { useAgendaContext } from '../hooks/AgendaContext';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
 type Props = NativeStackScreenProps<ScheduleStackParamList, 'ScheduleList'>;
 
@@ -53,10 +53,14 @@ const COUNSELOR_CATEGORY_COLORS: Record<string, string> = {
   'Leadership': '#27AE60',
 };
 
-// Sessions worth bookmarking (breaks and check-ins don't need saving)
+const DAY_LABELS: Record<EventDay, { short: string; long: string }> = {
+  day1: { short: 'MAY 26', long: 'MONDAY, MAY 26' },
+  day2: { short: 'MAY 27', long: 'TUESDAY, MAY 27' },
+};
+
 const BOOKMARKABLE: Session['category'][] = ['keynote', 'campfire', 'social', 'activity'];
 
-// ─── Campfire session card (inside the horizontal scroll) ────────────────────
+// ─── Campfire card (horizontal scroll) ───────────────────────────────────────
 function CampfireCard({
   cs,
   rotation,
@@ -109,7 +113,7 @@ function CampfireCard({
   );
 }
 
-// ─── Inline campfire block for a rotation ────────────────────────────────────
+// ─── Inline campfire block ────────────────────────────────────────────────────
 function CampfireBlock({
   session,
   navigation,
@@ -124,19 +128,18 @@ function CampfireBlock({
 
   return (
     <View style={styles.campfireBlock}>
-      {/* Block header */}
       <View style={styles.campfireBlockHeader}>
-        <View style={[styles.categoryDot, { backgroundColor: colors.teal }]} />
         <View style={{ flex: 1 }}>
-          <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
           <Text style={styles.campfireBlockTime}>
-            Rotation #{rotation.rotationNumber}  ·  {session.startTime} – {session.endTime}
+            {session.startTime} – {session.endTime}
+          </Text>
+          <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
+          <Text style={styles.campfireBlockMeta}>
+            Rotation #{rotation.rotationNumber}  ·  {rotationSessions.length} sessions
           </Text>
         </View>
-        <Text style={styles.campfireCount}>{rotationSessions.length} sessions</Text>
       </View>
 
-      {/* Horizontal scroll of session cards */}
       {rotationSessions.length > 0 ? (
         <ScrollView
           horizontal
@@ -177,46 +180,53 @@ export default function ScheduleScreen({ navigation }: Props) {
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
-      {/* Day tabs */}
-      <View style={styles.tabs}>
+
+      {/* ── All Sessions / My Agenda toggle ── */}
+      <View style={styles.toggle}>
         <TouchableOpacity
-          style={[styles.tab, activeDay === 'day1' && styles.tabActive]}
-          onPress={() => setActiveDay('day1')}
+          style={[styles.toggleBtn, !myAgendaOnly && styles.toggleBtnActive]}
+          onPress={() => setMyAgendaOnly(false)}
         >
-          <Text style={[styles.tabText, activeDay === 'day1' && styles.tabTextActive]}>
-            MAY 26 · KICKOFF PARTY
+          <Text style={[styles.toggleText, !myAgendaOnly && styles.toggleTextActive]}>
+            All Sessions
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tab, activeDay === 'day2' && styles.tabActive]}
-          onPress={() => setActiveDay('day2')}
+          style={[styles.toggleBtn, myAgendaOnly && styles.toggleBtnActive]}
+          onPress={() => setMyAgendaOnly(true)}
         >
-          <Text style={[styles.tabText, activeDay === 'day2' && styles.tabTextActive]}>
-            MAY 27 · CAMP DAY
+          <Text style={[styles.toggleText, myAgendaOnly && styles.toggleTextActive]}>
+            My Agenda
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* My Agenda toggle */}
-      <TouchableOpacity
-        style={[styles.agendaToggle, myAgendaOnly && styles.agendaToggleActive]}
-        onPress={() => setMyAgendaOnly((v) => !v)}
-      >
-        <Ionicons
-          name={myAgendaOnly ? 'bookmark' : 'bookmark-outline'}
-          size={16}
-          color={myAgendaOnly ? colors.white : colors.primary}
-        />
-        <Text style={[styles.agendaToggleText, myAgendaOnly && styles.agendaToggleTextActive]}>
-          MY AGENDA
-        </Text>
-      </TouchableOpacity>
+      {/* ── Day selector ── */}
+      <View style={styles.dayRow}>
+        {(['day1', 'day2'] as EventDay[]).map((day) => (
+          <TouchableOpacity
+            key={day}
+            style={[styles.dayChip, activeDay === day && styles.dayChipActive]}
+            onPress={() => setActiveDay(day)}
+          >
+            <Text style={[styles.dayChipText, activeDay === day && styles.dayChipTextActive]}>
+              {DAY_LABELS[day].short}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
-      {/* Session list */}
+      {/* ── Date section header ── */}
+      <View style={styles.dateHeader}>
+        <Text style={styles.dateHeaderText}>{DAY_LABELS[activeDay].long}</Text>
+      </View>
+
+      {/* ── Session list ── */}
       <FlatList
         data={filtered}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.list}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyIcon}>📋</Text>
@@ -227,55 +237,44 @@ export default function ScheduleScreen({ navigation }: Props) {
           </View>
         }
         renderItem={({ item }) => {
-          const isCampfire = item.category === 'campfire';
-
-          // ── Campfire items: inline horizontal block ──
-          if (isCampfire) {
-            return (
-              <CampfireBlock
-                session={item}
-                navigation={navigation}
-              />
-            );
+          if (item.category === 'campfire') {
+            return <CampfireBlock session={item} navigation={navigation} />;
           }
 
-          // ── All other session types: standard card ──
           const bookmarkable = BOOKMARKABLE.includes(item.category);
           const saved = isSaved(item.id);
+          const catColor = CATEGORY_COLORS[item.category];
 
           return (
             <TouchableOpacity
-              style={[styles.card, saved && styles.cardSaved]}
+              style={styles.row}
               onPress={() => navigation.navigate('SessionDetail', { session: item })}
-              activeOpacity={0.8}
+              activeOpacity={0.7}
             >
-              <View style={[styles.categoryDot, { backgroundColor: CATEGORY_COLORS[item.category] }]} />
-              <View style={styles.cardContent}>
-                <Text style={styles.categoryLabel}>{CATEGORY_LABELS[item.category]}</Text>
-                <Text style={styles.sessionTitle}>{item.title}</Text>
-                <View style={styles.metaRow}>
-                  <Text style={styles.time}>
-                    {item.startTime}{item.endTime ? ` – ${item.endTime}` : ''}
-                  </Text>
-                  <Text style={styles.dot}> · </Text>
-                  <Text style={styles.location} numberOfLines={1}>📍 {item.location}</Text>
-                </View>
-                {item.leadName && <Text style={styles.lead}>👤 {item.leadName}</Text>}
+              <View style={[styles.rowAccent, { backgroundColor: catColor }]} />
+              <View style={styles.rowBody}>
+                <Text style={styles.rowTime}>
+                  {item.startTime}{item.endTime ? ` – ${item.endTime}` : ''}
+                </Text>
+                <Text style={styles.rowTitle}>{item.title}</Text>
+                <Text style={styles.rowMeta}>
+                  {CATEGORY_LABELS[item.category]}  ·  {item.location}
+                </Text>
+                {item.leadName && <Text style={styles.rowLead}>👤 {item.leadName}</Text>}
               </View>
               {bookmarkable && loaded && (
                 <TouchableOpacity
                   onPress={() => toggleSession(item.id)}
                   hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-                  style={styles.bookmarkBtn}
+                  style={styles.rowBookmark}
                 >
                   <Ionicons
                     name={saved ? 'bookmark' : 'bookmark-outline'}
-                    size={20}
+                    size={22}
                     color={saved ? colors.primary : '#CCC'}
                   />
                 </TouchableOpacity>
               )}
-              {!bookmarkable && <Text style={styles.chevron}>›</Text>}
             </TouchableOpacity>
           );
         }}
@@ -286,7 +285,9 @@ export default function ScheduleScreen({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  tabs: {
+
+  // ── Toggle ──
+  toggle: {
     flexDirection: 'row',
     margin: spacing.md,
     marginBottom: spacing.sm,
@@ -296,120 +297,122 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
     overflow: 'hidden',
   },
-  tab: {
+  toggleBtn: {
     flex: 1,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm + 2,
     alignItems: 'center',
-    paddingHorizontal: spacing.xs,
   },
-  tabActive: { backgroundColor: colors.primary },
-  tabText: {
+  toggleBtnActive: { backgroundColor: colors.primary },
+  toggleText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
-    fontWeight: fontWeight.bold,
-    fontSize: 10,
-    letterSpacing: 0.5,
-    textAlign: 'center',
+    fontSize: fontSize.sm,
+    letterSpacing: 0.3,
   },
-  tabTextActive: { color: colors.white },
-  agendaToggle: {
+  toggleTextActive: { color: colors.white },
+
+  // ── Day chips ──
+  dayRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    marginRight: spacing.md,
-    marginBottom: spacing.sm,
+    gap: spacing.sm,
     paddingHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+  },
+  dayChip: {
     paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
     borderRadius: radius.full,
     borderWidth: 2,
-    borderColor: colors.primary,
+    borderColor: colors.border,
     backgroundColor: colors.white,
-    gap: spacing.xs,
   },
-  agendaToggleActive: { backgroundColor: colors.primary },
-  agendaToggleText: {
-    color: colors.primary,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 1,
-  },
-  agendaToggleTextActive: { color: colors.white },
-  list: { paddingHorizontal: spacing.md, paddingBottom: spacing.xxl },
+  dayChipActive: { backgroundColor: colors.textDark, borderColor: colors.textDark },
+  dayChipText: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.xs, letterSpacing: 0.5 },
+  dayChipTextActive: { color: colors.white },
 
-  // ── Standard session card ──
-  card: {
+  // ── Date header bar ──
+  dateHeader: {
+    backgroundColor: colors.textDark,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    marginBottom: 0,
+  },
+  dateHeaderText: {
+    fontFamily: fontFamily.subheading,
+    color: colors.white,
+    fontSize: fontSize.sm,
+    letterSpacing: 1.5,
+  },
+
+  // ── Session list ──
+  list: { paddingBottom: spacing.xxl },
+  separator: { height: StyleSheet.hairlineWidth, backgroundColor: colors.border, marginLeft: spacing.md + 4 },
+
+  // ── Session row ──
+  row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'stretch',
     backgroundColor: colors.white,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.surface,
+    paddingVertical: spacing.md,
+    paddingRight: spacing.md,
   },
-  cardSaved: { borderColor: colors.primary, borderWidth: 2 },
-  categoryDot: {
-    width: 10,
-    height: 10,
-    borderRadius: radius.full,
-    marginRight: spacing.sm,
-    alignSelf: 'flex-start',
-    marginTop: 4,
-  },
-  cardContent: { flex: 1 },
-  categoryLabel: {
-    color: colors.teal,
+  rowAccent: { width: 4, marginRight: spacing.md },
+  rowBody: { flex: 1 },
+  rowTime: {
+    fontFamily: fontFamily.bodySemi,
+    color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 1,
-    marginBottom: 2,
+    marginBottom: 3,
+    letterSpacing: 0.3,
   },
-  sessionTitle: {
+  rowTitle: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
+    lineHeight: 22,
     marginBottom: 4,
   },
-  metaRow: { flexDirection: 'row', alignItems: 'center' },
-  time: { color: colors.primary, fontSize: fontSize.xs, fontWeight: fontWeight.bold },
-  dot: { color: '#ccc' },
-  location: { color: '#888', fontSize: fontSize.xs, flex: 1 },
-  lead: { color: colors.teal, fontSize: fontSize.xs, marginTop: 2 },
-  bookmarkBtn: { paddingLeft: spacing.sm },
-  chevron: { color: colors.primary, fontSize: 22, fontWeight: fontWeight.bold },
+  rowMeta: {
+    fontFamily: fontFamily.bodyBold,
+    color: colors.textMuted,
+    fontSize: fontSize.xs,
+    letterSpacing: 0.5,
+  },
+  rowLead: { fontFamily: fontFamily.body, color: colors.teal, fontSize: fontSize.xs, marginTop: 3 },
+  rowBookmark: { justifyContent: 'center', paddingLeft: spacing.sm },
 
   // ── Campfire block ──
   campfireBlock: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.tealLight,
-    overflow: 'hidden',
+    borderRadius: 0,
   },
   campfireBlockHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    padding: spacing.md,
-    paddingBottom: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.tealLight,
-  },
-  campfireBlockLabel: {
-    color: colors.teal,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 1,
+    alignItems: 'flex-start',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    paddingLeft: spacing.md + 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border,
   },
   campfireBlockTime: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    marginTop: 1,
+    marginBottom: 3,
+    letterSpacing: 0.3,
   },
-  campfireCount: {
-    color: colors.primary,
+  campfireBlockLabel: {
+    fontFamily: fontFamily.bodyBold,
+    color: colors.teal,
+    fontSize: fontSize.md,
+    marginBottom: 2,
+  },
+  campfireBlockMeta: {
+    fontFamily: fontFamily.bodyBold,
+    color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
+    letterSpacing: 0.5,
   },
   campfireScroll: {
     paddingHorizontal: spacing.md,
@@ -423,60 +426,28 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
 
-  // ── Individual campfire card (horizontal) ──
+  // ── Campfire card ──
   campfireCard: {
     width: 200,
     backgroundColor: colors.background,
-    borderRadius: radius.sm,
+    borderRadius: 0,
     borderWidth: 1,
     borderColor: colors.border,
     flexDirection: 'row',
     overflow: 'hidden',
   },
-  campfireCardAccent: {
-    width: 4,
-    alignSelf: 'stretch',
-  },
-  campfireCardBody: {
-    flex: 1,
-    padding: spacing.sm,
-    gap: 3,
-  },
-  campfireCategoryLabel: {
-    fontSize: 9,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 0.5,
-  },
-  campfireCounselorName: {
-    color: colors.textDark,
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
-  },
-  campfireTopicText: {
-    color: '#555',
-    fontSize: 11,
-    lineHeight: 15,
-  },
-  campfireLocRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  campfireLocText: {
-    color: '#999',
-    fontSize: 10,
-    flex: 1,
-  },
-  campfireBookmarkBtn: {
-    padding: spacing.xs,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    paddingTop: spacing.sm,
-  },
+  campfireCardAccent: { width: 4, alignSelf: 'stretch' },
+  campfireCardBody: { flex: 1, padding: spacing.sm, gap: 3 },
+  campfireCategoryLabel: { fontFamily: fontFamily.subheading, fontSize: 9, letterSpacing: 0.5 },
+  campfireCounselorName: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.sm },
+  campfireTopicText: { fontFamily: fontFamily.body, color: '#555', fontSize: 11, lineHeight: 15 },
+  campfireLocRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
+  campfireLocText: { fontFamily: fontFamily.body, color: '#999', fontSize: 10, flex: 1 },
+  campfireBookmarkBtn: { padding: spacing.xs, justifyContent: 'flex-start', alignItems: 'center', paddingTop: spacing.sm },
 
   // ── Empty state ──
   empty: { alignItems: 'center', paddingTop: spacing.xxl, paddingHorizontal: spacing.xl },
   emptyIcon: { fontSize: 48, marginBottom: spacing.md },
-  emptyText: { color: colors.primary, fontSize: fontSize.lg, fontWeight: fontWeight.heavy, textAlign: 'center' },
-  emptySubtext: { color: '#888', fontSize: fontSize.sm, textAlign: 'center', marginTop: spacing.sm, lineHeight: 20 },
+  emptyText: { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.lg, textAlign: 'center' },
+  emptySubtext: { fontFamily: fontFamily.body, color: '#888', fontSize: fontSize.sm, textAlign: 'center', marginTop: spacing.sm, lineHeight: 20 },
 });

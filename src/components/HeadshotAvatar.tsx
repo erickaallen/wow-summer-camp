@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
-import { colors, fontWeight } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 interface Props {
   source?: number;         // require() image
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   initial: {
+    fontFamily: fontFamily.display,
     color: colors.white,
-    fontWeight: fontWeight.heavy,
   },
 });

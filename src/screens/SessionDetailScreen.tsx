@@ -13,7 +13,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScheduleStackParamList } from '../types';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { getReminderDate } from '../utils/sessionTime';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 type Props = NativeStackScreenProps<ScheduleStackParamList, 'SessionDetail'>;
 
@@ -115,29 +115,34 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
       <ScrollView contentContainerStyle={styles.scroll}>
 
         {/* Header card */}
-        <View style={[styles.header, { borderColor: catColor }]}>
-          <View style={[styles.categoryBadge, { backgroundColor: catColor }]}>
-            <Text style={styles.categoryText}>
-              {CATEGORY_LABELS[session.category] ?? session.category.toUpperCase()}
-            </Text>
-          </View>
-          <Text style={styles.title}>{session.title}</Text>
-          <View style={styles.metaRow}>
-            <Text style={styles.time}>
-              {session.startTime}{session.endTime ? ` – ${session.endTime}` : ''}
-            </Text>
-            <Text style={styles.metaDot}> · </Text>
+        <View style={[styles.header, shadow.md]}>
+          <View style={[styles.headerStrip, { backgroundColor: catColor }]} />
+          <View style={styles.headerBody}>
+            <View style={[styles.categoryBadge, { backgroundColor: catColor }]}>
+              <Text style={styles.categoryText}>
+                {CATEGORY_LABELS[session.category] ?? session.category.toUpperCase()}
+              </Text>
+            </View>
+            <Text style={styles.title}>{session.title}</Text>
+            <View style={styles.metaRow}>
+              <Text style={styles.time}>
+                🕐 {session.startTime}{session.endTime ? ` – ${session.endTime}` : ''}
+              </Text>
+            </View>
             <Text style={styles.location}>📍 {session.location}</Text>
+            {session.leadName && (
+              <Text style={styles.lead}>👤 {session.leadName}</Text>
+            )}
           </View>
-          {session.leadName && (
-            <Text style={styles.lead}>👤 {session.leadName}</Text>
-          )}
         </View>
 
         {/* Description */}
-        <View style={styles.descriptionCard}>
-          <Text style={styles.description}>{session.description}</Text>
-        </View>
+        {!!session.description && (
+          <View style={[styles.descriptionCard, shadow.sm]}>
+            <Text style={styles.descriptionLabel}>ABOUT THIS SESSION</Text>
+            <Text style={styles.description}>{session.description}</Text>
+          </View>
+        )}
 
         {/* Agenda / Reminder CTAs */}
         {bookmarkable && loaded && (
@@ -232,49 +237,52 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { padding: spacing.md },
+  scroll: { padding: spacing.md, paddingBottom: spacing.xxl, gap: spacing.md },
   header: {
-    backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    borderWidth: 3,
-    padding: spacing.lg,
-    marginBottom: spacing.md,
+    backgroundColor: colors.white,
+    borderRadius: 0,
+    overflow: 'hidden',
   },
+  headerStrip: { height: 8 },
+  headerBody: { padding: spacing.lg },
   categoryBadge: {
     alignSelf: 'flex-start',
     borderRadius: radius.full,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
     marginBottom: spacing.sm,
   },
   categoryText: {
+    fontFamily: fontFamily.subheading,
     color: colors.white,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 1,
+    letterSpacing: 2,
   },
   title: {
-    color: colors.primary,
+    fontFamily: fontFamily.display,
+    color: colors.textDark,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     marginBottom: spacing.sm,
+    lineHeight: 28,
   },
-  metaRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' },
-  time: { color: colors.textDark, fontSize: fontSize.sm, fontWeight: fontWeight.bold },
-  metaDot: { color: '#ccc' },
-  location: { color: '#888', fontSize: fontSize.sm },
-  lead: { color: colors.teal, fontSize: fontSize.sm, fontWeight: fontWeight.bold, marginTop: spacing.xs },
+  metaRow: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs },
+  time: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.sm },
+  location: { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, marginBottom: spacing.xs },
+  lead: { fontFamily: fontFamily.bodyBold, color: colors.teal, fontSize: fontSize.sm, marginTop: spacing.xs },
   descriptionCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
-    marginBottom: spacing.md,
   },
-  description: { color: '#444', fontSize: fontSize.md, lineHeight: 24 },
-  ctaBlock: {
-    gap: spacing.sm,
-    marginBottom: spacing.md,
+  descriptionLabel: {
+    fontFamily: fontFamily.subheading,
+    color: colors.textMuted,
+    fontSize: fontSize.xs,
+    letterSpacing: 2,
+    marginBottom: spacing.sm,
   },
+  description: { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.md, lineHeight: 24, textAlign: 'justify' },
+  ctaBlock: { gap: spacing.sm },
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -286,9 +294,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   primaryBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 0.5,
   },
   secondaryBtn: {
@@ -304,9 +312,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   secondaryBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
   },
   savedBadge: {
     flexDirection: 'row',
@@ -319,9 +327,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   savedBadgeText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
   },
   reminderSetBlock: { gap: spacing.sm },
   cancelReminderBtn: { alignSelf: 'center' },
@@ -332,18 +340,19 @@ const styles = StyleSheet.create({
   },
   campfireNote: {
     backgroundColor: colors.accent,
-    borderRadius: radius.md,
+    borderRadius: 0,
     borderWidth: 2,
     borderColor: colors.teal,
     padding: spacing.md,
   },
   campfireNoteTitle: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     marginBottom: spacing.xs,
   },
   campfireNoteBody: {
+    fontFamily: fontFamily.body,
     color: '#555',
     fontSize: fontSize.sm,
     lineHeight: 20,

@@ -21,7 +21,7 @@ import { CommonActions } from '@react-navigation/native';
 import { HeaderBackButton } from '@react-navigation/elements';
 import { MoreStackParamList, RootTabParamList, UserProfile } from '../types';
 import { useProfile } from '../hooks/useProfile';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'Profile'>;
 
@@ -206,15 +206,16 @@ export default function ProfileScreen({ navigation, route }: Props) {
             </Text>
           </View>
 
+          {/* Not implementing QR checkin for 2026 */}
           {/* ── Section 1: Check-in ── */}
-          <Text style={styles.sectionHeader}>🎟 CHECK-IN</Text>
+          {/* <Text style={styles.sectionHeader}>🎟 CHECK-IN</Text>
           <Text style={styles.sectionSubheader}>
             This is the email you used to purchase your ticket. It's encoded into your check-in QR code and never shared with other attendees.
           </Text>
-          <FieldGroup fields={CHECK_IN_FIELDS} form={form} onChange={update} />
+          <FieldGroup fields={CHECK_IN_FIELDS} form={form} onChange={update} /> */}
 
           {/* ── Section 2: Networking ── */}
-          <Text style={[styles.sectionHeader, { marginTop: spacing.lg }]}>👋 YOUR NETWORKING CARD</Text>
+          <Text style={[styles.sectionHeader, { marginTop: spacing.lg }]}>YOUR NETWORKING CARD</Text>
           <Text style={styles.sectionSubheader}>
             This info is what gets shared when you tap "Share My Contact" with a fellow camper. Contact email can be the same as your ticket email or different.
           </Text>
@@ -229,12 +230,11 @@ export default function ProfileScreen({ navigation, route }: Props) {
             activeOpacity={0.85}
             disabled={saving}
           >
-            <Ionicons name="checkmark-circle-outline" size={20} color={colors.white} />
             <Text style={styles.saveBtnText}>{saving ? 'Saving…' : 'Save Profile'}</Text>
           </TouchableOpacity>
 
           {/* ── Share (only visible after save) ── */}
-          {isComplete && (
+          {/* {isComplete && (
             <TouchableOpacity
               style={styles.shareBtn}
               onPress={handleShare}
@@ -246,7 +246,7 @@ export default function ProfileScreen({ navigation, route }: Props) {
                 {sharing ? 'Opening Share Sheet…' : 'Share My Contact'}
               </Text>
             </TouchableOpacity>
-          )}
+          )} */}
 
         </ScrollView>
       </KeyboardAvoidingView>
@@ -305,13 +305,14 @@ const styles = StyleSheet.create({
   },
 
   sectionHeader: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 1.5,
     marginBottom: spacing.xs,
   },
   sectionSubheader: {
+    fontFamily: fontFamily.body,
     color: colors.textMuted,
     fontSize: fontSize.sm,
     lineHeight: 20,
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
 
   card: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     ...shadow.sm,
     overflow: 'hidden',
   },
@@ -333,20 +334,22 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   fieldLabel: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textMuted,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
     letterSpacing: 0.5,
     marginBottom: 4,
   },
   required: { color: colors.primary },
   input: {
+    fontFamily: fontFamily.body,
     color: colors.textDark,
     fontSize: fontSize.md,
     paddingVertical: 2,
   },
 
   requiredNote: {
+    fontFamily: fontFamily.body,
     color: '#BBB',
     fontSize: fontSize.sm,
     marginTop: spacing.sm,
@@ -359,14 +362,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: spacing.sm,
     backgroundColor: colors.primary,
-    borderRadius: radius.full,
+    borderRadius: 0,
     paddingVertical: spacing.md,
     marginBottom: spacing.sm,
   },
   saveBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
   },
 
   shareBtn: {
@@ -381,8 +384,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   shareBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
   },
 });

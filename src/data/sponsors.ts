@@ -2,9 +2,9 @@ import { Sponsor } from '../types';
 
 export const sponsors: Sponsor[] = [
   {
-    id: 'sp_plat1',
-    name: 'Platinum Sponsor TBD',
-    tier: 'platinum',
+    id: 'sp_pres1',
+    name: 'Presenting Sponsor TBD',
+    tier: 'presenting',
     description: 'Sponsor description coming soon.',
     logoPlaceholder: '⭐',
   },
@@ -30,10 +30,10 @@ export const sponsors: Sponsor[] = [
     logoPlaceholder: '✨',
   },
   {
-    id: 'sp_community1',
-    name: 'Community Partner TBD',
-    tier: 'community',
-    description: 'Partner description coming soon.',
+    id: 'sp_pink1',
+    name: 'Pink Sponsor TBD',
+    tier: 'pink',
+    description: 'Sponsor description coming soon.',
     logoPlaceholder: '💜',
   },
 ];

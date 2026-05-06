@@ -5,7 +5,7 @@ import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CounselorsStackParamList, CounselorCategory } from '../types';
 import { counselors } from '../data/counselors';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
 type Props = NativeStackScreenProps<CounselorsStackParamList, 'CounselorList'>;
 
@@ -18,10 +18,10 @@ const CATEGORIES: CounselorCategory[] = [
 ];
 
 const CATEGORY_ICONS: Record<CounselorCategory, string> = {
-  'Movement': '🏃‍♀️',
+  'Movement': '🧘🏾‍♀️',
   'Mindset & Storytelling': '🧠',
-  'Craft & Connect': '🎨',
-  'Business & Branding': '💼',
+  'Craft & Connect': '💕',
+  'Business & Branding': '💰',
   'Leadership': '👑',
 };
 
@@ -56,34 +56,52 @@ export default function CounselorsScreen({ navigation }: Props) {
               data={['All', ...CATEGORIES] as (CounselorCategory | 'All')[]}
               keyExtractor={(item) => item}
               contentContainerStyle={styles.filterRow}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.chip, activeCategory === item && styles.chipActive]}
-                  onPress={() => setActiveCategory(item)}
-                >
-                  <Text style={[styles.chipText, activeCategory === item && styles.chipTextActive]}>
-                    {item === 'All' ? 'All' : `${CATEGORY_ICONS[item]} ${item}`}
-                  </Text>
-                </TouchableOpacity>
-              )}
+              renderItem={({ item }) => {
+                const catColor = item === 'All' ? colors.primary : CATEGORY_COLORS[item];
+                const isActive = activeCategory === item;
+                return (
+                  <TouchableOpacity
+                    style={[
+                      styles.chip,
+                      { borderColor: catColor },
+                      isActive && { backgroundColor: catColor },
+                    ]}
+                    onPress={() => setActiveCategory(item)}
+                  >
+                    {item === 'All' ? (
+                      <Text style={[styles.chipText, { color: isActive ? colors.white : catColor }]}>All</Text>
+                    ) : (
+                      <View style={styles.chipInner}>
+                        <Text style={styles.chipEmoji}>{CATEGORY_ICONS[item]}</Text>
+                        <Text style={[styles.chipText, { color: isActive ? colors.white : catColor }]}>{item}</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                );
+              }}
               style={styles.filterList}
             />
           </View>
         }
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={styles.card}
+            style={[styles.card, {
+              borderColor: CATEGORY_COLORS[item.category],
+              shadowColor: CATEGORY_COLORS[item.category],
+              shadowOffset: { width: 4, height: 4 },
+              shadowOpacity: 1,
+              shadowRadius: 0,
+            }]}
             onPress={() => navigation.navigate('CounselorDetail', { counselor: item })}
             activeOpacity={0.8}
           >
-            <View style={[styles.categoryBar, { backgroundColor: CATEGORY_COLORS[item.category] }]} />
 
             {/* Headshot */}
             <View style={{ marginLeft: spacing.sm }}>
               <HeadshotAvatar
                 source={item.headshot}
                 name={item.name}
-                size={56}
+                size={72}
                 borderColor={CATEGORY_COLORS[item.category]}
               />
             </View>
@@ -93,11 +111,11 @@ export default function CounselorsScreen({ navigation }: Props) {
               <Text style={styles.topic} numberOfLines={2}>{item.sessionTopic}</Text>
               <View style={styles.categoryPill}>
                 <Text style={styles.categoryText}>
-                  {CATEGORY_ICONS[item.category]} {item.category}
+                  {item.category}
                 </Text>
               </View>
             </View>
-            <Text style={styles.chevron}>›</Text>
+            <Text style={[styles.chevron, { color: CATEGORY_COLORS[item.category] }]}>›</Text>
           </TouchableOpacity>
         )}
       />
@@ -109,16 +127,16 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   list: { padding: spacing.md, paddingBottom: spacing.xxl },
   heading: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
     marginBottom: spacing.xs,
   },
   subheading: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
     marginBottom: spacing.md,
   },
   filterList: { marginBottom: spacing.md },
@@ -127,38 +145,35 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
     borderRadius: radius.full,
     borderWidth: 2,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     marginRight: spacing.xs,
   },
-  chipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipText: { color: colors.textMuted, fontWeight: fontWeight.bold, fontSize: fontSize.xs },
-  chipTextActive: { color: colors.white },
+  chipInner: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
+  chipEmoji: { fontSize: fontSize.sm },
+  chipText: { fontFamily: 'Corben_700Bold', fontSize: fontSize.sm },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: radius.md,
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.border,
-    overflow: 'hidden',
+    borderRadius: 0,
+    marginBottom: spacing.lg,
+    borderWidth: 2,
   },
-  categoryBar: { width: 4, alignSelf: 'stretch' },
   avatar: {
     marginLeft: spacing.sm,
   },
   cardContent: { flex: 1, padding: spacing.md },
-  name: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.heavy, marginBottom: 2 },
-  topic: { color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
+  name: { color: colors.textDark, fontFamily: 'Corben_700Bold', fontSize: fontSize.md, marginBottom: 2 },
+  topic: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, letterSpacing: 2, textTransform: 'uppercase', marginBottom: spacing.xs },
   categoryPill: {
     alignSelf: 'flex-start',
     backgroundColor: colors.background,
     borderRadius: radius.full,
-    paddingHorizontal: spacing.sm,
+    paddingLeft: 0,
+    paddingRight: spacing.sm,
     paddingVertical: 2,
   },
-  categoryText: { color: colors.textMuted, fontSize: fontSize.xs, fontWeight: fontWeight.bold },
-  chevron: { color: colors.primary, fontSize: 22, fontWeight: fontWeight.bold, paddingRight: spacing.sm },
+  categoryText: { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.xs },
+  chevron: { fontSize: 22, paddingRight: spacing.sm },
 });

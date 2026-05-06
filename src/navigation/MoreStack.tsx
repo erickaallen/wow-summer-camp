@@ -5,7 +5,7 @@ import MoreScreen from '../screens/MoreScreen';
 import SponsorsScreen from '../screens/SponsorsScreen';
 import CheckInScreen from '../screens/CheckInScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<MoreStackParamList>();
 
@@ -15,7 +15,8 @@ export default function MoreStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
         headerTintColor: colors.textDark,
-        headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
+        headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
+        headerBackTitle: 'Back',
       }}
     >
       <Stack.Screen name="MoreMenu" component={MoreScreen} options={{ title: 'More' }} />

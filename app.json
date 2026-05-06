@@ -50,7 +50,8 @@
           "color": "#F03E8C",
           "sounds": []
         }
-      ]
+      ],
+      "expo-font"
     ],
     "web": {
       "favicon": "./assets/favicon.png"

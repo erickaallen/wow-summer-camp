@@ -11,7 +11,7 @@ import { counselors } from '../data/counselors';
 import { campfireLocations } from '../data/campfireLocations';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { getReminderDateFromSlot } from '../utils/sessionTime';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
 type Props = NativeStackScreenProps<ScheduleStackParamList, 'CounselorSessionDetail'>;
 
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   scroll: { padding: spacing.md },
   heroCard: {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     borderWidth: 3,
     padding: spacing.lg,
     alignItems: 'center',
@@ -242,43 +242,43 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   categoryText: {
+    fontFamily: fontFamily.subheading,
     color: colors.white,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
   name: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
   instagram: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
     textDecorationLine: 'underline',
   },
   sessionCard: {
     backgroundColor: colors.accent,
-    borderRadius: radius.md,
+    borderRadius: 0,
     borderWidth: 2,
     borderColor: colors.teal,
     padding: spacing.md,
     marginBottom: spacing.md,
   },
   topicLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.teal,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 1,
     marginBottom: spacing.xs,
   },
   topic: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
     lineHeight: 22,
     marginBottom: spacing.sm,
   },
@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexWrap: 'wrap',
   },
-  metaText: { color: '#555', fontSize: fontSize.xs },
+  metaText: { fontFamily: fontFamily.body, color: '#555', fontSize: fontSize.xs },
   metaDot: { color: '#ccc' },
   ctaBlock: { gap: spacing.sm, marginBottom: spacing.md },
   primaryBtn: {
@@ -301,9 +301,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   primaryBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 0.5,
   },
   secondaryBtn: {
@@ -319,9 +319,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   secondaryBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
   },
   savedBadge: {
     flexDirection: 'row',
@@ -334,9 +334,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   savedBadgeText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
   },
   reminderSetBlock: { gap: spacing.sm },
   cancelBtn: { alignSelf: 'center' },
@@ -347,15 +347,15 @@ const styles = StyleSheet.create({
   },
   bioCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
   },
   bioLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.teal,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
     marginBottom: spacing.sm,
   },
-  bio: { color: '#444', fontSize: fontSize.md, lineHeight: 24 },
+  bio: { fontFamily: fontFamily.body, color: '#444', fontSize: fontSize.md, lineHeight: 24 },
 });

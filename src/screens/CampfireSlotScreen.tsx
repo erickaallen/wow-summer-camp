@@ -16,7 +16,7 @@ import { counselorSessions } from '../data/counselorSessions';
 import { campfireLocations } from '../data/campfireLocations';
 import { counselors } from '../data/counselors';
 import { useAgendaContext } from '../hooks/AgendaContext';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily } from '../theme';
 import { Ionicons } from '@expo/vector-icons';
 import { CampfireRotation } from '../types';
 
@@ -102,28 +102,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   slotTitle: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.heavy,
   },
   slotTime: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
     marginTop: spacing.xs,
   },
   slotSubtitle: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textDark,
     fontSize: fontSize.xs,
     marginTop: spacing.xs,
-    fontWeight: fontWeight.semibold,
   },
   list: { padding: spacing.md, paddingBottom: spacing.xxl },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     marginBottom: spacing.sm,
     borderWidth: 1,
     borderColor: colors.surface,
@@ -133,25 +133,25 @@ const styles = StyleSheet.create({
   categoryBar: { width: 5, alignSelf: 'stretch' },
   cardContent: { flex: 1, padding: spacing.md },
   counselorName: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
     marginBottom: 2,
   },
-  topic: { color: '#555', fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
+  topic: { fontFamily: fontFamily.body, color: '#555', fontSize: fontSize.sm, lineHeight: 18, marginBottom: spacing.xs },
   metaRow: { flexDirection: 'row', alignItems: 'center' },
-  category: { fontSize: fontSize.xs, fontWeight: fontWeight.bold },
+  category: { fontFamily: fontFamily.subheading, fontSize: fontSize.xs },
   dot: { color: '#ccc' },
-  location: { color: '#888', fontSize: fontSize.xs },
+  location: { fontFamily: fontFamily.body, color: '#888', fontSize: fontSize.xs },
   bookmark: { paddingHorizontal: spacing.sm },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
   emptyIcon: { fontSize: 56, marginBottom: spacing.md },
   emptyTitle: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.heavy,
     textAlign: 'center',
     marginBottom: spacing.sm,
   },
-  emptyBody: { color: '#555', fontSize: fontSize.sm, textAlign: 'center', lineHeight: 22 },
+  emptyBody: { fontFamily: fontFamily.body, color: '#555', fontSize: fontSize.sm, textAlign: 'center', lineHeight: 22 },
 });

@@ -3,23 +3,23 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { sponsors } from '../data/sponsors';
 import { Sponsor } from '../types';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
 const TIER_LABELS: Record<Sponsor['tier'], string> = {
-  platinum: 'PLATINUM',
+  presenting: 'PRESENTING',
   gold: 'GOLD',
   silver: 'SILVER',
-  community: 'COMMUNITY PARTNERS',
+  pink: 'PINK',
 };
 
 const TIER_COLORS: Record<Sponsor['tier'], string> = {
-  platinum: '#B0C4DE',
+  presenting: '#B0C4DE',
   gold: colors.accent,
   silver: '#D3D3D3',
-  community: colors.surface,
+  pink: colors.surface,
 };
 
-const TIER_ORDER: Sponsor['tier'][] = ['platinum', 'gold', 'silver', 'community'];
+const TIER_ORDER: Sponsor['tier'][] = ['presenting', 'gold', 'silver', 'pink'];
 
 export default function SponsorsScreen() {
   return (
@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
   scroll: { padding: spacing.md, paddingBottom: spacing.xxl },
   heading: {
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
     textAlign: 'center',
     marginBottom: spacing.lg,
@@ -73,16 +73,16 @@ const styles = StyleSheet.create({
     borderColor: colors.teal,
   },
   tierLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.textDark,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
   sponsorCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
     marginBottom: spacing.sm,
     borderWidth: 1,
@@ -90,6 +90,6 @@ const styles = StyleSheet.create({
   },
   logo: { fontSize: 36, marginRight: spacing.md },
   sponsorInfo: { flex: 1 },
-  sponsorName: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.bold },
+  sponsorName: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md },
   sponsorDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2 },
 });

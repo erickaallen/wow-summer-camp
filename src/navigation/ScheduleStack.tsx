@@ -4,7 +4,7 @@ import { ScheduleStackParamList } from '../types';
 import ScheduleScreen from '../screens/ScheduleScreen';
 import SessionDetailScreen from '../screens/SessionDetailScreen';
 import CounselorSessionDetailScreen from '../screens/CounselorSessionDetailScreen';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<ScheduleStackParamList>();
 
@@ -14,7 +14,8 @@ export default function ScheduleStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
         headerTintColor: colors.textDark,
-        headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
+        headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
+        headerBackTitle: 'Back',
       }}
     >
       <Stack.Screen name="ScheduleList" component={ScheduleScreen} options={{ title: 'Schedule' }} />

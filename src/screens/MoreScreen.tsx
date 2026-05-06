@@ -5,7 +5,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'r
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { MoreStackParamList } from '../types';
-import { colors, spacing, fontSize, fontWeight, radius } from '../theme';
+import { colors, spacing, fontSize, fontFamily } from '../theme';
 
 const PRIVACY_URL  = 'https://www.womanownedwallet.com/policies/privacy-policy';
 const WOW_URL      = 'https://www.womanownedwallet.com';
@@ -50,12 +50,13 @@ const MENU_ITEMS: MenuItem[] = [
     screen: 'Profile',
     description: 'Set up your contact info and networking card.',
   },
-  {
-    label: 'Check In',
-    icon: 'qr-code-outline',
-    screen: 'CheckIn',
-    description: 'Show your QR code at the registration table.',
-  },
+  // Not implementing QR checkin for 2026
+  // {
+  //   label: 'Check In',
+  //   icon: 'qr-code-outline',
+  //   screen: 'CheckIn',
+  //   description: 'Show your QR code at the registration table.',
+  // },
   {
     label: 'Sponsors',
     icon: 'ribbon-outline',
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   scroll: { padding: spacing.md, paddingBottom: spacing.xxl },
   banner: {
     backgroundColor: colors.accent,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     borderWidth: 3,
     borderColor: colors.teal,
     padding: spacing.lg,
@@ -136,19 +137,19 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   bannerTag: {
+    fontFamily: fontFamily.subheading,
     color: colors.teal,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 3,
     marginBottom: spacing.xs,
   },
-  bannerTitle: { color: colors.primary, fontSize: fontSize.xl, fontWeight: fontWeight.heavy },
-  bannerDate: { color: colors.primary, fontSize: fontSize.sm, fontWeight: fontWeight.bold, marginTop: spacing.xs },
+  bannerTitle: { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.xl },
+  bannerDate: { fontFamily: fontFamily.bodyBold, color: colors.primary, fontSize: fontSize.sm, marginTop: spacing.xs },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
     marginBottom: spacing.sm,
     borderWidth: 1,
@@ -158,13 +159,13 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     backgroundColor: colors.surface,
-    borderRadius: radius.md,
+    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: spacing.md,
   },
   menuText: { flex: 1, flexShrink: 1, marginRight: spacing.sm },
-  menuLabel: { color: colors.textDark, fontSize: fontSize.md, fontWeight: fontWeight.bold, flexWrap: 'wrap' },
+  menuLabel: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md, flexWrap: 'wrap' },
   menuDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2, flexWrap: 'wrap' },
   footer: {
     alignItems: 'center',
@@ -180,13 +181,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   linkText: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.semibold,
   },
   footerBrand: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
   },
 });

@@ -21,7 +21,7 @@ import { announcements } from '../data/announcements';
 import { useProfile } from '../hooks/useProfile';
 import { useChecklist } from '../hooks/useChecklist';
 import { shareVCard } from '../utils/vcard';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 const EVENT_START = new Date('2026-05-26T09:00:00');
 const HASHTAG = 'wowsummercamp';
@@ -316,9 +316,9 @@ const styles = StyleSheet.create({
     height: 120,
   },
   heroDate: {
+    fontFamily: fontFamily.subheading,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
     letterSpacing: 1.5,
     marginTop: spacing.xs,
   },
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   // ── Base card ──
   card: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     padding: spacing.md,
     ...shadow.sm,
   },
@@ -343,9 +343,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   cardTitle: {
+    fontFamily: fontFamily.subheading,
     color: colors.textDark,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
 
@@ -357,15 +357,15 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   checklistTitle: {
+    fontFamily: fontFamily.subheading,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 1.5,
   },
   checklistProgress: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
   },
   checkRow: {
     flexDirection: 'row',
@@ -398,35 +398,35 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.lg,
   },
   countdownLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
     marginBottom: spacing.sm,
   },
   countdownRow: { flexDirection: 'row', alignItems: 'center' },
   countUnit:    { alignItems: 'center', minWidth: 56 },
   countValue: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
   },
   countUnitLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
     letterSpacing: 1,
   },
   colon: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     marginBottom: spacing.md,
   },
   liveText: {
+    fontFamily: fontFamily.display,
     color: colors.primary,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
 
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   announcementRow: {
     flexDirection: 'row',
     overflow: 'hidden',
-    borderRadius: radius.sm,
+    borderRadius: 0,
   },
   announcementDivider: {
     marginBottom: spacing.sm,
@@ -445,12 +445,13 @@ const styles = StyleSheet.create({
   announcementAccent: { width: 4, backgroundColor: colors.primary, borderRadius: 2 },
   announcementBody:   { flex: 1, paddingLeft: spacing.sm },
   announcementTitle: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
     marginBottom: spacing.xs,
   },
   announcementText: {
+    fontFamily: fontFamily.body,
     color: colors.textMuted,
     fontSize: fontSize.sm,
     lineHeight: 20,
@@ -459,28 +460,28 @@ const styles = StyleSheet.create({
   // ── Venue ──
   venueCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     padding: spacing.lg,
     alignItems: 'center',
     ...shadow.sm,
   },
   venueEyebrow: {
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 3,
     marginBottom: spacing.sm,
   },
   venueName: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     textAlign: 'center',
   },
   venueDetail: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
     textAlign: 'center',
     marginTop: 2,
   },
@@ -492,9 +493,9 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
   venueDate: {
+    fontFamily: fontFamily.subheading,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 1,
     textAlign: 'center',
   },
@@ -510,9 +511,9 @@ const styles = StyleSheet.create({
     borderColor: colors.teal,
   },
   directionsBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 0.5,
   },
 
@@ -534,36 +535,37 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   shareContactText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
   },
 
   // ── Instagram ──
   instagramBorder: {
-    borderRadius: radius.lg + 2,
+    borderRadius: 0,
     padding: 2,
     ...shadow.sm,
   },
   instagramCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     padding: spacing.md,
     gap: spacing.sm,
   },
   instagramBody: {
+    fontFamily: fontFamily.body,
     color: colors.textMuted,
     fontSize: fontSize.sm,
     lineHeight: 21,
   },
   instagramHashtag: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 0.5,
   },
   instagramBtn: {
-    borderRadius: radius.md,
+    borderRadius: 0,
     overflow: 'hidden',
     marginTop: spacing.xs,
   },
@@ -576,9 +578,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
   },
   instagramBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     flex: 1,
     textAlign: 'center',
   },

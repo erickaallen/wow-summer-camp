@@ -13,9 +13,9 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
-const VENUE_MAP = require('../../assets/images/venue-map.png');
+const VENUE_MAP = require('../../assets/images/venue-map.pdf');
 const DIRECTIONS_URL_IOS     = 'https://maps.apple.com/?daddr=Progress+Park+Louisville+KY&dirflg=d';
 const DIRECTIONS_URL_ANDROID = 'https://www.google.com/maps/dir/?api=1&destination=Progress+Park+Louisville+KY';
 
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
     ...shadow.sm,
   },
   directionsBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
   },
 
   // ── Map ──
@@ -187,9 +187,9 @@ const styles = StyleSheet.create({
     ...shadow.sm,
   },
   hintText: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.semibold,
   },
 
   // ── Legend Modal ──
@@ -204,9 +204,9 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   legendTitle: {
+    fontFamily: fontFamily.subheading,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
   legendList: {
@@ -232,14 +232,14 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   legendBadgeText: {
+    fontFamily: fontFamily.subheading,
     color: colors.white,
     fontSize: 11,
-    fontWeight: fontWeight.heavy,
   },
   legendLabel: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
     flex: 1,
   },
 });

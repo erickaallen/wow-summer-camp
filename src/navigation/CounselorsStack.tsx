@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { CounselorsStackParamList } from '../types';
 import CounselorsScreen from '../screens/CounselorsScreen';
 import CounselorDetailScreen from '../screens/CounselorDetailScreen';
-import { colors } from '../theme';
+import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<CounselorsStackParamList>();
 
@@ -13,7 +13,8 @@ export default function CounselorsStack() {
       screenOptions={{
         headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
         headerTintColor: colors.textDark,
-        headerTitleStyle: { fontWeight: '800', color: colors.textDark, fontSize: 17 },
+        headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
+        headerBackTitle: 'Back',
       }}
     >
       <Stack.Screen name="CounselorList" component={CounselorsScreen} options={{ title: 'Camp Counselors' }} />

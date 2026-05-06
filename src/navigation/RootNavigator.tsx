@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RootTabParamList } from '../types';
-import { colors, shadow } from '../theme';
+import { colors, shadow, fontFamily } from '../theme';
 import HomeScreen from '../screens/HomeScreen';
 import ScheduleStack from './ScheduleStack';
 import CounselorsStack from './CounselorsStack';
@@ -41,7 +41,7 @@ export default function RootNavigator() {
           paddingTop: 8,
         },
         tabBarLabelStyle: {
-          fontWeight: '700',
+          fontFamily: fontFamily.bodySemi,
           fontSize: 10,
           letterSpacing: 0.3,
         },

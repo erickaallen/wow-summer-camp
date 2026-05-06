@@ -4,7 +4,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'r
 import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CounselorsStackParamList } from '../types';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 type Props = NativeStackScreenProps<CounselorsStackParamList, 'CounselorDetail'>;
 
@@ -52,11 +52,6 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
               />
             </View>
 
-            {/* Category badge */}
-            <View style={[styles.categoryBadge, { backgroundColor: categoryColor }]}>
-              <Text style={styles.categoryText}>{counselor.category.toUpperCase()}</Text>
-            </View>
-
             <Text style={styles.name}>{counselor.name}</Text>
 
             {counselor.instagram && (
@@ -64,6 +59,10 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
                 <Text style={styles.instagram}>{counselor.instagram}</Text>
               </TouchableOpacity>
             )}
+
+            {counselor.bio ? (
+              <Text style={styles.bio}>{counselor.bio}</Text>
+            ) : null}
           </View>
         </View>
 
@@ -71,15 +70,10 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
         <View style={[styles.topicCard, shadow.sm]}>
           <Text style={styles.topicLabel}>🔥 CAMPFIRE SESSION TOPIC</Text>
           <Text style={styles.topicText}>{counselor.sessionTopic}</Text>
+          {counselor.sessionDescription ? (
+            <Text style={styles.sessionDescription}>{counselor.sessionDescription}</Text>
+          ) : null}
         </View>
-
-        {/* ── Bio (when available) ── */}
-        {counselor.bio ? (
-          <View style={[styles.bioCard, shadow.sm]}>
-            <Text style={styles.bioLabel}>ABOUT</Text>
-            <Text style={styles.bio}>{counselor.bio}</Text>
-          </View>
-        ) : null}
 
       </ScrollView>
     </SafeAreaView>
@@ -93,7 +87,7 @@ const styles = StyleSheet.create({
   // ── Hero ──
   heroCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     overflow: 'hidden',
   },
   heroStrip: { height: 8 },
@@ -112,60 +106,64 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   categoryText: {
+    fontFamily: fontFamily.subheading,
     color: colors.white,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
   name: {
     color: colors.textDark,
+    fontFamily: 'Corben_700Bold',
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
   instagramRow: { marginTop: spacing.xs },
   instagram: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
     textDecorationLine: 'underline',
   },
 
   // ── Topic ──
   topicCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
     borderLeftWidth: 4,
     borderLeftColor: colors.primary,
   },
   topicLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 1,
     marginBottom: spacing.xs,
   },
   topicText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.bold,
     lineHeight: 24,
   },
-
-  // ── Bio ──
-  bioCard: {
-    backgroundColor: colors.white,
-    borderRadius: radius.md,
-    padding: spacing.md,
-  },
-  bioLabel: {
+  sessionDescription: {
+    fontFamily: fontFamily.body,
     color: colors.textMuted,
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
-    letterSpacing: 2,
-    marginBottom: spacing.sm,
+    fontSize: fontSize.sm,
+    lineHeight: 22,
+    textAlign: 'justify',
+    marginTop: spacing.sm,
   },
-  bio: { color: colors.textDark, fontSize: fontSize.md, lineHeight: 24 },
+
+  bio: {
+    fontFamily: fontFamily.body,
+    color: colors.textMuted,
+    fontSize: fontSize.sm,
+    lineHeight: 22,
+    textAlign: 'justify',
+    alignSelf: 'stretch',
+    marginTop: spacing.md,
+    paddingHorizontal: spacing.sm,
+  },
 });

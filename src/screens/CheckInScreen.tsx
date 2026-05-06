@@ -7,7 +7,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useFocusEffect } from '@react-navigation/native';
 import { MoreStackParamList } from '../types';
 import { useProfile } from '../hooks/useProfile';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '../theme';
+import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'CheckIn'>;
 
@@ -120,9 +120,9 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   emptyTitle: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.lg,
-    fontWeight: fontWeight.heavy,
     textAlign: 'center',
   },
   emptyBody: {
@@ -142,37 +142,37 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   setupBtnText: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.white,
     fontSize: fontSize.md,
-    fontWeight: fontWeight.heavy,
   },
 
   // ── QR card ──
   qrCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.lg,
+    borderRadius: 0,
     padding: spacing.lg,
     alignItems: 'center',
     gap: spacing.md,
     ...shadow.md,
   },
   qrLabel: {
+    fontFamily: fontFamily.subheading,
     color: colors.primary,
     fontSize: fontSize.xs,
-    fontWeight: fontWeight.heavy,
     letterSpacing: 2,
   },
   qrBox: {
     padding: spacing.md,
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     borderWidth: 3,
     borderColor: colors.tealLight,
   },
   qrEmail: {
+    fontFamily: fontFamily.bodyBold,
     color: colors.textDark,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.bold,
   },
   qrHint: {
     color: colors.textMuted,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   // ── Name card ──
   nameCard: {
     backgroundColor: colors.white,
-    borderRadius: radius.md,
+    borderRadius: 0,
     padding: spacing.md,
     alignItems: 'center',
     gap: spacing.xs,
@@ -210,9 +210,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   nameText: {
+    fontFamily: fontFamily.display,
     color: colors.textDark,
     fontSize: fontSize.xl,
-    fontWeight: fontWeight.heavy,
   },
   businessText: {
     color: colors.textMuted,
@@ -228,8 +228,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   editBtnText: {
+    fontFamily: fontFamily.bodySemi,
     color: colors.teal,
     fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
   },
 });

@@ -4,12 +4,26 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts, Corben_700Bold } from '@expo-google-fonts/corben';
+import {
+  Raleway_400Regular,
+  Raleway_600SemiBold,
+  Raleway_700Bold,
+} from '@expo-google-fonts/raleway';
+import { Barlow_500Medium } from '@expo-google-fonts/barlow';
 import RootNavigator from './src/navigation/RootNavigator';
 import { AgendaProvider } from './src/hooks/AgendaContext';
 import SplashOverlay from './src/components/SplashOverlay';
 
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
+  const [fontsLoaded] = useFonts({
+    Corben_700Bold,
+    Raleway_400Regular,
+    Raleway_600SemiBold,
+    Raleway_700Bold,
+    Barlow_500Medium,
+  });
 
   useEffect(() => {
     // Hide the native splash (works in real builds) as soon as JS is ready
@@ -18,6 +32,8 @@ export default function App() {
     }, 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  if (!fontsLoaded) return null;
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

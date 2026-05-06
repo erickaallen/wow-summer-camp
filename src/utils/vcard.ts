@@ -56,7 +56,7 @@ export function buildVCard(p: UserProfile): string {
 
 export async function shareVCard(p: UserProfile) {
   const vcf      = buildVCard(p);
-  const fileName = `${p.firstName}_${p.lastName}_WOWCamp.vcf`.replace(/\s+/g, '_');
+  const fileName = `${p.firstName}_${p.lastName}_WOWSummerCamp2026.vcf`.replace(/\s+/g, '_');
   const path     = `${FileSystem.cacheDirectory}${fileName}`;
   await FileSystem.writeAsStringAsync(path, vcf, { encoding: FileSystem.EncodingType.UTF8 });
   const canShare = await Sharing.isAvailableAsync();

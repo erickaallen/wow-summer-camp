@@ -123,5 +123,13 @@ export const shadow = {
   },
 };
 
-const theme = { colors, tieDyeGradient, tieDyeMiniGradient, spacing, radius, fontSize, fontWeight, shadow };
+export const fontFamily = {
+  body:        'Raleway_400Regular',
+  bodySemi:    'Raleway_600SemiBold',
+  bodyBold:    'Raleway_700Bold',
+  display:     'Corben_700Bold',
+  subheading:  'Barlow_500Medium',
+};
+
+const theme = { colors, tieDyeGradient, tieDyeMiniGradient, spacing, radius, fontSize, fontWeight, fontFamily, shadow };
 export default theme;
