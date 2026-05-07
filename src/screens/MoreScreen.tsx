@@ -7,10 +7,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { MoreStackParamList } from '../types';
 import { colors, spacing, fontSize, fontFamily, shadow } from '../theme';
 
-const PRIVACY_URL  = 'https://www.womanownedwallet.com/policies/privacy-policy';
-const WOW_URL      = 'https://www.womanownedwallet.com';
+const PRIVACY_URL   = 'https://www.womanownedwallet.com/policies/privacy-policy';
+const WOW_URL       = 'https://www.womanownedwallet.com';
 const SHOP_URL      = 'https://www.womanownedwallet.com/collections/shop-all';
 const DIRECTORY_URL = 'https://www.womanownedwallet.com/products/wow-directory-posting?_pos=3&_sid=8de28d22e&_ss=r';
+// TODO: Replace with the real post-camp survey link before the event
+const FEEDBACK_URL  = 'https://forms.gle/REPLACE_WITH_REAL_SURVEY_LINK';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 
@@ -30,6 +32,12 @@ type ExternalItem = {
 
 const EXTERNAL_ITEMS: ExternalItem[] = [
   {
+    label: 'Camp Feedback Survey',
+    icon: 'star-outline',
+    url: FEEDBACK_URL,
+    description: "Share your experience — we'd love your feedback!",
+  },
+  {
     label: 'Shop Woman-Owned Wallet',
     icon: 'bag-handle-outline',
     url: SHOP_URL,
@@ -39,7 +47,7 @@ const EXTERNAL_ITEMS: ExternalItem[] = [
     label: 'Join the W.O.W. Directory',
     icon: 'people-circle-outline',
     url: DIRECTORY_URL,
-    description: 'Get listed in the Woman Owned Wallet business directory.',
+    description: 'Get listed in the Woman-Owned Wallet business directory.',
   },
 ];
 
@@ -117,7 +125,7 @@ export default function MoreScreen({ navigation }: Props) {
           <Text style={styles.linkText}>Privacy Policy</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => Linking.openURL(WOW_URL)} activeOpacity={0.7}>
-          <Text style={styles.footerBrand}>Woman Owned Wallet</Text>
+          <Text style={styles.footerBrand}>Woman-Owned Wallet</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
