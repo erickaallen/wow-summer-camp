@@ -28,18 +28,18 @@ export const announcements: Announcement[] = [
     body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
     visibleUntil: '2026-05-26T09:00:00',
   },
-    {
-    id: 'pre2',
-    title: 'Registration Is Now Open',
-    body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
-    visibleUntil: '2026-05-26T09:00:00',
-  },
-    {
-    id: 'pre3',
-    title: 'Registration Is Now Open',
-    body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
-    visibleUntil: '2026-05-26T09:00:00',
-  },
+  // {
+  //   id: 'pre2',
+  //   title: 'Registration Is Now Open',
+  //   body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
+  //   visibleUntil: '2026-05-26T09:00:00',
+  // },
+  // {
+  //   id: 'pre3',
+  //   title: 'Registration Is Now Open',
+  //   body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
+  //   visibleUntil: '2026-05-26T09:00:00',
+  // },
 
   // ── Kickoff day: May 26 ───────────────────────────────────────────────────
   {

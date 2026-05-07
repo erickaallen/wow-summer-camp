@@ -50,8 +50,8 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
   const canRemind = !!getReminderDate(session); // false if session is in the past
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ title: session.title });
-  }, [navigation, session]);
+    navigation.setOptions({ title: 'Session Details' });
+  }, [navigation]);
 
   const handleSetReminder = async () => {
     setReminderLoading(true);

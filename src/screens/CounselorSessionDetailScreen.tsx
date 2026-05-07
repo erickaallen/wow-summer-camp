@@ -45,9 +45,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
   const canRemind = !!getReminderDateFromSlot(rotation);
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      title: 'Campfire Session',
-    });
+    navigation.setOptions({ title: 'Session Details' });
   }, [navigation]);
 
   const handleToggleSave = async () => {

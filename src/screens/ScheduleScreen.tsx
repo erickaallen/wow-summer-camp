@@ -31,10 +31,21 @@ import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
 type Props = NativeStackScreenProps<ScheduleStackParamList, 'ScheduleList'>;
 
+// ─── Notebook paper constants ─────────────────────────────────────────────────
+const MARGIN_X = 76;   // width of the time column
+
+/** Splits "9:00 AM" → { main: "9:00", suffix: "AM" } */
+function parseSessionTime(time: string): { main: string; suffix: string } {
+  const spaceIdx = time.lastIndexOf(' ');
+  if (spaceIdx === -1) return { main: time, suffix: '' };
+  return { main: time.slice(0, spaceIdx), suffix: time.slice(spaceIdx + 1) };
+}
+
+
 const CATEGORY_COLORS: Record<Session['category'], string> = {
   keynote: colors.primary,
   campfire: colors.teal,
-  break: '#95A5A6',
+  break: colors.yellow,
   social: '#F0A500',
   activity: '#E67E22',
   checkin: '#27AE60',
@@ -44,7 +55,7 @@ const CATEGORY_LABELS: Record<Session['category'], string> = {
   keynote: 'MAIN STAGE',
   campfire: '🔥 CAMPFIRE',
   break: 'BREAK',
-  social: '✨ SOCIAL',
+  social: 'SOCIAL',
   activity: 'ACTIVITY',
   checkin: 'CHECK-IN',
 };
@@ -199,7 +210,11 @@ function CampfireCard({
   };
 
   return (
-    <TouchableOpacity style={styles.campfireCard} onPress={onPress} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.campfireCard}
+      onPress={onPress}
+      activeOpacity={0.8}
+    >
       <View style={[styles.campfireCardAccent, { backgroundColor: catColor }]} />
       <View style={styles.campfireCardBody}>
         <Text style={[styles.campfireCategoryLabel, { color: catColor }]} numberOfLines={1}>
@@ -252,18 +267,29 @@ function CampfireBlock({
   const rotationSessions = counselorSessions.filter((cs) => cs.rotationId === rotation.id);
   const savedId = myAgendaOnly ? getSavedForRotation(rotation.id) : undefined;
 
+  const { main: cfTimeMain, suffix: cfTimeSuffix } = parseSessionTime(session.startTime);
+
+  // Shared header — time in margin + label (bar is on the outer block container)
+  const campfireHeader = (extraMeta?: React.ReactNode) => (
+    <View style={styles.campfireBlockHeader}>
+      <View style={styles.rowTimeArea}>
+        <Text style={styles.rowTimeMain}>{cfTimeMain}</Text>
+        {cfTimeSuffix ? <Text style={styles.rowTimeSuffix}>{cfTimeSuffix}</Text> : null}
+      </View>
+      <View style={styles.campfireBlockRight}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.campfireBlockLabel}>🔥 Campfire Rotation #{rotation.rotationNumber}</Text>
+          {extraMeta}
+        </View>
+      </View>
+    </View>
+  );
+
   // ── My Agenda: gap card — no session chosen yet ──
   if (myAgendaOnly && !savedId) {
     return (
       <View style={styles.campfireBlock}>
-        <View style={styles.campfireBlockHeader}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.campfireBlockTime}>
-              {session.startTime} – {session.endTime}
-            </Text>
-            <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
-          </View>
-        </View>
+        {campfireHeader()}
         <TouchableOpacity
           style={styles.campfireGap}
           onPress={onBrowse}
@@ -288,19 +314,14 @@ function CampfireBlock({
 
   return (
     <View style={styles.campfireBlock}>
-      <View style={styles.campfireBlockHeader}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.campfireBlockTime}>
-            {session.startTime} – {session.endTime}
-          </Text>
-          <Text style={styles.campfireBlockLabel}>🔥 CAMPFIRE SESSIONS</Text>
-          {!myAgendaOnly && (
-            <Text style={styles.campfireBlockMeta}>
-              Rotation #{rotation.rotationNumber}  ·  {rotationSessions.length} sessions
+      <View style={styles.campfireBlockBar} />
+      {campfireHeader(
+        !myAgendaOnly
+          ? <Text style={styles.campfireBlockMeta}>
+              {rotationSessions.length} sessions to choose from
             </Text>
-          )}
-        </View>
-      </View>
+          : null
+      )}
 
       {visibleSessions.length > 0 ? (
         <ScrollView
@@ -336,8 +357,7 @@ export default function ScheduleScreen({ navigation }: Props) {
   const { getSavedForRotation, loaded } = useAgendaContext();
 
   const daySessions = sessions.filter((s) => s.day === activeDay);
-  // In My Agenda mode all sessions are shown — campfire blocks handle their own
-  // "selected" vs "gap" rendering based on whether a session has been chosen.
+  // All sessions always shown — campfire blocks render gap cards when unselected
   const filtered = daySessions;
 
   return (
@@ -376,55 +396,57 @@ export default function ScheduleScreen({ navigation }: Props) {
       </View>
 
       {/* ── Session list ── */}
-      <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>📋</Text>
-            <Text style={styles.emptyText}>No saved sessions yet.</Text>
-            <Text style={styles.emptySubtext}>
-              Tap the bookmark icon on any session to add it to your agenda.
-            </Text>
-          </View>
-        }
-        renderItem={({ item }) => {
-          if (item.category === 'campfire') {
+      <View style={styles.listContainer}>
+        <ScrollView
+          style={styles.listScroll}
+          contentContainerStyle={styles.list}
+        >
+          {/* Session items */}
+          {filtered.map((item) => {
+            if (item.category === 'campfire') {
+              return (
+                <CampfireBlock
+                  key={item.id}
+                  session={item}
+                  navigation={navigation}
+                  myAgendaOnly={myAgendaOnly}
+                  onBrowse={() => setMyAgendaOnly(false)}
+                />
+              );
+            }
+
+            const { main: timeMain, suffix: timeSuffix } = parseSessionTime(item.startTime);
+            const catColor = CATEGORY_COLORS[item.category];
+
             return (
-              <CampfireBlock
-                session={item}
-                navigation={navigation}
-                myAgendaOnly={myAgendaOnly}
-                onBrowse={() => setMyAgendaOnly(false)}
-              />
+              <TouchableOpacity
+                key={item.id}
+                style={styles.row}
+                onPress={() => navigation.navigate('SessionDetail', { session: item })}
+                activeOpacity={0.75}
+              >
+                {/* Time — written in the notebook margin */}
+                <View style={styles.rowTimeArea}>
+                  <Text style={styles.rowTimeMain}>{timeMain}</Text>
+                  {timeSuffix ? <Text style={styles.rowTimeSuffix}>{timeSuffix}</Text> : null}
+                </View>
+
+                {/* Content — right of the pink margin line */}
+                <View style={styles.rowContent}>
+                  <View style={[styles.rowColorBar, { backgroundColor: catColor }]} />
+                  <View style={styles.rowContentInner}>
+                    <Text style={styles.rowTitle} numberOfLines={2}>{item.title}</Text>
+                    <Text style={styles.rowMeta}>
+                      {CATEGORY_LABELS[item.category]}
+                      {item.location ? `  ·  ${item.location}` : ''}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
             );
-          }
-
-          const catColor = CATEGORY_COLORS[item.category];
-
-          return (
-            <TouchableOpacity
-              style={styles.row}
-              onPress={() => navigation.navigate('SessionDetail', { session: item })}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.rowAccent, { backgroundColor: catColor }]} />
-              <View style={styles.rowBody}>
-                <Text style={styles.rowTime}>
-                  {item.startTime}{item.endTime ? ` – ${item.endTime}` : ''}
-                </Text>
-                <Text style={styles.rowTitle}>{item.title}</Text>
-                <Text style={styles.rowMeta}>
-                  {CATEGORY_LABELS[item.category]}  ·  {item.location}
-                </Text>
-                {item.leadName && <Text style={styles.rowLead}>👤 {item.leadName}</Text>}
-              </View>
-            </TouchableOpacity>
-          );
-        }}
-      />
+          })}
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -435,7 +457,7 @@ const styles = StyleSheet.create({
   // ── Toggle ──
   toggle: {
     flexDirection: 'row',
-    margin: spacing.md,
+    marginHorizontal: spacing.md,
     marginBottom: spacing.sm,
     backgroundColor: colors.white,
     borderRadius: radius.full,
@@ -477,9 +499,7 @@ const styles = StyleSheet.create({
     fontSize: fontSize.lg,
     textAlign: 'center',
   },
-  daySelectorTitleActive: {
-    color: colors.textDark,
-  },
+  daySelectorTitleActive: { color: colors.textDark },
   daySelectorDate: {
     fontFamily: fontFamily.subheading,
     color: colors.textMuted,
@@ -487,9 +507,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 2,
   },
-  daySelectorDateActive: {
-    color: colors.textDark,
-  },
+  daySelectorDateActive: { color: colors.textDark },
   daySelectorImage: {
     position: 'absolute',
     width: 62,
@@ -497,27 +515,56 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 
-  // ── Session list ──
+  // ── List container ──
+  listContainer: { flex: 1, backgroundColor: colors.background },
+  listScroll: { backgroundColor: colors.background },
   list: { paddingBottom: spacing.xxl },
-  separator: { height: StyleSheet.hairlineWidth, backgroundColor: colors.border, marginLeft: spacing.md + 4 },
 
   // ── Session row ──
   row: {
     flexDirection: 'row',
-    alignItems: 'stretch',
-    backgroundColor: colors.white,
+    alignItems: 'flex-start',
+    backgroundColor: colors.background,
     paddingVertical: spacing.md,
     paddingRight: spacing.md,
   },
-  rowAccent: { width: 4, marginRight: spacing.md },
-  rowBody: { flex: 1 },
-  rowTime: {
-    fontFamily: fontFamily.bodySemi,
-    color: colors.textMuted,
-    fontSize: fontSize.xs,
-    marginBottom: 3,
-    letterSpacing: 0.3,
+
+  // Time column (left of the divider)
+  rowTimeArea: {
+    width: MARGIN_X,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 2,
   },
+  rowTimeMain: {
+    fontFamily: fontFamily.barlowBold,
+    fontSize: 19,
+    lineHeight: 23,
+    color: colors.textDark,
+  },
+  rowTimeSuffix: {
+    fontFamily: fontFamily.subheading,
+    fontSize: 10,
+    color: colors.textMuted,
+    letterSpacing: 0.5,
+    marginTop: 1,
+  },
+
+  // Content column (right of the divider)
+  rowContent: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingLeft: spacing.sm,
+    paddingTop: 2,
+  },
+  rowColorBar: {
+    width: 3,
+    minHeight: 44,
+    alignSelf: 'stretch',
+    borderRadius: 1.5,
+    marginRight: spacing.sm,
+  },
+  rowContentInner: { flex: 1 },
   rowTitle: {
     fontFamily: fontFamily.barlowBold,
     color: colors.textDark,
@@ -526,61 +573,70 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   rowMeta: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.subheading,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
-  rowLead: { fontFamily: fontFamily.body, color: colors.teal, fontSize: fontSize.xs, marginTop: 3 },
+  rowLead: {
+    fontFamily: fontFamily.body,
+    color: colors.teal,
+    fontSize: fontSize.xs,
+    marginTop: 3,
+  },
+
   // ── Campfire block ──
   campfireBlock: {
-    backgroundColor: colors.white,
-    borderRadius: 0,
+    backgroundColor: 'transparent',
   },
   campfireBlockHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingHorizontal: spacing.md,
     paddingVertical: spacing.md,
-    paddingLeft: spacing.md + 4,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border,
+    paddingRight: spacing.md,
+    // no border — the teal spine provides the visual separation
   },
-  campfireBlockTime: {
-    fontFamily: fontFamily.bodySemi,
-    color: colors.textMuted,
-    fontSize: fontSize.xs,
-    marginBottom: 3,
-    letterSpacing: 0.3,
+  campfireBlockRight: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingLeft: spacing.md,   // breathing room between spine and text
+    paddingTop: 2,
   },
   campfireBlockLabel: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.barlowBold,
     color: colors.teal,
     fontSize: fontSize.md,
+    lineHeight: 22,
     marginBottom: 2,
   },
   campfireBlockMeta: {
-    fontFamily: fontFamily.bodyBold,
+    fontFamily: fontFamily.subheading,
     color: colors.textMuted,
     fontSize: fontSize.xs,
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   campfireScroll: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingLeft: MARGIN_X + spacing.sm,
+    paddingRight: spacing.md,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
     gap: spacing.sm,
   },
   campfireEmpty: {
+    fontFamily: fontFamily.body,
     color: '#999',
     fontSize: fontSize.xs,
-    padding: spacing.md,
+    paddingLeft: MARGIN_X + spacing.sm,
+    paddingVertical: spacing.sm,
     fontStyle: 'italic',
   },
 
   // ── Campfire gap (My Agenda — no session chosen) ──
   campfireGap: {
-    margin: spacing.md,
+    marginLeft: MARGIN_X + spacing.sm,
+    marginRight: spacing.md,
     marginTop: spacing.xs,
+    marginBottom: spacing.sm,
     backgroundColor: '#FFF3F8',
     borderWidth: 1.5,
     borderColor: colors.primary,
@@ -606,10 +662,10 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // ── Campfire card ──
+  // ── Campfire card (floating cards in horizontal scroll) ──
   campfireCard: {
     width: 200,
-    backgroundColor: colors.background,
+    backgroundColor: colors.white,
     borderRadius: 0,
     borderWidth: 1,
     borderColor: colors.border,
