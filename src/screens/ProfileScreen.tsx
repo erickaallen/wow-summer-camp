@@ -194,7 +194,7 @@ export default function ProfileScreen({ navigation, route }: Props) {
                 />
               ) : (
                 <View style={styles.avatarPlaceholder}>
-                  <Ionicons name="person" size={48} color={colors.tealLight} />
+                  <Ionicons name="person-outline" size={48} color={colors.primary} />
                 </View>
               )}
               <View style={styles.avatarBadge}>
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: colors.surface,
+    backgroundColor: 'transparent',
     borderWidth: 3,
     borderColor: colors.primary,
     alignItems: 'center',

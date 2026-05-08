@@ -19,7 +19,8 @@
         "NSPrivacyAccessedAPITypes": []
       },
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "We use your location to show you where you are on the venue map."
+        "NSLocationWhenInUseUsageDescription": "We use your location to show you where you are on the venue map.",
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -52,7 +53,8 @@
         }
       ],
       "expo-font",
-      "expo-video"
+      "expo-video",
+      "expo-screen-orientation"
     ],
     "web": {
       "favicon": "./assets/favicon.png"
@@ -63,6 +65,12 @@
       },
       "privacyPolicyUrl": "https://www.womanownedwallet.com/policies/privacy-policy"
     },
-    "owner": "higher-realms-digital"
+    "owner": "higher-realms-digital",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9b5aa04c-c366-4ebe-a859-9181968fdd66"
+    }
   }
 }

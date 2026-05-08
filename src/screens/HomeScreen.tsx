@@ -15,7 +15,7 @@ import {
 const SCREEN_W = Dimensions.get('window').width;
 
 const BANNER      = require('../../assets/images/wow-banner.png');
-const HEART_HANDS = require('../../assets/home-screen-heart-hands.png');
+const HEART_HANDS = require('../../assets/images/home-screen-heart-hands.png');
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -57,12 +57,14 @@ function getDirections() {
   );
 }
 
-function openInstagram() {
-  const appUrl = `instagram://tag/${HASHTAG}`;
+async function openInstagram() {
+  const appUrl = `instagram://tag?name=${HASHTAG}`;
   const webUrl = `https://www.instagram.com/explore/tags/${HASHTAG}/`;
-  Linking.canOpenURL(appUrl).then((supported) =>
-    Linking.openURL(supported ? appUrl : webUrl),
-  );
+  try {
+    await Linking.openURL(appUrl);
+  } catch {
+    Linking.openURL(webUrl);
+  }
 }
 
 function getActiveAnnouncements() {

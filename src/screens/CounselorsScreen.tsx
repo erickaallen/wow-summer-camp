@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
   },
   cardContent: { flex: 1, padding: spacing.md },
-  name: { color: colors.textDark, fontFamily: 'Corben_700Bold', fontSize: fontSize.md, marginBottom: 2 },
+  name: { color: colors.textDark, fontFamily: 'Corben_700Bold', fontSize: fontSize.md, lineHeight: 20, marginBottom: 2 },
   topic: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 18, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: spacing.xs },
   categoryPill: {
     alignSelf: 'flex-start',

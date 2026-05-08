@@ -19,7 +19,7 @@ type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 type MenuItem = {
   label: string;
   icon: React.ComponentProps<typeof Ionicons>['name'];
-  screen: keyof Pick<MoreStackParamList, 'Sponsors' | 'CheckIn' | 'Profile'>;
+  screen: keyof Pick<MoreStackParamList, 'Sponsors' | 'CheckIn' | 'Profile' | 'AboutApp'>;
   description: string;
 };
 
@@ -31,12 +31,13 @@ type ExternalItem = {
 };
 
 const EXTERNAL_ITEMS: ExternalItem[] = [
-  {
-    label: 'Camp Feedback Survey',
-    icon: 'star-outline',
-    url: FEEDBACK_URL,
-    description: "Share your experience — we'd love your feedback!",
-  },
+  // Commenting out until we have the link ready
+  // {
+  //   label: 'Camp Feedback Survey',
+  //   icon: 'star-outline',
+  //   url: FEEDBACK_URL,
+  //   description: "Share your experience — we'd love your feedback!",
+  // },
   {
     label: 'Shop Woman-Owned Wallet',
     icon: 'bag-handle-outline',
@@ -71,6 +72,12 @@ const MENU_ITEMS: MenuItem[] = [
     screen: 'Sponsors',
     description: 'Meet the sponsors making WOW Summer Camp possible.',
   },
+  {
+    label: 'About This App',
+    icon: 'information-circle-outline',
+    screen: 'AboutApp',
+    description: 'App version, feedback, and the team that built it.',
+  },
 ];
 
 export default function MoreScreen({ navigation }: Props) {
@@ -85,7 +92,7 @@ export default function MoreScreen({ navigation }: Props) {
             activeOpacity={0.8}
           >
             <View style={styles.iconWrap}>
-              <Ionicons name={item.icon} size={28} color={colors.primary} />
+              <Ionicons name={item.icon} size={32} color={colors.primary} />
             </View>
             <View style={styles.menuText}>
               <Text style={styles.menuLabel}>{item.label}</Text>
@@ -103,7 +110,7 @@ export default function MoreScreen({ navigation }: Props) {
             activeOpacity={0.8}
           >
             <View style={styles.iconWrap}>
-              <Ionicons name={item.icon} size={28} color={colors.primary} />
+              <Ionicons name={item.icon} size={32} color={colors.primary} />
             </View>
             <View style={styles.menuText}>
               <Text style={styles.menuLabel}>{item.label}</Text>
@@ -163,16 +170,12 @@ const styles = StyleSheet.create({
     ...shadow.sm,
   },
   iconWrap: {
-    width: 48,
-    height: 48,
-    backgroundColor: colors.surface,
-    borderRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
+    marginRight: spacing.sm,
   },
   menuText: { flex: 1, flexShrink: 1, marginRight: spacing.sm },
-  menuLabel: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md, flexWrap: 'wrap' },
+  menuLabel: { fontFamily: 'Corben_700Bold', color: colors.textDark, fontSize: fontSize.sm, flexWrap: 'wrap' },
   menuDesc: { color: '#888', fontSize: fontSize.xs, marginTop: 2, flexWrap: 'wrap' },
   footer: {
     alignItems: 'center',

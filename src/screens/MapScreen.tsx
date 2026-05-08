@@ -8,12 +8,17 @@ import {
   Image,
   ScrollView,
   Modal,
+  StatusBar,
   useWindowDimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
-const VENUE_MAP = require('../../assets/images/venue-map.pdf');
+const VENUE_MAP_PNG = require('../../assets/images/venue-map-1.png');
+// Map natural size
+const MAP_NATURAL_W = 750;
+const MAP_NATURAL_H = 580;
 
 // All 56 numbered locations from the venue map
 const LOCATIONS = [
@@ -75,20 +80,38 @@ const LOCATIONS = [
   { n: 56, label: 'Handicap Accessible Parking' },
 ];
 
-
 export default function MapScreen() {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const [fullscreen, setFullscreen] = useState(false);
   const [legendVisible, setLegendVisible] = useState(false);
 
-  // Map image natural size: 750 × 580 — scale to fill screen width
-  const MAP_W = width;
-  const MAP_H = Math.round(width * (580 / 750));
+  // Portrait map: scale to screen width
+  const portraitMapW = width;
+  const portraitMapH = Math.round(width * (MAP_NATURAL_H / MAP_NATURAL_W));
 
+  // Fullscreen (landscape) map: after orientation lock, dimensions flip.
+  // Scale to fill the landscape height while preserving aspect ratio.
+  const landscapeH = Math.min(width, height);   // shorter side = landscape height
+  const landscapeW = Math.round(landscapeH * (MAP_NATURAL_W / MAP_NATURAL_H));
+
+  const openFullscreen = async () => {
+    setFullscreen(true);
+    try {
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    } catch (_) {}
+  };
+
+  const closeFullscreen = async () => {
+    try {
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    } catch (_) {}
+    setFullscreen(false);
+  };
 
   return (
     <SafeAreaView style={styles.safe} edges={[]}>
 
-      {/* ── Zoomable Map (iOS native scroll zoom, Android basic scroll) ── */}
+      {/* ── Portrait map with tap-to-expand ── */}
       <ScrollView
         style={styles.mapScroll}
         contentContainerStyle={styles.mapContent}
@@ -99,18 +122,74 @@ export default function MapScreen() {
         showsVerticalScrollIndicator={false}
         centerContent
       >
-        <Image
-          source={VENUE_MAP}
-          style={{ width: MAP_W, height: MAP_H }}
-          resizeMode="contain"
-        />
+        <TouchableOpacity onPress={openFullscreen} activeOpacity={0.92}>
+          <Image
+            source={VENUE_MAP_PNG}
+            style={{ width: portraitMapW, height: portraitMapH }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Hint pill */}
-      <View style={styles.hintPill} pointerEvents="none">
-        <Ionicons name="hand-left-outline" size={18} color={colors.textMuted} />
-        <Text style={styles.hintText}>Pinch to zoom</Text>
+      <View style={styles.hintRow} pointerEvents="none">
+        <View style={styles.hintPill}>
+          <Ionicons name="hand-left-outline" size={15} color={colors.textMuted} />
+          <Text style={styles.hintText}>Pinch to zoom</Text>
+        </View>
+        <View style={styles.hintPill}>
+          <Ionicons name="expand-outline" size={15} color={colors.textMuted} />
+          <Text style={styles.hintText}>Tap to expand</Text>
+        </View>
       </View>
+
+      {/* ── Full-screen landscape modal ── */}
+      <Modal
+        visible={fullscreen}
+        animationType="fade"
+        presentationStyle="fullScreen"
+        statusBarTranslucent
+        onRequestClose={closeFullscreen}
+      >
+        <StatusBar hidden />
+        <View style={styles.fullscreenContainer}>
+          <ScrollView
+            style={styles.fullscreenScroll}
+            contentContainerStyle={styles.fullscreenContent}
+            maximumZoomScale={5}
+            minimumZoomScale={1}
+            bouncesZoom
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            centerContent
+          >
+            <Image
+              source={VENUE_MAP_PNG}
+              style={{ width: landscapeW, height: landscapeH }}
+              resizeMode="contain"
+            />
+          </ScrollView>
+
+          {/* Rotate hint — only visible in portrait inside the modal */}
+          {width < height && (
+            <View style={styles.rotateHint} pointerEvents="none">
+              <Ionicons name="phone-landscape-outline" size={18} color="rgba(255,255,255,0.8)" />
+              <Text style={styles.rotateHintText}>Rotate for landscape view</Text>
+            </View>
+          )}
+
+          {/* Close button */}
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={closeFullscreen}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <View style={styles.closeBtnInner}>
+              <Ionicons name="close" size={22} color={colors.white} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
 
       {/* ── Legend Modal ── */}
       <Modal
@@ -146,36 +225,26 @@ export default function MapScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#111' },
 
-  directionsBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-    backgroundColor: colors.primary,
-    borderRadius: radius.full,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 2,
-    ...shadow.sm,
-  },
-  directionsBtnText: {
-    fontFamily: fontFamily.bodyBold,
-    color: colors.white,
-    fontSize: fontSize.sm,
-  },
-
-  // ── Map ──
+  // ── Portrait map ──
   mapScroll: { flex: 1, backgroundColor: '#111' },
   mapContent: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 
-  hintPill: {
+  hintRow: {
     position: 'absolute',
     bottom: spacing.xl,
-    alignSelf: 'center',
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.sm,
+  },
+  hintPill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xs,
-    backgroundColor: 'rgba(255,255,255,0.85)',
+    backgroundColor: 'rgba(255,255,255,0.88)',
     borderRadius: radius.full,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     ...shadow.sm,
   },
@@ -183,6 +252,48 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily.bodySemi,
     color: colors.textMuted,
     fontSize: fontSize.sm,
+  },
+
+  // ── Fullscreen landscape ──
+  fullscreenContainer: {
+    flex: 1,
+    backgroundColor: '#111',
+  },
+  fullscreenScroll: { flex: 1 },
+  fullscreenContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rotateHint: {
+    position: 'absolute',
+    bottom: spacing.xl,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  rotateHintText: {
+    fontFamily: fontFamily.bodySemi,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: fontSize.sm,
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: spacing.md,
+    right: spacing.md,
+  },
+  closeBtnInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
   // ── Legend Modal ──

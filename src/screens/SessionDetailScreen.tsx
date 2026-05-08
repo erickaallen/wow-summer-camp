@@ -92,7 +92,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
           </Text>
           <Text style={styles.metaText}>📍 {session.location}</Text>
           {session.leadName && (
-            <Text style={[styles.metaText, { color: colors.teal }]}>👤 {session.leadName}</Text>
+            <Text style={styles.metaText}>👤 {session.leadName}</Text>
           )}
         </View>
 
@@ -119,7 +119,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
                     <Ionicons
                       name={reminded ? 'notifications' : 'notifications-outline'}
                       size={26}
-                      color={reminded ? colors.primary : colors.textMuted}
+                      color={reminded ? colors.white : colors.primary}
                     />
                   </View>
                   <Text style={[styles.actionLabel, reminded && styles.actionLabelActive]}>
@@ -128,9 +128,11 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
                 </TouchableOpacity>
               </View>
             )}
-            <Text style={styles.agendaNote}>
-              ✓ This session is on every attendee's agenda
-            </Text>
+            {session.day === 'day2' && (
+              <Text style={styles.agendaNote}>
+                ✓ This session is on every attendee's agenda
+              </Text>
+            )}
           </View>
         )}
 
@@ -175,9 +177,9 @@ const styles = StyleSheet.create({
     lineHeight: 36,
   },
   metaText: {
-    fontFamily: fontFamily.body,
+    fontFamily: fontFamily.bodyBold,
     color: colors.textMuted,
-    fontSize: fontSize.sm,
+    fontSize: fontSize.md,
     marginBottom: spacing.xs,
   },
   descriptionCard: {
@@ -199,7 +201,7 @@ const styles = StyleSheet.create({
   agendaNote: {
     fontFamily: fontFamily.bodySemi,
     fontSize: fontSize.xs,
-    color: colors.teal,
+    color: colors.textMuted,
     textAlign: 'center',
     letterSpacing: 0.3,
   },
@@ -218,12 +220,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FDE8F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionIconWrapActive: {
-    backgroundColor: '#FDE8F0',
+    backgroundColor: colors.primary,
   },
   actionLabel: {
     fontFamily: fontFamily.bodySemi,

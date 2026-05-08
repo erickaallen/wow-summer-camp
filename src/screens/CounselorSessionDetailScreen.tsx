@@ -49,7 +49,29 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
   }, [navigation]);
 
   const handleToggleSave = async () => {
-    if (saved && reminded) await cancelReminder(counselorSession.id);
+    if (saved) {
+      if (reminded) await cancelReminder(counselorSession.id);
+      toggleSession(counselorSession.id);
+      return;
+    }
+    const existingId = getSavedForRotation(counselorSession.rotationId);
+    if (existingId && existingId !== counselorSession.id) {
+      Alert.alert(
+        'Time Slot Conflict',
+        'You already have a campfire session saved for this rotation. Switch to this one instead?',
+        [
+          { text: 'Keep Current', style: 'cancel' },
+          {
+            text: 'Switch',
+            onPress: async () => {
+              await cancelReminder(existingId);
+              replaceSession(existingId, counselorSession.id);
+            },
+          },
+        ],
+      );
+      return;
+    }
     toggleSession(counselorSession.id);
   };
 
@@ -101,28 +123,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
     await doScheduleReminder();
   };
 
-  const handleSaveOnly = () => {
-    if (!saved) {
-      const existingId = getSavedForRotation(counselorSession.rotationId);
-      if (existingId && existingId !== counselorSession.id) {
-        Alert.alert(
-          'Time Slot Conflict',
-          'You already have a campfire session saved for this rotation. Switch to this one instead?',
-          [
-            { text: 'Keep Current', style: 'cancel' },
-            {
-              text: 'Switch',
-              onPress: () => replaceSession(existingId, counselorSession.id),
-            },
-          ],
-        );
-        return;
-      }
-      toggleSession(counselorSession.id);
-    }
-  };
-
-  const handleCancelReminder = async () => {
+const handleCancelReminder = async () => {
     setReminderLoading(true);
     await cancelReminder(counselorSession.id);
     setReminderLoading(false);
@@ -160,7 +161,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
                   <Ionicons
                     name={saved ? 'bookmark' : 'bookmark-outline'}
                     size={26}
-                    color={saved ? colors.primary : colors.textMuted}
+                    color={saved ? colors.white : colors.primary}
                   />
                 </View>
                 <Text style={[styles.actionLabel, saved && styles.actionLabelActive]}>
@@ -180,7 +181,7 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
                     <Ionicons
                       name={reminded ? 'notifications' : 'notifications-outline'}
                       size={26}
-                      color={reminded ? colors.primary : colors.textMuted}
+                      color={reminded ? colors.white : colors.primary}
                     />
                   </View>
                   <Text style={[styles.actionLabel, reminded && styles.actionLabelActive]}>
@@ -267,9 +268,9 @@ const styles = StyleSheet.create({
   },
   metaRow: { marginBottom: spacing.xs },
   metaText: {
-    fontFamily: fontFamily.body,
+    fontFamily: fontFamily.bodyBold,
     color: colors.textMuted,
-    fontSize: fontSize.sm,
+    fontSize: fontSize.md,
     marginBottom: spacing.xs,
   },
 
@@ -290,12 +291,12 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: colors.surface,
+    backgroundColor: '#FDE8F0',
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionIconWrapActive: {
-    backgroundColor: '#FDE8F0',
+    backgroundColor: colors.primary,
   },
   actionLabel: {
     fontFamily: fontFamily.bodySemi,

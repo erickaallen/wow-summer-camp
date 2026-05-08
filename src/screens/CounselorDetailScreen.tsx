@@ -24,9 +24,11 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
   const categoryColor = CATEGORY_COLORS[counselor.category] ?? colors.primary;
   const firstName = counselor.name.split(' ')[0];
 
-  // Find this counselor's first session + its rotation for the topic card link
-  const session  = counselorSessions.find((cs) => cs.counselorId === counselor.id);
-  const rotation = session ? campfireRotations.find((r) => r.id === session.rotationId) : undefined;
+  // Find all sessions this counselor is hosting, paired with their rotation
+  const sessions = counselorSessions
+    .filter((cs) => cs.counselorId === counselor.id)
+    .map((cs) => ({ session: cs, rotation: campfireRotations.find((r) => r.id === cs.rotationId) }))
+    .filter((pair): pair is { session: typeof pair.session; rotation: NonNullable<typeof pair.rotation> } => !!pair.rotation);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({ title: 'Meet Your Counselor' });
@@ -36,15 +38,6 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
     if (counselor.instagram) {
       const handle = counselor.instagram.replace('@', '');
       Linking.openURL(`https://instagram.com/${handle}`);
-    }
-  };
-
-  const handleSessionPress = () => {
-    if (session && rotation) {
-      navigation.navigate('CounselorSessionDetail', {
-        counselorSession: session,
-        rotation,
-      });
     }
   };
 
@@ -85,24 +78,32 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
         ) : null}
 
         {/* ── Campfire session topic card ── */}
-        <TouchableOpacity
+        <View
           style={[styles.topicCard, {
             borderColor: categoryColor,
             shadowColor: categoryColor,
           }]}
-          onPress={handleSessionPress}
-          activeOpacity={session && rotation ? 0.75 : 1}
-          disabled={!session || !rotation}
         >
           <Text style={[styles.topicLabel, { color: categoryColor }]}>🔥 CAMPFIRE SESSION TOPIC</Text>
           <Text style={styles.topicText}>{counselor.sessionTopic}</Text>
-          {session && rotation && (
-            <View style={styles.topicFooter}>
-              <Text style={[styles.topicLink, { color: categoryColor }]}>View session details</Text>
-              <Ionicons name="chevron-forward" size={14} color={categoryColor} />
+          {sessions.length > 0 && (
+            <View style={styles.chipsSection}>
+              <Text style={[styles.chipsLabel, { color: categoryColor }]}>SELECT A TIME TO LEARN MORE</Text>
+              <View style={styles.chipsRow}>
+                {sessions.map(({ session, rotation }) => (
+                  <TouchableOpacity
+                    key={session.id}
+                    style={[styles.timeChip, { backgroundColor: categoryColor }]}
+                    onPress={() => navigation.navigate('CounselorSessionDetail', { counselorSession: session, rotation })}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.timeChipText}>{rotation.startTime}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             </View>
           )}
-        </TouchableOpacity>
+        </View>
 
       </ScrollView>
     </SafeAreaView>
@@ -184,14 +185,28 @@ const styles = StyleSheet.create({
     fontSize: fontSize.md,
     lineHeight: 24,
   },
-  topicFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: spacing.sm,
-    gap: 2,
+  chipsSection: {
+    marginTop: spacing.lg,
   },
-  topicLink: {
-    fontFamily: fontFamily.bodySemi,
+  chipsLabel: {
+    fontFamily: fontFamily.subheading,
     fontSize: fontSize.xs,
+    letterSpacing: 1.2,
+    marginBottom: spacing.sm,
+  },
+  chipsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.xs,
+  },
+  timeChip: {
+    borderRadius: radius.full,
+    paddingHorizontal: spacing.md,
+    paddingVertical: 5,
+  },
+  timeChipText: {
+    fontFamily: 'Corben_700Bold',
+    fontSize: fontSize.sm,
+    color: colors.white,
   },
 });

@@ -7,6 +7,7 @@ import MoreScreen from '../screens/MoreScreen';
 import SponsorsScreen from '../screens/SponsorsScreen';
 import CheckInScreen from '../screens/CheckInScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import AboutAppScreen from '../screens/AboutAppScreen';
 import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<MoreStackParamList>();
@@ -30,6 +31,7 @@ export default function MoreStack() {
       <Stack.Screen name="Sponsors" component={SponsorsScreen} options={{ title: 'Sponsors' }} />
       <Stack.Screen name="CheckIn" component={CheckInScreen} options={{ title: 'Check In' }} />
       <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'My Profile' }} />
+      <Stack.Screen name="AboutApp" component={AboutAppScreen} options={{ title: 'About This App' }} />
     </Stack.Navigator>
   );
 }

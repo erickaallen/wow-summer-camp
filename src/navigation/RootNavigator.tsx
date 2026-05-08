@@ -33,7 +33,7 @@ export default function RootNavigator() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.tabBarActive,
-        tabBarInactiveTintColor: colors.tabBarInactive,
+        tabBarInactiveTintColor: colors.textDark,
         tabBarBackground: () => (
           <View style={{ flex: 1, backgroundColor: colors.tabBar }}>
             <BeadedBorder />

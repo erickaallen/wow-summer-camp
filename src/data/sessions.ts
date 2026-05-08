@@ -83,7 +83,7 @@ export const sessions: Session[] = [
     day: 'day2',
     startTime: '9:00 AM',
     endTime: '10:00 AM',
-    title: 'Opening Ceremony & Staff Announcements',
+    title: 'Opening Ceremony & Announcements',
     location: 'Main Stage',
     description: 'Rundown of the day, intro to staff, and patch explanations.',
     category: 'keynote',

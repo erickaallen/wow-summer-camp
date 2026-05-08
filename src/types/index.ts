@@ -143,6 +143,7 @@ export type MoreStackParamList = {
   Sponsors: undefined;
   CheckIn: undefined;
   Profile: { fromHome?: boolean } | undefined;
+  AboutApp: undefined;
 };
 
 export type MapStackParamList = {
