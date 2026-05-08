@@ -13,6 +13,7 @@ export default function MapStack() {
         headerStyle: { backgroundColor: colors.background },
         headerShadowVisible: false,
         headerTintColor: colors.textDark,
+        headerTitleAlign: 'center',
         headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
       }}
     >

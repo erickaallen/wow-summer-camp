@@ -7,13 +7,15 @@ export const sponsors: Sponsor[] = [
     tier: 'presenting',
     description: 'Sponsor description coming soon.',
     logoPlaceholder: '⭐',
+    website: '',
   },
-    {
+  {
     id: 'sp_gold1',
     name: 'Racing Louisville',
     tier: 'gold',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/LouisvilleRacingFcLogo.png'),
+    website: 'https://www.racingloufc.com/',
   },
   {
     id: 'sp_gold2',
@@ -21,6 +23,7 @@ export const sponsors: Sponsor[] = [
     tier: 'gold',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/HigherRealmsDigitalLogo.png'),
+    website: 'https://higherrealmsdigital.com',
   },
   {
     id: 'sp_silver1',
@@ -28,6 +31,7 @@ export const sponsors: Sponsor[] = [
     tier: 'silver',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/502HempLogo.png'),
+    website: 'https://502hemp.com/',
   },
   {
     id: 'sp_pink1',
@@ -35,6 +39,7 @@ export const sponsors: Sponsor[] = [
     tier: 'pink',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/KaitlinKeanePhotographyLogo.png'),
+    website: 'https://katelinkeanephotography.com/',
   },
   {
     id: 'sp_pink2',
@@ -42,6 +47,7 @@ export const sponsors: Sponsor[] = [
     tier: 'pink',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/ProgressParkLogo.png'),
+    website: 'https://www.progressparkky.com/',
   },
   {
     id: 'sp_pink3',
@@ -49,12 +55,14 @@ export const sponsors: Sponsor[] = [
     tier: 'pink',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/Pose502Logo.png'),
+    website: 'https://www.pose502.com/',
   },
   {
     id: 'sp_pink4',
-    name: 'Pink Sponsor TBD',
+    name: 'Jazz•It•Up Decor',
     tier: 'pink',
     description: 'Sponsor description coming soon.',
-    logoPlaceholder: '💜',
+    logo: require('../../assets/images/logos/JazzItUpLogo.png'),
+    website: 'https://jazzitupdecor.com/',
   },
 ];

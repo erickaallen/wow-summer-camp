@@ -30,11 +30,13 @@ export default function AboutAppScreen() {
         {/* ── Built by ── */}
         <View style={styles.card}>
           <Text style={styles.cardLabel}>BUILT BY</Text>
-          <Image
-            source={require('../../assets/images/logos/HigherRealmsDigitalLogo.png')}
-            style={styles.builderLogo}
-            resizeMode="contain"
-          />
+          <TouchableOpacity onPress={() => Linking.openURL(BUILDER_SITE)} activeOpacity={0.7}>
+            <Image
+              source={require('../../assets/images/logos/HigherRealmsDigitalLogo.png')}
+              style={styles.builderLogo}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
           <Text style={styles.cardBody}>
             We design and build custom mobile apps for small businesses, events, and communities — thoughtfully crafted from the ground up.
           </Text>

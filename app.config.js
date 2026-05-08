@@ -1,13 +1,15 @@
-const { expo: base } = require('./app.json');
-
 const isDev = process.env.APP_ENV === 'development';
 
 module.exports = ({ config }) => ({
-  ...base,
+  ...config,
   ios: {
-    ...base.ios,
+    ...config.ios,
     bundleIdentifier: isDev
       ? 'com.womanownedwallet.summercamp.dev'
       : 'com.womanownedwallet.summercamp',
+  },
+  android: {
+    ...config.android,
+    softwareKeyboardLayoutMode: 'pan',
   },
 });

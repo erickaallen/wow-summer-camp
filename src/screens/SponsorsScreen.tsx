@@ -1,6 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { sponsors } from '../data/sponsors';
 import { Sponsor } from '../types';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
@@ -42,16 +42,20 @@ export default function SponsorsScreen() {
                 <Text style={[styles.tierLabel, { color: TIER_TEXT_COLORS[tier] }]}>{TIER_LABELS[tier]}</Text>
               </View>
               {tierSponsors.map((sponsor) => (
-                <View key={sponsor.id} style={styles.sponsorCard}>
+                <TouchableOpacity
+                  key={sponsor.id}
+                  style={styles.sponsorCard}
+                  onPress={() => sponsor.website ? Linking.openURL(sponsor.website) : undefined}
+                  activeOpacity={sponsor.website ? 0.7 : 1}
+                >
                   {sponsor.logo
                     ? <Image source={sponsor.logo} style={styles.logoImage} resizeMode="contain" />
                     : <Text style={styles.logo}>{sponsor.logoPlaceholder}</Text>
                   }
                   <View style={styles.sponsorInfo}>
                     <Text style={styles.sponsorName}>{sponsor.name}</Text>
-                    <Text style={styles.sponsorDesc}>{sponsor.description}</Text>
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </View>
           );

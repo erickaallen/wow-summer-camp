@@ -16,6 +16,7 @@ export default function CounselorsStack() {
       screenOptions={({ navigation }) => ({
         headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
         headerTintColor: colors.textDark,
+        headerTitleAlign: 'center',
         headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
         headerLeft: ({ canGoBack }) =>
           canGoBack ? (

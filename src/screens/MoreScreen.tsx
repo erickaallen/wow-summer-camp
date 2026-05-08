@@ -1,6 +1,6 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Linking, Image } from 'react-native';
 
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -123,6 +123,9 @@ export default function MoreScreen({ navigation }: Props) {
 
       {/* ── Pinned footer ── */}
       <View style={styles.footer}>
+        <TouchableOpacity onPress={() => Linking.openURL(WOW_URL)} activeOpacity={0.7}>
+          <Image source={require('../../assets/images/logos/WOWLogo.png')} style={styles.footerLogo} resizeMode="contain" />
+        </TouchableOpacity>
         <TouchableOpacity
           style={styles.linkRow}
           onPress={() => Linking.openURL(PRIVACY_URL)}
@@ -130,9 +133,6 @@ export default function MoreScreen({ navigation }: Props) {
         >
           <Ionicons name="shield-checkmark-outline" size={14} color={colors.textMuted} />
           <Text style={styles.linkText}>Privacy Policy</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL(WOW_URL)} activeOpacity={0.7}>
-          <Text style={styles.footerBrand}>Woman-Owned Wallet</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -181,8 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.md,
     gap: spacing.xs,
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderTopColor: colors.border,
+
     backgroundColor: colors.background,
   },
   linkRow: {
@@ -195,9 +194,8 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     fontSize: fontSize.xs,
   },
-  footerBrand: {
-    fontFamily: fontFamily.display,
-    color: colors.primary,
-    fontSize: fontSize.sm,
+  footerLogo: {
+    width: 120,
+    height: 40,
   },
 });

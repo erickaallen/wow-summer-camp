@@ -149,8 +149,8 @@ export default function ProfileScreen({ navigation, route }: Props) {
   };
 
   const handleSave = async () => {
-    if (!form.firstName?.trim() || !form.lastName?.trim() || !form.ticketEmail?.trim()) {
-      Alert.alert('Required Fields', 'Please fill in your first name, last name, and ticket email.');
+    if (!form.firstName?.trim() || !form.lastName?.trim()) {
+      Alert.alert('Required Fields', 'Please fill in your first name and last name.');
       return;
     }
     setSaving(true);
@@ -179,7 +179,7 @@ export default function ProfileScreen({ navigation, route }: Props) {
     <SafeAreaView style={styles.safe} edges={[]}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={88}
       >
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">

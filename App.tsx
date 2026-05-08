@@ -27,12 +27,11 @@ export default function App() {
   });
 
   useEffect(() => {
-    // Hide the native splash (works in real builds) as soon as JS is ready
-    const timer = setTimeout(() => {
+    if (fontsLoaded) {
+      // Hand off from native static splash to our video overlay immediately
       SplashScreen.hideAsync();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    }
+  }, [fontsLoaded]);
 
   if (!fontsLoaded) return null;
 
@@ -46,6 +45,9 @@ export default function App() {
           </NavigationContainer>
         </AgendaProvider>
       </SafeAreaProvider>
+      {!splashDone && (
+        <SplashOverlay onDone={() => setSplashDone(true)} />
+      )}
     </GestureHandlerRootView>
   );
 }
