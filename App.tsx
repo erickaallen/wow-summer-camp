@@ -45,11 +45,6 @@ export default function App() {
             <RootNavigator />
           </NavigationContainer>
         </AgendaProvider>
-
-        {/* Fake splash — visible in Expo Go where native splash doesn't work */}
-        {!splashDone && (
-          <SplashOverlay duration={5000} onDone={() => setSplashDone(true)} />
-        )}
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

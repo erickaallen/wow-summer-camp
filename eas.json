@@ -7,15 +7,14 @@
     "ios-dev": {
       "developmentClient": true,
       "distribution": "internal",
-      "ios": {
-        "bundleIdentifier": "com.womanownedwallet.summercamp.dev"
+      "env": {
+        "APP_ENV": "development"
       }
     },
     "ios-prod": {
       "distribution": "store",
       "autoIncrement": true,
       "ios": {
-        "bundleIdentifier": "com.womanownedwallet.summercamp",
         "buildConfiguration": "Release"
       }
     },
