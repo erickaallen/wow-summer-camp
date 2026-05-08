@@ -14,12 +14,16 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.womanownedwallet.wowsummercamp",
+      "bundleIdentifier": "com.womanownedwallet.summercamp",
       "privacyManifests": {
-        "NSPrivacyAccessedAPITypes": []
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": ["CA92.1"]
+          }
+        ]
       },
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "We use your location to show you where you are on the venue map.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -28,22 +32,11 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F03E8C"
       },
-      "package": "com.womanownedwallet.wowsummercamp",
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ],
+      "package": "com.womanownedwallet.summercamp",
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false
     },
     "plugins": [
-      [
-        "expo-location",
-        {
-          "locationWhenInUsePermission": "We use your location to show you where you are on the venue map."
-        }
-      ],
       [
         "expo-notifications",
         {

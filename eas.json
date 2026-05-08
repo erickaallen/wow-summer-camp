@@ -4,30 +4,34 @@
     "promptToConfigurePushNotifications": false
   },
   "build": {
-    "development": {
+    "ios-dev": {
       "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
       "distribution": "internal",
       "ios": {
-        "simulator": false
+        "bundleIdentifier": "com.womanownedwallet.summercamp.dev"
       }
     },
-    "production": {
-      "autoIncrement": true
+    "ios-prod": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "ios": {
+        "bundleIdentifier": "com.womanownedwallet.summercamp",
+        "buildConfiguration": "Release"
+      }
+    },
+    "android": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {
-    "production": {
+    "ios-prod": {
       "ios": {
-        "appleId": "ericka.allen@gmail.com",
-        "ascAppId": "REPLACE_WITH_APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "REPLACE_WITH_APPLE_TEAM_ID"
-      },
-      "android": {
-        "serviceAccountKeyPath": "./google-service-account.json",
-        "track": "production"
+        "appleId": "ericka@higherrealmsdigital.com",
+        "ascAppId": "6767265853",
+        "appleTeamId": "P39QR5M7WC"
       }
     }
   }
