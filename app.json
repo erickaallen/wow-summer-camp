@@ -58,7 +58,8 @@
         {
           "cameraPermission": false
         }
-      ]
+      ],
+      "./plugins/remove-android-permissions"
     ],
     "web": {
       "favicon": "./assets/favicon.png"
