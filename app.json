@@ -46,8 +46,19 @@
         }
       ],
       "expo-font",
-      "expo-video",
-      "expo-screen-orientation"
+      [
+        "expo-video",
+        {
+          "microphonePermission": false
+        }
+      ],
+      "expo-screen-orientation",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": false
+        }
+      ]
     ],
     "web": {
       "favicon": "./assets/favicon.png"

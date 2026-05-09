@@ -24,7 +24,7 @@
     "android": {
       "distribution": "internal",
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       },
       "channel": "android"
     }
