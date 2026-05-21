@@ -1,14 +1,14 @@
 import { Sponsor } from '../types';
 
 export const sponsors: Sponsor[] = [
-  {
-    id: 'sp_pres1',
-    name: 'Presenting Sponsor TBD',
-    tier: 'presenting',
-    description: 'Sponsor description coming soon.',
-    logoPlaceholder: '⭐',
-    website: '',
-  },
+  // {
+  //   id: 'sp_pres1',
+  //   name: 'Presenting Sponsor TBD',
+  //   tier: 'presenting',
+  //   description: 'Sponsor description coming soon.',
+  //   logoPlaceholder: '⭐',
+  //   website: '',
+  // },
   {
     id: 'sp_gold1',
     name: 'Racing Louisville',

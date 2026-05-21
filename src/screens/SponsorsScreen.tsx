@@ -37,10 +37,11 @@ export default function SponsorsScreen() {
           const tierSponsors = sponsors.filter((s) => s.tier === tier);
           if (tierSponsors.length === 0) return null;
           return (
-            <View key={tier} style={styles.tierSection}>
-              <View style={[styles.tierBadge, { backgroundColor: TIER_COLORS[tier] }]}>
+            <View key={tier}>
+            {/* <View key={tier} style={styles.tierSection}> */}
+              {/* <View style={[styles.tierBadge, { backgroundColor: TIER_COLORS[tier] }]}>
                 <Text style={[styles.tierLabel, { color: TIER_TEXT_COLORS[tier] }]}>{TIER_LABELS[tier]}</Text>
-              </View>
+              </View> */}
               {tierSponsors.map((sponsor) => (
                 <TouchableOpacity
                   key={sponsor.id}
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: spacing.lg,
   },
-  tierSection: { marginBottom: spacing.lg },
+  // tierSection: { marginBottom: spacing.lg },
   tierBadge: {
     borderRadius: radius.full,
     paddingHorizontal: spacing.md,

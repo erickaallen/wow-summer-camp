@@ -2,8 +2,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import HeadshotAvatar from '../components/HeadshotAvatar';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { CounselorsStackParamList, CounselorCategory } from '../types';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CounselorsStackParamList, RootStackParamList, CounselorCategory } from '../types';
 import { counselors } from '../data/counselors';
 import { colors, spacing, fontSize, fontFamily, radius } from '../theme';
 
@@ -23,6 +24,7 @@ const CATEGORY_ICONS: Record<CounselorCategory, string> = {
   'Craft & Connect': '💕',
   'Business & Branding': '💰',
   'Leadership': '👑',
+  'Racing Louisville': '⚽',
 };
 
 const CATEGORY_COLORS: Record<CounselorCategory, string> = {
@@ -34,7 +36,8 @@ const CATEGORY_COLORS: Record<CounselorCategory, string> = {
   'Racing Louisville': '#4DBFBF',
 };
 
-export default function CounselorsScreen({ navigation }: Props) {
+export default function CounselorsScreen(_props: Props) {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [activeCategory, setActiveCategory] = useState<CounselorCategory | 'All'>('All');
 
   const filtered = (activeCategory === 'All'

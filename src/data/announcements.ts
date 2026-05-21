@@ -12,35 +12,13 @@ import { Announcement } from '../types';
  *   Post-camp   → after May 27 5 PM
  */
 export const announcements: Announcement[] = [
-
-  // ── TEST: visible right now (remove before launch) ───────────────────────
-  // {
-  //   id: 'test1',
-  //   title: '👋 Announcement Test',
-  //   body: 'This card is visible right now so you can see the time-based display working. It expires May 26 at 8 AM.',
-  //   visibleUntil: '2026-05-26T08:00:00',
-  // },
-
   // ── Pre-camp (app is live, event hasn't started yet) ─────────────────────
   {
     id: 'pre1',
     title: 'Registration Is Now Open',
-    body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
+    body: 'Take a peek at the schedule, explore the counselor lineup, and add the sessions you don\'t want to miss to your camp agenda!',
     visibleUntil: '2026-05-26T09:00:00',
   },
-  // {
-  //   id: 'pre2',
-  //   title: 'Registration Is Now Open',
-  //   body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
-  //   visibleUntil: '2026-05-26T09:00:00',
-  // },
-  // {
-  //   id: 'pre3',
-  //   title: 'Registration Is Now Open',
-  //   body: 'Download the schedule, explore the counselor lineup, and bookmark the sessions you don\'t want to miss before camp day!',
-  //   visibleUntil: '2026-05-26T09:00:00',
-  // },
-
   // ── Kickoff day: May 26 ───────────────────────────────────────────────────
   {
     id: 'day1_a',
@@ -79,7 +57,7 @@ export const announcements: Announcement[] = [
   {
     id: 'post1',
     title: '💛 Thanks for Coming to Camp!',
-    body: 'What an incredible weekend. Stay connected with your fellow campers — tag your photos with #WOWSummerCamp!',
+    body: 'What an amazing experience! Stay connected with your fellow campers — tag your photos with #WOWSummerCamp!',
     visibleFrom: '2026-05-27T17:00:00',
   },
 
