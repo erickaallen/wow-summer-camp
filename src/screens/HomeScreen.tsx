@@ -284,9 +284,8 @@ function CheckItem({
 }) {
   return (
     <View style={styles.checkRow}>
-      {/* Left: checkbox + label — toggles only */}
+      {/* Circle only: toggles the check */}
       <TouchableOpacity
-        style={styles.checkToggle}
         onPress={onToggle}
         activeOpacity={0.7}
         disabled={readonly || !onToggle}
@@ -296,12 +295,16 @@ function CheckItem({
           size={24}
           color={checked ? colors.teal : colors.tealLight}
         />
+      </TouchableOpacity>
+
+      {/* Label: navigates */}
+      <TouchableOpacity style={styles.checkToggle} onPress={onNavigate} activeOpacity={0.7}>
         <Text style={[styles.checkLabel, checked && styles.checkLabelDone]}>
           {label}
         </Text>
       </TouchableOpacity>
 
-      {/* Right: arrow — navigates only */}
+      {/* Chevron: navigates */}
       <TouchableOpacity onPress={onNavigate} activeOpacity={0.7} hitSlop={8}>
         <Ionicons name="chevron-forward" size={20} color={colors.teal} />
       </TouchableOpacity>

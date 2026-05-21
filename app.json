@@ -52,7 +52,6 @@
           "microphonePermission": false
         }
       ],
-      "expo-screen-orientation",
       [
         "expo-image-picker",
         {

@@ -1,8 +1,9 @@
 import { CampfireLocation } from '../types';
 
 /**
- * The 14 fixed physical spaces where campfire sessions run all day on May 27.
+ * The 13 fixed physical spaces where campfire sessions run all day on May 27.
  * Each counselor pair stays at their location — attendees rotate through them.
+ * Source of truth: Counselor Sessions Locations PDF (final, pre-camp)
  */
 export const campfireLocations: CampfireLocation[] = [
   {
@@ -10,7 +11,7 @@ export const campfireLocations: CampfireLocation[] = [
     locationNumber: 1,
     name: 'Airstream Trio',
     mapLabel: '33-35',
-    primaryCounselorId: 'c14',   // Holly Hartmann
+    primaryCounselorId: 'c14',   // Holly Hartman
     secondaryCounselorId: 'c27', // Ann Brown
   },
   {
@@ -19,14 +20,14 @@ export const campfireLocations: CampfireLocation[] = [
     name: 'Pavilion',
     mapLabel: '15',
     primaryCounselorId: 'c19',   // Cynthia Lee
-    secondaryCounselorId: 'c13', // Deirdre Barnes
+    secondaryCounselorId: 'c12', // Leah Bomar
   },
   {
     id: 'loc3',
     locationNumber: 3,
     name: 'Behind 502 House',
     mapLabel: '1',
-    primaryCounselorId: 'c22',   // Gretchen Hunt
+    primaryCounselorId: 'c17',   // Jessica Colliersmith
     secondaryCounselorId: 'c4',  // Whitney Fallon
   },
   {
@@ -34,7 +35,7 @@ export const campfireLocations: CampfireLocation[] = [
     locationNumber: 4,
     name: 'The Grove',
     mapLabel: '17',
-    primaryCounselorId: 'c23',   // Cierra Brent
+    primaryCounselorId: 'c22',   // Gretchen Hunt
     secondaryCounselorId: 'c5',  // Carmellia Jackson Hurley
   },
   {
@@ -51,23 +52,23 @@ export const campfireLocations: CampfireLocation[] = [
     name: 'Stella / Dottie',
     mapLabel: '50, 51',
     primaryCounselorId: 'c9',    // Tali Lindberg
-    secondaryCounselorId: 'c12', // Leah Bomar
+    secondaryCounselorId: 'c7',  // Cece Stevenson
   },
   {
     id: 'loc7',
     locationNumber: 7,
     name: 'Grass by Shuffleboard',
     mapLabel: '28',
-    primaryCounselorId: 'c1',    // Erica Weddle
+    primaryCounselorId: 'c26',   // Michelle Champagne
     secondaryCounselorId: 'c6',  // Megan Hale
   },
   {
     id: 'loc8',
     locationNumber: 8,
-    name: 'Dam Beach',
-    mapLabel: 'Dam Beach',
+    name: 'Bridge Beach',
+    mapLabel: '30',
     primaryCounselorId: 'c2',    // Megan Smith
-    secondaryCounselorId: 'c24', // Leslie Hall
+    secondaryCounselorId: 'c13', // Deirdre Barnes
   },
   {
     id: 'loc9',
@@ -75,29 +76,22 @@ export const campfireLocations: CampfireLocation[] = [
     name: 'Event Center Patio',
     mapLabel: '22',
     primaryCounselorId: 'c3',    // Abby Kamen
-    secondaryCounselorId: 'c16', // Sydney Catinna
+    secondaryCounselorId: 'c23', // Cierra Brent
   },
   {
     id: 'loc10',
     locationNumber: 10,
     name: 'Lake House Tent',
     mapLabel: '3',
-    primaryCounselorId: 'c25',   // Davonna Saier (solo)
-  },
-  {
-    id: 'loc11',
-    locationNumber: 11,
-    name: 'Left of Building 52',
-    mapLabel: '52',
-    primaryCounselorId: 'c8',    // Ari Farley
-    secondaryCounselorId: 'c7',  // Cece Stevenson
+    primaryCounselorId: 'c25',   // Davonna Saier
+    secondaryCounselorId: 'c24', // Leslie Hall
   },
   {
     id: 'loc12',
     locationNumber: 12,
     name: 'Tree Swing',
     mapLabel: '11',
-    primaryCounselorId: 'c11',   // Melissa Wurth & Vanessa
+    primaryCounselorId: 'c1',    // Erica Weddle
     secondaryCounselorId: 'c18', // Bonnie Logsdon
   },
   {
@@ -105,7 +99,7 @@ export const campfireLocations: CampfireLocation[] = [
     locationNumber: 13,
     name: 'The Lawn',
     mapLabel: '18',
-    primaryCounselorId: 'c17',   // Jessica Colliersmith
+    primaryCounselorId: 'c11',   // Melissa Wurth & Vanessa
     secondaryCounselorId: 'c15', // Patti Weiter
   },
   {
@@ -113,6 +107,7 @@ export const campfireLocations: CampfireLocation[] = [
     locationNumber: 14,
     name: 'Courtyard',
     mapLabel: '23',
-    primaryCounselorId: 'c10',   // Kylie Fischbach (solo)
+    primaryCounselorId: 'c10',   // Kylie Fischbach
+    secondaryCounselorId: 'c8',  // Ari Farley
   },
 ];

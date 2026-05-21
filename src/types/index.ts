@@ -14,6 +14,8 @@ export interface Session {
   category: 'keynote' | 'campfire' | 'break' | 'social' | 'activity' | 'checkin';
   /** Links a campfire schedule entry to its CampfireRotation */
   campfireRotationId?: string;
+  /** Links a panel session to its speaker counselor ids */
+  panelCounselorIds?: string[];
 }
 
 /** One of 7 timed rotation windows on May 27 (attendees move between them) */
@@ -43,7 +45,8 @@ export type CounselorCategory =
   | 'Mindset & Storytelling'
   | 'Craft & Connect'
   | 'Business & Branding'
-  | 'Leadership';
+  | 'Leadership'
+  | 'Racing Louisville';
 
 export interface Counselor {
   id: string;
@@ -53,9 +56,12 @@ export interface Counselor {
   category: CounselorCategory;
   bio: string;
   instagram?: string;
+  linkedin?: string;
   email?: string;
   headshot?: number; // require() image source
   confirmed: boolean;
+  /** Links a panel speaker back to their panel session id (e.g. 's23') */
+  panelSessionId?: string;
 }
 
 /**
@@ -126,16 +132,19 @@ export type RootTabParamList = {
   More: NavigatorScreenParams<MoreStackParamList> | undefined;
 };
 
+export type RootStackParamList = {
+  Tabs: NavigatorScreenParams<RootTabParamList> | undefined;
+  SessionDetail: { session: Session };
+  CounselorDetail: { counselor: Counselor };
+  CounselorSessionDetail: { counselorSession: CounselorSession; rotation: CampfireRotation };
+};
+
 export type ScheduleStackParamList = {
   ScheduleList: undefined;
-  SessionDetail: { session: Session };
-  CounselorSessionDetail: { counselorSession: CounselorSession; rotation: CampfireRotation };
 };
 
 export type CounselorsStackParamList = {
   CounselorList: undefined;
-  CounselorDetail: { counselor: Counselor };
-  CounselorSessionDetail: { counselorSession: CounselorSession; rotation: CampfireRotation };
 };
 
 export type MoreStackParamList = {

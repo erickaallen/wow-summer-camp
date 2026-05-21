@@ -65,4 +65,20 @@ export const sponsors: Sponsor[] = [
     logo: require('../../assets/images/logos/JazzItUpLogo.png'),
     website: 'https://jazzitupdecor.com/',
   },
+    {
+    id: 'sp_pink5',
+    name: 'The UPS Store at Waterfront Plaza',
+    tier: 'pink',
+    description: 'Sponsor description coming soon.',
+    logo: require('../../assets/images/logos/TheUPSStoreLogo.png'),
+    website: 'https://locations.theupsstore.com/ky/louisville/325-w-main-st-waterfront-plaza',
+  },
+  {
+    id: 'sp_pink6',
+    name: 'Best Dad Media',
+    tier: 'pink',
+    description: 'Sponsor description coming soon.',
+    logo: require('../../assets/images/logos/BestDadMediaLogo.png'),
+    website: 'https://bestdadmedia.com/',
+  },
 ];

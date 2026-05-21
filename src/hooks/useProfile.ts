@@ -22,8 +22,7 @@ export function isProfileComplete(profile: UserProfile | null): boolean {
   if (!profile) return false;
   return !!(
     profile.firstName?.trim() &&
-    profile.lastName?.trim() &&
-    profile.ticketEmail?.trim()
+    profile.lastName?.trim()
   );
 }
 

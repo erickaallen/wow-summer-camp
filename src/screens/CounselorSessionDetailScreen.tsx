@@ -7,14 +7,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ScheduleStackParamList } from '../types';
+import { RootStackParamList } from '../types';
 import { counselors } from '../data/counselors';
 import { campfireLocations } from '../data/campfireLocations';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { getReminderDateFromSlot } from '../utils/sessionTime';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
-type Props = NativeStackScreenProps<ScheduleStackParamList, 'CounselorSessionDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'CounselorSessionDetail'>;
 
 const CATEGORY_COLORS: Record<string, string> = {
   'Movement': '#4DBFBF',
@@ -43,10 +43,6 @@ export default function CounselorSessionDetailScreen({ route, navigation }: Prop
   const saved = isSaved(counselorSession.id);
   const reminded = hasReminder(counselorSession.id);
   const canRemind = !!getReminderDateFromSlot(rotation);
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Session Details' });
-  }, [navigation]);
 
   const handleToggleSave = async () => {
     if (saved) {
@@ -208,10 +204,7 @@ const handleCancelReminder = async () => {
             shadowColor: catColor,
           }]}
           onPress={() =>
-            navigation.getParent<any>()?.navigate('Counselors', {
-              screen: 'CounselorDetail',
-              params: { counselor },
-            })
+            navigation.navigate('CounselorDetail', { counselor })
           }
           activeOpacity={0.8}
         >
@@ -228,6 +221,8 @@ const handleCancelReminder = async () => {
               <Text style={styles.counselorName}>{counselor.name}</Text>
               {counselor.instagram ? (
                 <Text style={[styles.learnMore, { color: catColor }]}>{counselor.instagram}</Text>
+              ) : counselor.linkedin ? (
+                <Text style={[styles.learnMore, { color: catColor }]}>LinkedIn</Text>
               ) : null}
             </View>
             <Ionicons name="chevron-forward" size={20} color={catColor} />

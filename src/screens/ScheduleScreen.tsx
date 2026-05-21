@@ -13,9 +13,11 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path } from 'react-native-svg';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import {
   ScheduleStackParamList,
+  RootStackParamList,
   Session,
   EventDay,
   CounselorSession,
@@ -300,12 +302,12 @@ function CampfireCard({
 // ─── Inline campfire block ────────────────────────────────────────────────────
 function CampfireBlock({
   session,
-  navigation,
+  rootNav,
   myAgendaOnly,
   onBrowse,
 }: {
   session: Session;
-  navigation: Props['navigation'];
+  rootNav: NativeStackNavigationProp<RootStackParamList>;
   myAgendaOnly: boolean;
   onBrowse: () => void;
 }) {
@@ -386,7 +388,7 @@ function CampfireBlock({
               cs={cs}
               rotation={rotation}
               onPress={() =>
-                navigation.navigate('CounselorSessionDetail', {
+                rootNav.navigate('CounselorSessionDetail', {
                   counselorSession: cs,
                   rotation,
                 })
@@ -403,6 +405,7 @@ function CampfireBlock({
 
 // ─── Main screen ─────────────────────────────────────────────────────────────
 export default function ScheduleScreen({ navigation }: Props) {
+  const rootNav = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [activeDay, setActiveDay] = useState<EventDay>('day1');
   const [myAgendaOnly, setMyAgendaOnly] = useState(false);
   const { getSavedForRotation, loaded } = useAgendaContext();
@@ -462,7 +465,7 @@ export default function ScheduleScreen({ navigation }: Props) {
                 <CampfireBlock
                   key={item.id}
                   session={item}
-                  navigation={navigation}
+                  rootNav={rootNav}
                   myAgendaOnly={myAgendaOnly}
                   onBrowse={() => setMyAgendaOnly(false)}
                 />
@@ -476,7 +479,7 @@ export default function ScheduleScreen({ navigation }: Props) {
               <TouchableOpacity
                 key={item.id}
                 style={styles.row}
-                onPress={() => navigation.navigate('SessionDetail', { session: item })}
+                onPress={() => rootNav.navigate('SessionDetail', { session: item })}
                 activeOpacity={0.75}
               >
                 {/* Time — written in the notebook margin */}

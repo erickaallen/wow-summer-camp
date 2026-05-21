@@ -4,8 +4,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { ScheduleStackParamList } from '../types';
 import ScheduleScreen from '../screens/ScheduleScreen';
-import SessionDetailScreen from '../screens/SessionDetailScreen';
-import CounselorSessionDetailScreen from '../screens/CounselorSessionDetailScreen';
 import { colors, fontFamily } from '../theme';
 
 const Stack = createNativeStackNavigator<ScheduleStackParamList>();
@@ -14,7 +12,8 @@ export default function ScheduleStack() {
   return (
     <Stack.Navigator
       screenOptions={({ navigation }) => ({
-        headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false,
+        headerStyle: { backgroundColor: colors.background },
+        headerShadowVisible: false,
         headerTintColor: colors.textDark,
         headerTitleAlign: 'center',
         headerTitleStyle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: 17 },
@@ -27,8 +26,6 @@ export default function ScheduleStack() {
       })}
     >
       <Stack.Screen name="ScheduleList" component={ScheduleScreen} options={{ title: 'Schedule' }} />
-      <Stack.Screen name="SessionDetail" component={SessionDetailScreen} options={{ title: 'Session' }} />
-      <Stack.Screen name="CounselorSessionDetail" component={CounselorSessionDetailScreen} options={{ title: 'Campfire Session' }} />
     </Stack.Navigator>
   );
 }

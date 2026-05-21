@@ -125,6 +125,7 @@ export const shadow = {
 
 export const fontFamily = {
   body:        'Raleway_400Regular',
+  bodyItalic:  'Raleway_400Regular_Italic',
   bodySemi:    'Raleway_600SemiBold',
   bodyBold:    'Raleway_700Bold',
   display:     'Corben_700Bold',

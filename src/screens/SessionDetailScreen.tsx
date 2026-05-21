@@ -10,15 +10,17 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ScheduleStackParamList } from '../types';
+import { RootStackParamList } from '../types';
 import { useAgendaContext } from '../hooks/AgendaContext';
 import { getReminderDate } from '../utils/sessionTime';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
+import { counselors } from '../data/counselors';
+import HeadshotAvatar from '../components/HeadshotAvatar';
 
 /** Categories where users can set a personal reminder */
 const REMINDABLE = ['keynote', 'social', 'activity'];
 
-type Props = NativeStackScreenProps<ScheduleStackParamList, 'SessionDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'SessionDetail'>;
 
 const CATEGORY_LABELS: Record<string, string> = {
   keynote: 'MAIN STAGE',
@@ -48,10 +50,6 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
   const remindable = REMINDABLE.includes(session.category);
   const reminded = hasReminder(session.id);
   const canRemind = !!getReminderDate(session); // false if session is in the past
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Session Details' });
-  }, [navigation]);
 
   const handleSetReminder = async () => {
     setReminderLoading(true);
@@ -91,9 +89,6 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
             🕐 {session.startTime}{session.endTime ? ` – ${session.endTime}` : ''}
           </Text>
           <Text style={styles.metaText}>📍 {session.location}</Text>
-          {session.leadName && (
-            <Text style={styles.metaText}>👤 {session.leadName}</Text>
-          )}
         </View>
 
         {/* Description */}
@@ -133,6 +128,42 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
                 ✓ This session is on every attendee's agenda
               </Text>
             )}
+          </View>
+        )}
+
+        {/* Racing Louisville player cards */}
+        {session.panelCounselorIds && session.panelCounselorIds.length > 0 && (
+          <View style={styles.panelSection}>
+            <Text style={styles.panelSectionLabel}>MEET THE PLAYERS</Text>
+            {session.panelCounselorIds.map((cid) => {
+              const player = counselors.find((c) => c.id === cid);
+              if (!player) return null;
+              return (
+                <TouchableOpacity
+                  key={cid}
+                  style={styles.playerCard}
+                  activeOpacity={0.8}
+                  onPress={() =>
+                    navigation.navigate('CounselorDetail', { counselor: player })
+                  }
+                >
+                  <HeadshotAvatar
+                    source={player.headshot}
+                    name={player.name}
+                    size={52}
+                    borderColor={colors.teal}
+                    borderWidth={2}
+                  />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.playerName}>{player.name}</Text>
+                    {player.instagram && (
+                      <Text style={styles.playerHandle}>{player.instagram}</Text>
+                    )}
+                  </View>
+                  <Ionicons name="chevron-forward" size={20} color={colors.teal} />
+                </TouchableOpacity>
+              );
+            })}
           </View>
         )}
 
@@ -235,6 +266,42 @@ const styles = StyleSheet.create({
   },
   actionLabelActive: {
     color: colors.primary,
+  },
+  panelSection: {
+    gap: spacing.sm,
+  },
+  panelSectionLabel: {
+    fontFamily: fontFamily.subheading,
+    color: colors.textDark,
+    fontSize: fontSize.sm,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: spacing.xs,
+  },
+  playerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.white,
+    borderWidth: 2,
+    borderColor: colors.teal,
+    padding: spacing.md,
+    shadowColor: colors.teal,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  playerName: {
+    fontFamily: fontFamily.display,
+    color: colors.textDark,
+    fontSize: fontSize.md,
+    marginBottom: 2,
+  },
+  playerHandle: {
+    fontFamily: fontFamily.bodySemi,
+    color: colors.teal,
+    fontSize: fontSize.sm,
   },
   campfireNote: {
     backgroundColor: colors.accent,

@@ -4,12 +4,13 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'r
 import { Ionicons } from '@expo/vector-icons';
 import HeadshotAvatar from '../components/HeadshotAvatar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { CounselorsStackParamList } from '../types';
+import { RootStackParamList } from '../types';
 import { counselorSessions } from '../data/counselorSessions';
 import { campfireRotations } from '../data/campfireRotations';
+import { sessions } from '../data/sessions';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
-type Props = NativeStackScreenProps<CounselorsStackParamList, 'CounselorDetail'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'CounselorDetail'>;
 
 const CATEGORY_COLORS: Record<string, string> = {
   'Movement':              '#4DBFBF',
@@ -17,6 +18,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Craft & Connect':       '#E67E22',
   'Business & Branding':   colors.primary,
   'Leadership':            '#27AE60',
+  'Racing Louisville':     '#4DBFBF',
 };
 
 export default function CounselorDetailScreen({ route, navigation }: Props) {
@@ -24,20 +26,27 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
   const categoryColor = CATEGORY_COLORS[counselor.category] ?? colors.primary;
   const firstName = counselor.name.split(' ')[0];
 
-  // Find all sessions this counselor is hosting, paired with their rotation
-  const sessions = counselorSessions
+  // Find all campfire sessions this counselor is hosting, paired with their rotation
+  const campfireSessions = counselorSessions
     .filter((cs) => cs.counselorId === counselor.id)
     .map((cs) => ({ session: cs, rotation: campfireRotations.find((r) => r.id === cs.rotationId) }))
     .filter((pair): pair is { session: typeof pair.session; rotation: NonNullable<typeof pair.rotation> } => !!pair.rotation);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Meet Your Counselor' });
-  }, [navigation]);
+  // For panel speakers, find the linked panel session
+  const panelSession = counselor.panelSessionId
+    ? sessions.find((s) => s.id === counselor.panelSessionId)
+    : undefined;
 
   const handleInstagram = () => {
     if (counselor.instagram) {
       const handle = counselor.instagram.replace('@', '');
       Linking.openURL(`https://instagram.com/${handle}`);
+    }
+  };
+
+  const handleLinkedIn = () => {
+    if (counselor.linkedin) {
+      Linking.openURL(counselor.linkedin);
     }
   };
 
@@ -61,9 +70,15 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
             <Text style={styles.name}>{counselor.name}</Text>
 
             {counselor.instagram && (
-              <TouchableOpacity onPress={handleInstagram} style={styles.instagramRow}>
-                <Ionicons name="logo-instagram" size={20} color={colors.primary} />
-                <Text style={styles.instagram}>{counselor.instagram}</Text>
+              <TouchableOpacity onPress={handleInstagram} style={styles.socialRow}>
+                <Ionicons name="logo-instagram" size={20} color={categoryColor} />
+                <Text style={[styles.socialHandle, { color: categoryColor }]}>{counselor.instagram}</Text>
+              </TouchableOpacity>
+            )}
+            {counselor.linkedin && (
+              <TouchableOpacity onPress={handleLinkedIn} style={styles.socialRow}>
+                <Ionicons name="logo-linkedin" size={20} color={categoryColor} />
+                <Text style={[styles.socialHandle, { color: categoryColor }]}>LinkedIn</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -77,33 +92,52 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
           </View>
         ) : null}
 
-        {/* ── Campfire session topic card ── */}
-        <View
-          style={[styles.topicCard, {
-            borderColor: categoryColor,
-            shadowColor: categoryColor,
-          }]}
-        >
-          <Text style={[styles.topicLabel, { color: categoryColor }]}>🔥 CAMPFIRE SESSION TOPIC</Text>
-          <Text style={styles.topicText}>{counselor.sessionTopic}</Text>
-          {sessions.length > 0 && (
-            <View style={styles.chipsSection}>
-              <Text style={[styles.chipsLabel, { color: categoryColor }]}>SELECT A TIME TO LEARN MORE</Text>
-              <View style={styles.chipsRow}>
-                {sessions.map(({ session, rotation }) => (
-                  <TouchableOpacity
-                    key={session.id}
-                    style={[styles.timeChip, { backgroundColor: categoryColor }]}
-                    onPress={() => navigation.navigate('CounselorSessionDetail', { counselorSession: session, rotation })}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.timeChipText}>{rotation.startTime}</Text>
-                  </TouchableOpacity>
-                ))}
+        {/* ── Campfire session topic card — regular counselors only ── */}
+        {!panelSession && (
+          <View
+            style={[styles.topicCard, {
+              borderColor: categoryColor,
+              shadowColor: categoryColor,
+            }]}
+          >
+            <Text style={[styles.topicLabel, { color: categoryColor }]}>🔥 CAMPFIRE SESSION TOPIC</Text>
+            <Text style={styles.topicText}>{counselor.sessionTopic}</Text>
+            {campfireSessions.length > 0 && (
+              <View style={styles.chipsSection}>
+                <Text style={[styles.chipsLabel, { color: categoryColor }]}>SELECT A TIME TO LEARN MORE</Text>
+                <View style={styles.chipsRow}>
+                  {campfireSessions.map(({ session, rotation }) => (
+                    <TouchableOpacity
+                      key={session.id}
+                      style={[styles.timeChip, { backgroundColor: categoryColor }]}
+                      onPress={() => navigation.navigate('CounselorSessionDetail', { counselorSession: session, rotation })}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.timeChipText}>{rotation.startTime}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
               </View>
+            )}
+          </View>
+        )}
+
+        {/* ── Panel session link — Racing Louisville players only ── */}
+        {panelSession && (
+          <TouchableOpacity
+            style={[styles.panelSessionBtn, { borderColor: categoryColor, shadowColor: categoryColor }]}
+            activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate('SessionDetail', { session: panelSession })
+            }
+          >
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.topicLabel, { color: categoryColor }]}>⚽ PLAYER PANEL</Text>
+              <Text style={styles.topicText}>{panelSession.title.replace(' Player Panel', '')}</Text>
             </View>
-          )}
-        </View>
+            <Ionicons name="chevron-forward" size={20} color={categoryColor} />
+          </TouchableOpacity>
+        )}
 
       </ScrollView>
     </SafeAreaView>
@@ -133,8 +167,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: spacing.xs,
   },
-  instagramRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.xs },
-  instagram: {
+  socialRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, marginTop: spacing.xs },
+  socialHandle: {
     fontFamily: fontFamily.bodyBold,
     color: colors.primary,
     fontSize: fontSize.md,
@@ -208,5 +242,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Corben_700Bold',
     fontSize: fontSize.sm,
     color: colors.white,
+  },
+  panelSessionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    padding: spacing.md,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+    backgroundColor: colors.white,
   },
 });

@@ -31,6 +31,7 @@ const CATEGORY_COLORS: Record<CounselorCategory, string> = {
   'Craft & Connect': '#E67E22',
   'Business & Branding': colors.primary,
   'Leadership': '#27AE60',
+  'Racing Louisville': '#4DBFBF',
 };
 
 export default function CounselorsScreen({ navigation }: Props) {
@@ -38,7 +39,11 @@ export default function CounselorsScreen({ navigation }: Props) {
 
   const filtered = (activeCategory === 'All'
     ? counselors
-    : counselors.filter((c) => c.category === activeCategory)
+    : counselors.filter((c) =>
+        c.category === activeCategory ||
+        // Racing Louisville players appear under the Movement filter
+        (activeCategory === 'Movement' && c.category === 'Racing Louisville')
+      )
   ).slice().sort((a, b) => a.name.localeCompare(b.name));
 
   return (

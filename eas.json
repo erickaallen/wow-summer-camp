@@ -23,6 +23,7 @@
     },
     "android": {
       "distribution": "internal",
+      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
       },

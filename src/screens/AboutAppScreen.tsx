@@ -2,9 +2,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from 'expo-constants';
 import { colors, spacing, fontSize, fontFamily, shadow } from '../theme';
 
-const APP_VERSION = '1.0.0';
+const appVersion = Constants.nativeAppVersion ?? '—';
+const buildNumber = Constants.nativeBuildVersion ?? '—';
 const BUILDER_SITE = 'https://higherrealmsdigital.com';
 const BUILDER_EMAIL = 'upward@higherrealmsdigital.com';
 const BUG_EMAIL = 'support@higherrealmsdigital.com';
@@ -21,9 +23,9 @@ export default function AboutAppScreen() {
             style={styles.appLogo}
             resizeMode="contain"
           />
-          <Text style={styles.version}>Version {APP_VERSION}</Text>
+          <Text style={styles.version}>Version {appVersion} ({buildNumber})</Text>
           <Text style={styles.tagline}>
-            Your pocket guide to campfire sessions, counselors, and all things summer camp.
+            Your pocket guide to campfire sessions, counselors, and all things Summer Camp.
           </Text>
         </View>
 
@@ -38,7 +40,10 @@ export default function AboutAppScreen() {
             />
           </TouchableOpacity>
           <Text style={styles.cardBody}>
-            We design and build custom mobile apps for small businesses, events, and communities — thoughtfully crafted from the ground up.
+            Higher Realms Digital builds custom mobile apps, tools, and business systems
+            for women-led businesses, events, and communities. We create tech that
+            helps lighten the mental load so you can be present for the work you were
+            born to do.
           </Text>
           <TouchableOpacity
             style={styles.linkRow}
@@ -47,7 +52,6 @@ export default function AboutAppScreen() {
           >
             <Ionicons name="globe-outline" size={16} color={colors.primary} />
             <Text style={styles.linkText}>higherrealmsdigital.com</Text>
-            {/* <Ionicons name="open-outline" size={13} color={colors.primary} /> */}
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkRow}
@@ -63,7 +67,9 @@ export default function AboutAppScreen() {
         <View style={styles.card}>
           <Text style={styles.cardLabel}>FEEDBACK & BUG REPORTS</Text>
           <Text style={styles.cardBody}>
-            Noticed something off? Have a suggestion? We genuinely want to hear it. Every piece of feedback helps us make the app better — for this event and every one that comes after.
+            Noticed something off? Have an idea that would make this better?
+            Send it our way. Every note shapes this app and the next one. That's
+            how good tech gets made.
           </Text>
           <TouchableOpacity
             style={styles.ctaBtn}
@@ -81,7 +87,9 @@ export default function AboutAppScreen() {
         <View style={[styles.card, styles.accentCard]}>
           <Text style={[styles.cardLabel, { color: colors.teal }]}>INTERESTED IN YOUR OWN APP?</Text>
           <Text style={styles.cardBody}>
-            We'd love to build something for you. Whether it's an event app, a client portal, or something entirely new — reach out and let's talk about what we can create together.
+            Got an idea you've been carrying? An event, a community, a tool your
+            people keep asking for. Let's talk about what we can build together.
+            Your vision deserves to be alive and expressed.
           </Text>
           <TouchableOpacity
             style={[styles.ctaBtn, styles.ctaBtnTeal]}
@@ -94,9 +102,9 @@ export default function AboutAppScreen() {
             <Text style={styles.ctaBtnText}>Get in Touch</Text>
           </TouchableOpacity>
         </View>
-
         <Text style={styles.footer}>
-          Made with Love for the WOW Gals & Pals.{'\n'}© 2026 Higher Realms Digital
+          <Text style={styles.footerKeepRising}>💖 Keep rising 💖{'\n'}</Text>
+          Made with Love for the W.O.W. Gals & Pals.{'\n'}
         </Text>
 
       </ScrollView>
@@ -206,5 +214,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     marginTop: spacing.sm,
+  },
+  footerKeepRising: {
+    fontFamily: fontFamily.bodyItalic,
   },
 });

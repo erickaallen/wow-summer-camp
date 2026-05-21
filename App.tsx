@@ -7,11 +7,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useFonts, Corben_700Bold } from '@expo-google-fonts/corben';
 import {
   Raleway_400Regular,
+  Raleway_400Regular_Italic,
   Raleway_600SemiBold,
   Raleway_700Bold,
 } from '@expo-google-fonts/raleway';
 import { Barlow_500Medium, Barlow_700Bold } from '@expo-google-fonts/barlow';
-import RootNavigator from './src/navigation/RootNavigator';
+import RootStack from './src/navigation/RootStack';
 import { AgendaProvider } from './src/hooks/AgendaContext';
 import SplashOverlay from './src/components/SplashOverlay';
 
@@ -20,6 +21,7 @@ export default function App() {
   const [fontsLoaded] = useFonts({
     Corben_700Bold,
     Raleway_400Regular,
+    Raleway_400Regular_Italic,
     Raleway_600SemiBold,
     Raleway_700Bold,
     Barlow_500Medium,
@@ -41,7 +43,7 @@ export default function App() {
         <AgendaProvider>
           <NavigationContainer>
             <StatusBar style="dark" />
-            <RootNavigator />
+            <RootStack />
           </NavigationContainer>
         </AgendaProvider>
       </SafeAreaProvider>
