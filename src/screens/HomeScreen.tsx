@@ -42,7 +42,7 @@ const SHOW_PHASE_DEMO = false;
 
 // ─── Screenshot helper — set to a phase name to freeze the home screen in that
 //     phase. Set back to null to restore live behavior. ─────────────────────────
-const FORCE_PHASE: EventPhase | null = 'day2_morning'; // May 26, 9:00 PM – May 27, 8:00 AM
+const FORCE_PHASE: EventPhase | null = null;
 
 // ─── Demo sessions (used only in the demo section below) ─────────────────────
 const DEMO = {
