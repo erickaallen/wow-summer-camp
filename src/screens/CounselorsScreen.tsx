@@ -28,12 +28,12 @@ const CATEGORY_ICONS: Record<CounselorCategory, string> = {
 };
 
 const CATEGORY_COLORS: Record<CounselorCategory, string> = {
-  'Movement': '#4DBFBF',
-  'Mindset & Storytelling': '#9B59B6',
-  'Craft & Connect': '#E67E22',
-  'Business & Branding': colors.primary,
-  'Leadership': '#27AE60',
-  'Racing Louisville': '#4DBFBF',
+  'Movement':              '#CEB2FB',
+  'Mindset & Storytelling': '#F5C435',
+  'Craft & Connect':       '#FFB0D0',
+  'Business & Branding':   '#4DBFBF',
+  'Leadership':            colors.primary,
+  'Racing Louisville':     '#CEB2FB',
 };
 
 export default function CounselorsScreen(_props: Props) {

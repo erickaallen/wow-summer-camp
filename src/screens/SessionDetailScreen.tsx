@@ -23,7 +23,7 @@ const REMINDABLE = ['keynote', 'social', 'activity'];
 type Props = NativeStackScreenProps<RootStackParamList, 'SessionDetail'>;
 
 const CATEGORY_LABELS: Record<string, string> = {
-  keynote: 'MAIN STAGE',
+  keynote: 'KEYNOTE',
   campfire: '🔥 CAMPFIRE SESSION',
   break: 'BREAK',
   social: '✨ SOCIAL',
@@ -38,6 +38,15 @@ const CATEGORY_COLORS: Record<string, string> = {
   social: '#F0A500',
   activity: '#E67E22',
   checkin: '#27AE60',
+};
+
+const COUNSELOR_CATEGORY_COLORS: Record<string, string> = {
+  'Movement':               '#CEB2FB',
+  'Mindset & Storytelling': '#F5C435',
+  'Craft & Connect':        '#FFB0D0',
+  'Business & Branding':    '#4DBFBF',
+  'Leadership':             colors.primary,
+  'Racing Louisville':      '#CEB2FB',
 };
 
 export default function SessionDetailScreen({ route, navigation }: Props) {
@@ -59,7 +68,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
     if (result === 'denied') {
       Alert.alert(
         'Notifications Blocked',
-        'To receive session reminders, enable notifications for WOW Summer Camp in your device Settings.',
+        'To receive session reminders, enable notifications for W.O.W. Summer Camp in your device Settings.',
         [{ text: 'OK' }],
       );
     } else if (result === 'past') {
@@ -136,8 +145,8 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
           const speakers = session.panelCounselorIds
             .map((cid) => counselors.find((c) => c.id === cid))
             .filter((c): c is NonNullable<typeof c> => !!c);
+          const cardColor = COUNSELOR_CATEGORY_COLORS[speakers[0]?.category ?? ''] ?? colors.primary;
           const isRacing = speakers.some((c) => c.category === 'Racing Louisville');
-          const cardColor = isRacing ? colors.teal : colors.primary;
           const sectionLabel = isRacing ? 'MEET THE PLAYERS' : '🎤 FEATURED SPEAKER';
           return (
             <View style={styles.panelSection}>
@@ -161,7 +170,7 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.playerName}>{speaker.name}</Text>
                     {speaker.instagram && (
-                      <Text style={[styles.playerHandle, { color: cardColor }]}>{speaker.instagram}</Text>
+                      <Text style={[styles.playerHandle, { color: cardColor }]}>{speaker.instagram?.replace('@', '')}</Text>
                     )}
                   </View>
                   <Ionicons name="chevron-forward" size={20} color={cardColor} />

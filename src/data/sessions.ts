@@ -224,7 +224,7 @@ export const sessions: Session[] = [
     startTime: '5:30 PM',
     endTime: '6:00 PM',
     title: 'Closing Ceremonies',
-    location: 'Main Stage',
+    location: 'Mess Hall Stage',
     description: 'Wrap-up celebration and toast with water bottles. You did it, Troop 502!',
     category: 'keynote',
   },

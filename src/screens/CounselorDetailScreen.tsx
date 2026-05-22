@@ -13,12 +13,12 @@ import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme'
 type Props = NativeStackScreenProps<RootStackParamList, 'CounselorDetail'>;
 
 const CATEGORY_COLORS: Record<string, string> = {
-  'Movement':              '#4DBFBF',
-  'Mindset & Storytelling':'#9B59B6',
-  'Craft & Connect':       '#E67E22',
-  'Business & Branding':   colors.primary,
-  'Leadership':            '#27AE60',
-  'Racing Louisville':     '#4DBFBF',
+  'Movement':              '#CEB2FB',
+  'Mindset & Storytelling': '#F5C435',
+  'Craft & Connect':       '#FFB0D0',
+  'Business & Branding':   '#4DBFBF',
+  'Leadership':            colors.primary,
+  'Racing Louisville':     '#CEB2FB',
 };
 
 export default function CounselorDetailScreen({ route, navigation }: Props) {
@@ -72,7 +72,7 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
             {counselor.instagram && (
               <TouchableOpacity onPress={handleInstagram} style={styles.socialRow}>
                 <Ionicons name="logo-instagram" size={20} color={categoryColor} />
-                <Text style={[styles.socialHandle, { color: categoryColor }]}>{counselor.instagram}</Text>
+                <Text style={[styles.socialHandle, { color: categoryColor }]}>{counselor.instagram?.replace('@', '')}</Text>
               </TouchableOpacity>
             )}
             {counselor.linkedin && (

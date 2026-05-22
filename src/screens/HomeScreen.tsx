@@ -17,6 +17,7 @@ const BANNER      = require('../../assets/images/wow-banner.png');
 const HEART_HANDS = require('../../assets/images/home-screen-heart-hands.png');
 
 import { Ionicons } from '@expo/vector-icons';
+import Svg, { Path } from 'react-native-svg';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList, Session } from '../types';
@@ -115,7 +116,7 @@ export default function HomeScreen() {
   const navigation       = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
   const rawCountdown     = useCountdown(EVENT_START);
   const countdown        = (FORCE_PHASE && FORCE_PHASE !== 'pre_event') ? null : rawCountdown;
-const { profile, reload, isComplete } = useProfile();
+  const { profile, reload, isComplete } = useProfile();
   const { checks, toggle } = useChecklist();
   const activeAnnouncements = getActiveAnnouncements();
   const [sharing, setSharing] = useState(false);
@@ -229,7 +230,7 @@ const { profile, reload, isComplete } = useProfile();
               </View>
               <CheckItem
                 checked={isComplete}
-                label="Create your profile"
+                label="Create your shareable profile"
                 onNavigate={() => navigation.navigate('More', { screen: 'Profile', params: { fromHome: true } })}
                 readonly
               />
@@ -299,9 +300,9 @@ const { profile, reload, isComplete } = useProfile();
         {phase !== 'post_event' && <View style={[styles.card, styles.shareCard]}>
           <View style={styles.cardHeader}>
             <Ionicons name="people-outline" size={14} color={colors.teal} />
-            <Text style={[styles.cardTitle, { color: colors.teal }]}>STAY CONNECTED</Text>
+            <Text style={[styles.cardTitle, { color: colors.textDark }]}>STAY CONNECTED</Text>
           </View>
-          <Text style={styles.shareTitle}>Swap contacts in one tap</Text>
+          <Text style={styles.shareTitle}>Swap Profile Details</Text>
           <Text style={styles.shareBlurb}>
             Meet a new business bestie? Share your contact info — your name, email, phone, and socials go straight to their phone.
           </Text>
@@ -327,16 +328,16 @@ const { profile, reload, isComplete } = useProfile();
         <View style={[styles.card, styles.instagramBorder]}>
           <View style={styles.instagramCard}>
             <View style={styles.cardHeader}>
-              <Ionicons name="logo-instagram" size={14} color={colors.textDark} />
+              <Ionicons name="logo-instagram" size={14} color={colors.primary} />
               <Text style={styles.cardTitle}>LIVE FEED</Text>
             </View>
-            <Text style={styles.instagramTitle}>Show us your camp pics</Text>
+            <Text style={styles.instagramTitle}>Show Us Your Best Camp Pics</Text>
             <Text style={styles.instagramBody}>
               Share your camp moments in real time! Tag your photos and videos with our event hashtag and you'll be part of our shared live feed.
             </Text>
             <Text style={styles.instagramHashtag}>#WOWSummerCamp</Text>
             <TouchableOpacity onPress={openInstagram} activeOpacity={0.8} style={styles.instagramBtn}>
-              <Ionicons name="logo-instagram" size={16} color={colors.textDark} />
+              <Ionicons name="logo-instagram" size={16} color={colors.primary} />
               <Text style={styles.instagramBtnText}>View on Instagram</Text>
             </TouchableOpacity>
           </View>
@@ -424,7 +425,7 @@ function Day2MorningCard() {
         <Ionicons name="sunny-outline" size={14} color={colors.primary} />
         <Text style={[styles.cardTitle, { color: colors.textDark }]}>MAIN CAMP DAY</Text>
       </View>
-      <Text style={styles.day2Title}>Check-in opens at 8 AM</Text>
+      <Text style={styles.day2Title}>Check-in Opens at 8 AM</Text>
       <Text style={styles.day2Body}>
         Coffee, breakfast, and badge pickup at the Mess Hall. Today is going to be so much fun!
       </Text>
@@ -494,7 +495,7 @@ function DirectoryCard() {
         <Text style={styles.cardTitle}>KEEP YOUR BUSINESS GROWING</Text>
       </View>
       <Text style={styles.directoryBody}>
-        Join the W.O.W. Women-Owned Business Directory and let Amanda and the entire WOW community help promote what you've built — all year long.
+        Join the W.O.W. Women-Owned Business Directory and let Amanda and the entire W.O.W. community help promote what you've built — all year long.
       </Text>
       <TouchableOpacity
         style={styles.directoryBtn}
@@ -516,7 +517,7 @@ function FeedbackCard() {
         <Text style={[styles.cardTitle, { color: colors.primary }]}>SHARE YOUR EXPERIENCE</Text>
       </View>
       <Text style={styles.feedbackBody}>
-        Camp is almost a wrap! Before you go, take 2 minutes to fill out our feedback survey. Your input shapes what WOW looks like next year — we read every single response.
+        Camp is almost a wrap! Before you go, take 2 minutes to fill out our feedback survey. Your input shapes what W.O.W. looks like next year — we read every single response.
       </Text>
       <TouchableOpacity
         style={styles.feedbackBtn}
@@ -580,17 +581,19 @@ function CheckItem({
         activeOpacity={0.7}
         disabled={readonly || !onToggle}
       >
-        <Ionicons
-          name={checked ? 'checkmark-circle' : 'ellipse-outline'}
-          size={24}
-          color={checked ? colors.teal : colors.tealLight}
-        />
+        <View style={[styles.checkBox, checked && styles.checkBoxChecked]}>
+          {checked && (
+            <Svg width="20" height="20" viewBox="0 0 20 20" style={{ position: 'absolute' }}>
+              <Path d="M 3 10 Q 7 15 9 17 Q 13 8 18 3" stroke={colors.primary} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            </Svg>
+          )}
+        </View>
       </TouchableOpacity>
       <TouchableOpacity style={styles.checkToggle} onPress={onNavigate} activeOpacity={0.7}>
         <Text style={[styles.checkLabel, checked && styles.checkLabelDone]}>{label}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={onNavigate} activeOpacity={0.7} hitSlop={8}>
-        <Ionicons name="chevron-forward" size={20} color={colors.teal} />
+        <Ionicons name="chevron-forward" size={20} color={colors.textDark} />
       </TouchableOpacity>
     </View>
   );
@@ -703,8 +706,19 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
   },
   checkToggle:      { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingRight: spacing.sm, paddingLeft: spacing.sm },
-  checkLabel:       { flex: 1, fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
+  checkLabel:       { flex: 1, fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
   checkLabelDone:   { color: colors.textMuted, textDecorationLine: 'line-through' },
+  checkBox: {
+    width: 26,
+    height: 26,
+    borderRadius: 4,
+    borderWidth: 2.5,
+    borderColor: colors.textDark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.white,
+  },
+  checkBoxChecked: { borderColor: colors.textDark },
 
   // ── Tonight lineup (Day 1 evening) ──
   tonightCard: {
@@ -894,7 +908,7 @@ const styles = StyleSheet.create({
   instagramCard:     { gap: spacing.sm },
   instagramTitle:    { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
   instagramBody:     { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 21 },
-  instagramHashtag:  { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.md, letterSpacing: 0.5 },
+  instagramHashtag:  { alignSelf: 'center', fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.md, letterSpacing: 0.5 },
   instagramBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -904,10 +918,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radius.full,
     borderWidth: 1.5,
-    borderColor: colors.textDark,
+    borderColor: colors.primary,
     marginTop: spacing.xs,
   },
-  instagramBtnText: { fontFamily: fontFamily.bodySemi, color: colors.textDark, fontSize: fontSize.sm },
+  instagramBtnText: { fontFamily: fontFamily.bodySemi, color: colors.primary, fontSize: fontSize.sm },
 
   // ── Demo section ──
   demoDividerWrap: {

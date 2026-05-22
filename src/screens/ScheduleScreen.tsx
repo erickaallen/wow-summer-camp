@@ -54,7 +54,7 @@ const CATEGORY_COLORS: Record<Session['category'], string> = {
 };
 
 const CATEGORY_LABELS: Record<Session['category'], string> = {
-  keynote: 'MAIN STAGE',
+  keynote: 'KEYNOTE',
   campfire: '🔥 CAMPFIRE',
   break: 'BREAK',
   social: 'SOCIAL',
@@ -63,11 +63,12 @@ const CATEGORY_LABELS: Record<Session['category'], string> = {
 };
 
 const COUNSELOR_CATEGORY_COLORS: Record<string, string> = {
-  'Movement': '#4DBFBF',
-  'Mindset & Storytelling': '#9B59B6',
-  'Craft & Connect': '#E67E22',
-  'Business & Branding': colors.primary,
-  'Leadership': '#27AE60',
+  'Movement':              '#CEB2FB',
+  'Mindset & Storytelling': '#F5C435',
+  'Craft & Connect':       '#FFB0D0',
+  'Business & Branding':   '#4DBFBF',
+  'Leadership':            colors.primary,
+  'Racing Louisville':     '#CEB2FB',
 };
 
 const DAY_LABELS: Record<EventDay, { short: string; long: string }> = {
@@ -234,7 +235,7 @@ function CampfireCard({
                 replaceSession(existingId, cs.id);
                 const result = await scheduleCounselorReminder(cs.id, rotation, counselor.name, counselor.sessionTopic);
                 if (result === 'denied') {
-                  Alert.alert('Notifications Blocked', 'Enable notifications for WOW Summer Camp in your device Settings.');
+                  Alert.alert('Notifications Blocked', 'Enable notifications for W.O.W. Summer Camp in your device Settings.');
                 }
               },
             },
@@ -246,7 +247,7 @@ function CampfireCard({
     }
     const result = await scheduleCounselorReminder(cs.id, rotation, counselor.name, counselor.sessionTopic);
     if (result === 'denied') {
-      Alert.alert('Notifications Blocked', 'Enable notifications for WOW Summer Camp in your device Settings.');
+      Alert.alert('Notifications Blocked', 'Enable notifications for W.O.W. Summer Camp in your device Settings.');
     } else if (result === 'past') {
       Alert.alert('Already Started', 'This session has already begun — no reminder needed!');
     }

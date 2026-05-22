@@ -68,7 +68,7 @@ const MENU_ITEMS: MenuItem[] = [
     label: 'Sponsors',
     icon: 'ribbon-outline',
     screen: 'Sponsors',
-    description: 'Meet the sponsors making WOW Summer Camp possible.',
+    description: 'Meet the sponsors making W.O.W. Summer Camp possible.',
   },
   {
     label: 'About This App',
