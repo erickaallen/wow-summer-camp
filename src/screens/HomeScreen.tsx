@@ -20,13 +20,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootTabParamList, Session } from '../types';
-import { announcements } from '../data/announcements';
 import { sessions } from '../data/sessions';
 import { useProfile } from '../hooks/useProfile';
 import { useChecklist } from '../hooks/useChecklist';
 import { shareVCard } from '../utils/vcard';
 import { getEventPhase, getNowNext, EventPhase, NowNext } from '../utils/eventPhase';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
+import { announcements } from '../data/announcements';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -34,19 +34,24 @@ import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme'
 const EVENT_START    = new Date('2026-05-26T18:00:00');
 const HASHTAG        = 'wowsummercamp';
 const DIRECTORY_URL  = 'https://www.womanownedwallet.com/products/wow-directory-posting?_pos=3&_sid=8de28d22e&_ss=r';
+const FEEDBACK_URL   = 'https://forms.gle/PLzhVCZm6d1LA1bAA';
 
 // ─── Set to false and rebuild once phase demo has been reviewed ───────────────
 const SHOW_PHASE_DEMO = false;
 
+// ─── Screenshot helper — set to a phase name to freeze the home screen in that
+//     phase. Set back to null to restore live behavior. ─────────────────────────
+const FORCE_PHASE: EventPhase | null = 'day2_morning'; // May 26, 9:00 PM – May 27, 8:00 AM
+
 // ─── Demo sessions (used only in the demo section below) ─────────────────────
 const DEMO = {
   checkin:   sessions.find(s => s.id === 's7')!,  // Check-In 8–9 AM
-  opening:   sessions.find(s => s.id === 's8')!,  // Opening Ceremony 9–10 AM
+  opening:   sessions.find(s => s.id === 's8')!,  // Opening Ceremony 9:15–9:45 AM
   campfire1: sessions.find(s => s.id === 's9')!,  // Campfire #1 10–10:30 AM
   break1:    sessions.find(s => s.id === 's10')!, // Canteen Break 10:30–10:45 AM
   campfire2: sessions.find(s => s.id === 's11')!, // Campfire #2 10:45–11:15 AM
   panel:     sessions.find(s => s.id === 's23')!, // Player Panel 4:15–5:15 PM
-  closing:   sessions.find(s => s.id === 's24')!, // Closing 5:15–6 PM
+  closing:   sessions.find(s => s.id === 's24')!, // Closing 5:30–6 PM
 };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -84,7 +89,6 @@ async function openInstagram() {
   const webUrl = `https://www.instagram.com/explore/tags/${HASHTAG}/`;
   try { await Linking.openURL(appUrl); } catch { Linking.openURL(webUrl); }
 }
-
 function getActiveAnnouncements() {
   const now = new Date();
   return announcements.filter(a => {
@@ -109,17 +113,19 @@ function sessionEmoji(s: Session): string {
 
 export default function HomeScreen() {
   const navigation       = useNavigation<BottomTabNavigationProp<RootTabParamList>>();
-  const countdown        = useCountdown(EVENT_START);
-  const activeAnnouncements = getActiveAnnouncements();
-  const { profile, reload, isComplete } = useProfile();
+  const rawCountdown     = useCountdown(EVENT_START);
+  const countdown        = (FORCE_PHASE && FORCE_PHASE !== 'pre_event') ? null : rawCountdown;
+const { profile, reload, isComplete } = useProfile();
   const { checks, toggle } = useChecklist();
+  const activeAnnouncements = getActiveAnnouncements();
   const [sharing, setSharing] = useState(false);
 
   // ── Phase state (updates every minute) ──────────────────────────────────────
-  const [phase,   setPhase]   = useState<EventPhase>(() => getEventPhase());
+  const [phase,   setPhase]   = useState<EventPhase>(() => FORCE_PHASE ?? getEventPhase());
   const [nowNext, setNowNext] = useState<NowNext>(() => getNowNext());
 
   useEffect(() => {
+    if (FORCE_PHASE) return;
     const tick = () => {
       setPhase(getEventPhase());
       setNowNext(getNowNext());
@@ -132,12 +138,17 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       reload();
-      setPhase(getEventPhase());
-      setNowNext(getNowNext());
+      if (!FORCE_PHASE) {
+        setPhase(getEventPhase());
+        setNowNext(getNowNext());
+      }
     }, [reload]),
   );
 
   const doneCount = [isComplete, checks.adventure, checks.instagram].filter(Boolean).length;
+
+  // True from 5:00 PM on camp day through 6:00 PM one week later (June 3)
+  const showFeedback = new Date() >= new Date(2026, 4, 27, 17, 0) && new Date() < new Date(2026, 5, 3, 18, 0);
 
   // True during day2_active while still in check-in / opening (before first campfire)
   const isEarlyDay2 = phase === 'day2_active' &&
@@ -238,25 +249,6 @@ export default function HomeScreen() {
           </>
         )}
 
-        {/* DAY 1 EVENING: tonight's lineup (alongside countdown above) */}
-        {phase === 'day1_evening' && <TonightLineupCard />}
-
-        {/* DAY 2 MORNING: check-in reminder (alongside countdown above) */}
-        {phase === 'day2_morning' && <Day2MorningCard />}
-
-        {/* DAY 2 ACTIVE: live now/next tracker (all sub-phases) */}
-        {phase === 'day2_active' && (
-          <NowNextCard
-            current={nowNext.current}
-            next={nowNext.next}
-            onSchedule={goToSchedule}
-          />
-        )}
-
-        {/* ══════════════════════════════════════════════════════
-            Always-on cards
-            ══════════════════════════════════════════════════════ */}
-
         {/* Announcements */}
         {activeAnnouncements.length > 0 && (
           <View style={[styles.card, styles.announcementCard]}>
@@ -278,6 +270,28 @@ export default function HomeScreen() {
           </View>
         )}
 
+        {/* DAY 1 EVENING: tonight's lineup */}
+        {phase === 'day1_evening' && <TonightLineupCard />}
+
+        {/* DAY 2 MORNING: check-in reminder */}
+        {phase === 'day2_morning' && <Day2MorningCard />}
+
+        {/* DAY 2 ACTIVE: live now/next tracker */}
+        {phase === 'day2_active' && (
+          <NowNextCard
+            current={nowNext.current}
+            next={nowNext.next}
+            onSchedule={goToSchedule}
+          />
+        )}
+
+        {/* ══════════════════════════════════════════════════════
+            Always-on cards
+            ══════════════════════════════════════════════════════ */}
+
+        {/* END-OF-CAMP: feedback survey CTA (visible 5 PM May 27 – 6 PM June 3) */}
+        {showFeedback && <FeedbackCard />}
+
         {/* POST-EVENT: directory CTA (Amanda's #1 ask) */}
         {phase === 'post_event' && <DirectoryCard />}
 
@@ -287,6 +301,7 @@ export default function HomeScreen() {
             <Ionicons name="people-outline" size={14} color={colors.teal} />
             <Text style={[styles.cardTitle, { color: colors.teal }]}>STAY CONNECTED</Text>
           </View>
+          <Text style={styles.shareTitle}>Swap contacts in one tap</Text>
           <Text style={styles.shareBlurb}>
             Meet a new business bestie? Share your contact info — your name, email, phone, and socials go straight to their phone.
           </Text>
@@ -312,17 +327,17 @@ export default function HomeScreen() {
         <View style={[styles.card, styles.instagramBorder]}>
           <View style={styles.instagramCard}>
             <View style={styles.cardHeader}>
-              <Ionicons name="logo-instagram" size={14} color={colors.primary} />
+              <Ionicons name="logo-instagram" size={14} color={colors.textDark} />
               <Text style={styles.cardTitle}>LIVE FEED</Text>
             </View>
+            <Text style={styles.instagramTitle}>Show us your camp pics</Text>
             <Text style={styles.instagramBody}>
               Share your camp moments in real time! Tag your photos and videos with our event hashtag and you'll be part of our shared live feed.
             </Text>
             <Text style={styles.instagramHashtag}>#WOWSummerCamp</Text>
             <TouchableOpacity onPress={openInstagram} activeOpacity={0.8} style={styles.instagramBtn}>
-              <Ionicons name="logo-instagram" size={16} color={colors.primary} />
+              <Ionicons name="logo-instagram" size={16} color={colors.textDark} />
               <Text style={styles.instagramBtnText}>View on Instagram</Text>
-              <Ionicons name="open-outline" size={14} color={colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -363,7 +378,7 @@ export default function HomeScreen() {
             <DemoDivider label="DAY 2 · PLAYER PANEL  (4:15–5:15 PM)" />
             <NowNextCard current={DEMO.panel} next={DEMO.closing} onSchedule={goToSchedule} />
 
-            <DemoDivider label="DAY 2 · CLOSING CEREMONIES  (5:15–6:00 PM)" />
+            <DemoDivider label="DAY 2 · CLOSING CEREMONIES  (5:30–6:00 PM)" />
             <NowNextCard current={DEMO.closing} next={null} onSchedule={goToSchedule} />
 
             <DemoDivider label="POST-EVENT  (after May 27, 6 PM)" />
@@ -383,9 +398,8 @@ export default function HomeScreen() {
 
 function TonightLineupCard() {
   const lineup = [
-    { time: '6:00 PM', label: 'Kickoff Party, Music & Networking' },
-    { time: '6:30 PM', label: 'Welcome Speech' },
-    { time: '7:00 PM', label: 'Headshots, Tarot Readings & Vendors' },
+    { time: '6:00 PM', label: 'Welcome to Camp' },
+    { time: '6:30 PM', label: 'How to Build a Fruitful Community Speech' },
   ];
   return (
     <View style={[styles.card, styles.tonightCard]}>
@@ -407,12 +421,12 @@ function Day2MorningCard() {
   return (
     <View style={[styles.card, styles.tealAccentCard]}>
       <View style={styles.cardHeader}>
-        <Ionicons name="sunny-outline" size={14} color={colors.teal} />
-        <Text style={[styles.cardTitle, { color: colors.teal }]}>MAIN CAMP DAY</Text>
+        <Ionicons name="sunny-outline" size={14} color={colors.primary} />
+        <Text style={[styles.cardTitle, { color: colors.textDark }]}>MAIN CAMP DAY</Text>
       </View>
       <Text style={styles.day2Title}>Check-in opens at 8 AM</Text>
       <Text style={styles.day2Body}>
-        Coffee, breakfast, and badge pickup at the Main Hall. Today is going to be incredible.
+        Coffee, breakfast, and badge pickup at the Mess Hall. Today is going to be so much fun!
       </Text>
     </View>
   );
@@ -489,6 +503,28 @@ function DirectoryCard() {
       >
         <Ionicons name="rocket-outline" size={16} color={colors.white} />
         <Text style={styles.directoryBtnText}>Join the W.O.W. Directory</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function FeedbackCard() {
+  return (
+    <View style={[styles.card, styles.feedbackCard]}>
+      <View style={styles.cardHeader}>
+        <Ionicons name="star-outline" size={14} color={colors.primary} />
+        <Text style={[styles.cardTitle, { color: colors.primary }]}>SHARE YOUR EXPERIENCE</Text>
+      </View>
+      <Text style={styles.feedbackBody}>
+        Camp is almost a wrap! Before you go, take 2 minutes to fill out our feedback survey. Your input shapes what WOW looks like next year — we read every single response.
+      </Text>
+      <TouchableOpacity
+        style={styles.feedbackBtn}
+        onPress={() => Linking.openURL(FEEDBACK_URL)}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="clipboard-outline" size={16} color={colors.white} />
+        <Text style={styles.feedbackBtnText}>Take the Survey</Text>
       </TouchableOpacity>
     </View>
   );
@@ -591,6 +627,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.sm,
     marginBottom: spacing.md,
+    color: colors.textDark,
   },
   cardTitle: {
     fontFamily: fontFamily.subheading,
@@ -649,15 +686,15 @@ const styles = StyleSheet.create({
   countdownRow:   { flexDirection: 'row', alignItems: 'center' },
   countUnit:      { alignItems: 'center', minWidth: 56 },
   countValue:     { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.xl },
-  countUnitLabel: { fontFamily: fontFamily.subheading, color: colors.textMuted, fontSize: fontSize.xs, letterSpacing: 1 },
+  countUnitLabel: { fontFamily: fontFamily.subheading, color: colors.textDark, fontSize: fontSize.xs, letterSpacing: 1 },
   colon:          { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.xl, marginBottom: spacing.md },
   liveText:       { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.xl, letterSpacing: 2 },
-  liveSubtext:    { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, textAlign: 'center', marginTop: spacing.xs },
+  liveSubtext:    { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, textAlign: 'center', marginTop: spacing.xs },
 
   // ── Prep checklist ──
   checklistHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   checklistTitle:  { fontFamily: fontFamily.subheading, color: colors.textDark, fontSize: fontSize.sm, letterSpacing: 1.5 },
-  checklistProgress: { fontFamily: fontFamily.bodyBold, color: colors.teal, fontSize: fontSize.sm },
+  checklistProgress: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.sm },
   checkRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -666,7 +703,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
   },
   checkToggle:      { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingRight: spacing.sm, paddingLeft: spacing.sm },
-  checkLabel:       { flex: 1, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
+  checkLabel:       { flex: 1, fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
   checkLabelDone:   { color: colors.textMuted, textDecorationLine: 'line-through' },
 
   // ── Tonight lineup (Day 1 evening) ──
@@ -689,18 +726,18 @@ const styles = StyleSheet.create({
   tonightTime:  { fontFamily: fontFamily.bodySemi, color: colors.primary, fontSize: fontSize.sm, width: 64 },
   tonightLabel: { flex: 1, fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
 
-  // ── Teal accent card (Day 2 morning) ──
+  // ── Day 2 morning card ──
   tealAccentCard: {
     borderWidth: 2,
-    borderColor: colors.teal,
-    shadowColor: colors.teal,
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 4,
   },
   day2Title: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
-  day2Body:  { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 20, marginBottom: spacing.md },
+  day2Body:  { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20, marginBottom: spacing.md },
 
   // ── Now/Next card ──
   nowNextCard: {
@@ -722,9 +759,9 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   nowBadgeText:    { fontFamily: fontFamily.subheading, color: colors.white, fontSize: 10, letterSpacing: 1 },
-  nowSessionTitle: { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md },
-  nowSessionMeta:  { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, marginTop: 2 },
-  nowIdleText:     { flex: 1, fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, fontStyle: 'italic' },
+  nowSessionTitle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md },
+  nowSessionMeta:  { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, marginTop: 2 },
+  nowIdleText:     { flex: 1, fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, fontStyle: 'italic' },
   nextRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -735,7 +772,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   nextLabel: { fontFamily: fontFamily.subheading, color: colors.primary, fontSize: 10, letterSpacing: 1 },
-  nextText:  { flex: 1, fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm },
+  nextText:  { flex: 1, fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm },
   scheduleLink: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -758,13 +795,13 @@ const styles = StyleSheet.create({
   },
   directoryThankYou: {
     fontFamily: fontFamily.bodyItalic,
-    color: colors.textMuted,
+    color: colors.textDark,
     fontSize: fontSize.sm,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: spacing.md,
   },
-  directoryBody: { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 22, marginBottom: spacing.md },
+  directoryBody: { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 22, marginBottom: spacing.md },
   directoryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -776,6 +813,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   directoryBtnText: { fontFamily: fontFamily.bodyBold, color: colors.white, fontSize: fontSize.sm },
+
+  // ── End-of-camp Feedback card ──
+  feedbackCard: {
+    borderWidth: 2,
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  feedbackBody: { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 22, marginBottom: spacing.md },
+  feedbackBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.primary,
+    borderRadius: radius.full,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  feedbackBtnText: { fontFamily: fontFamily.bodyBold, color: colors.white, fontSize: fontSize.sm },
 
   // ── Announcements ──
   announcementCard: {
@@ -790,8 +850,8 @@ const styles = StyleSheet.create({
   announcementRow:     { flexDirection: 'row', overflow: 'hidden', borderRadius: 0 },
   announcementDivider: { marginBottom: spacing.sm, paddingBottom: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
   announcementBody:    { flex: 1, paddingLeft: spacing.sm },
-  announcementTitle:   { fontFamily: fontFamily.bodyBold, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
-  announcementText:    { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 20 },
+  announcementTitle:   { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
+  announcementText:    { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
 
   // ── Share My Contact ──
   shareCard: {
@@ -803,7 +863,8 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 4,
   },
-  shareBlurb: { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 20, marginBottom: spacing.md },
+  shareTitle: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
+  shareBlurb: { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20, marginBottom: spacing.md },
   shareSubtleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -818,21 +879,22 @@ const styles = StyleSheet.create({
   shareSubtleBtnDisabled:     { borderColor: colors.border },
   shareSubtleBtnText:         { fontFamily: fontFamily.bodySemi, color: colors.teal, fontSize: fontSize.sm },
   shareSubtleBtnTextDisabled: { color: colors.textMuted },
-  shareIncompleteHint: { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.xs, textAlign: 'center', marginTop: spacing.sm },
+  shareIncompleteHint: { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.xs, textAlign: 'center', marginTop: spacing.sm },
 
   // ── Instagram ──
   instagramBorder: {
     borderWidth: 2,
-    borderColor: colors.accent,
-    shadowColor: colors.accent,
+    borderColor: colors.yellow,
+    shadowColor: colors.yellow,
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 4,
   },
   instagramCard:     { gap: spacing.sm },
-  instagramBody:     { fontFamily: fontFamily.body, color: colors.textMuted, fontSize: fontSize.sm, lineHeight: 21 },
-  instagramHashtag:  { fontFamily: fontFamily.subheading, color: colors.primary, fontSize: fontSize.md, letterSpacing: 0.5 },
+  instagramTitle:    { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
+  instagramBody:     { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 21 },
+  instagramHashtag:  { fontFamily: fontFamily.display, color: colors.primary, fontSize: fontSize.md, letterSpacing: 0.5 },
   instagramBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -842,10 +904,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: radius.full,
     borderWidth: 1.5,
-    borderColor: colors.primary,
+    borderColor: colors.textDark,
     marginTop: spacing.xs,
   },
-  instagramBtnText: { fontFamily: fontFamily.bodySemi, color: colors.primary, fontSize: fontSize.sm },
+  instagramBtnText: { fontFamily: fontFamily.bodySemi, color: colors.textDark, fontSize: fontSize.sm },
 
   // ── Demo section ──
   demoDividerWrap: {

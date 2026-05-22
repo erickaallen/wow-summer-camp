@@ -131,41 +131,45 @@ export default function SessionDetailScreen({ route, navigation }: Props) {
           </View>
         )}
 
-        {/* Racing Louisville player cards */}
-        {session.panelCounselorIds && session.panelCounselorIds.length > 0 && (
-          <View style={styles.panelSection}>
-            <Text style={styles.panelSectionLabel}>MEET THE PLAYERS</Text>
-            {session.panelCounselorIds.map((cid) => {
-              const player = counselors.find((c) => c.id === cid);
-              if (!player) return null;
-              return (
+        {/* Speaker / player cards */}
+        {session.panelCounselorIds && session.panelCounselorIds.length > 0 && (() => {
+          const speakers = session.panelCounselorIds
+            .map((cid) => counselors.find((c) => c.id === cid))
+            .filter((c): c is NonNullable<typeof c> => !!c);
+          const isRacing = speakers.some((c) => c.category === 'Racing Louisville');
+          const cardColor = isRacing ? colors.teal : colors.primary;
+          const sectionLabel = isRacing ? 'MEET THE PLAYERS' : '🎤 FEATURED SPEAKER';
+          return (
+            <View style={styles.panelSection}>
+              <Text style={styles.panelSectionLabel}>{sectionLabel}</Text>
+              {speakers.map((speaker) => (
                 <TouchableOpacity
-                  key={cid}
-                  style={styles.playerCard}
+                  key={speaker.id}
+                  style={[styles.playerCard, { borderColor: cardColor, shadowColor: cardColor }]}
                   activeOpacity={0.8}
                   onPress={() =>
-                    navigation.navigate('CounselorDetail', { counselor: player })
+                    navigation.navigate('CounselorDetail', { counselor: speaker })
                   }
                 >
                   <HeadshotAvatar
-                    source={player.headshot}
-                    name={player.name}
+                    source={speaker.headshot}
+                    name={speaker.name}
                     size={52}
-                    borderColor={colors.teal}
+                    borderColor={cardColor}
                     borderWidth={2}
                   />
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.playerName}>{player.name}</Text>
-                    {player.instagram && (
-                      <Text style={styles.playerHandle}>{player.instagram}</Text>
+                    <Text style={styles.playerName}>{speaker.name}</Text>
+                    {speaker.instagram && (
+                      <Text style={[styles.playerHandle, { color: cardColor }]}>{speaker.instagram}</Text>
                     )}
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color={colors.teal} />
+                  <Ionicons name="chevron-forward" size={20} color={cardColor} />
                 </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
+              ))}
+            </View>
+          );
+        })()}
 
         {/* Campfire explainer */}
         {session.category === 'campfire' && (

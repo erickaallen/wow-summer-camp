@@ -16,9 +16,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, fontSize, fontFamily, radius, shadow } from '../theme';
 
 const VENUE_MAP_PNG = require('../../assets/images/venue-map-1.png');
-const MAP_NATURAL_W = 750;
-const MAP_NATURAL_H = 580;
 const SCREEN_W = Dimensions.get('window').width;
+const MAP_W = 1500;
+const MAP_H = 2700;
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 5;
@@ -99,17 +99,13 @@ const styles = StyleSheet.create({
   },
 
   mapWrapper: {
-    width: SCREEN_W,
-    height: SCREEN_W * (MAP_NATURAL_W / MAP_NATURAL_H),
+    width: SCREEN_W - 24,
+    height: (SCREEN_W - 24) * (MAP_H / MAP_W),
   },
 
   mapImage: {
-    width: SCREEN_W * (MAP_NATURAL_W / MAP_NATURAL_H),
-    height: SCREEN_W,
-    position: 'absolute',
-    top: SCREEN_W * (MAP_NATURAL_W / MAP_NATURAL_H - 1) / 2,
-    left: -SCREEN_W * (MAP_NATURAL_W / MAP_NATURAL_H - 1) / 2,
-    transform: [{ rotate: '90deg' }],
+    width: '100%',
+    height: '100%',
   },
 
   hintRow: {

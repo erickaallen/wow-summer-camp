@@ -61,7 +61,6 @@ export const counselorSessions: CounselorSession[] = [
   { id: 'cs_r4_loc1',  counselorId: 'c27', rotationId: 'r4', locationId: 'loc1'  }, // Ann Brown           · Airstream Trio
   { id: 'cs_r4_loc2',  counselorId: 'c12', rotationId: 'r4', locationId: 'loc2'  }, // Leah Bomar          · Pavilion
   { id: 'cs_r4_loc3',  counselorId: 'c17', rotationId: 'r4', locationId: 'loc3'  }, // Jessica Colliersmith· Behind 502 House
-  { id: 'cs_r4_loc4',  counselorId: 'c22', rotationId: 'r4', locationId: 'loc4'  }, // Gretchen Hunt       · The Grove
   { id: 'cs_r4_loc5',  counselorId: 'c21', rotationId: 'r4', locationId: 'loc5'  }, // Kate Kravchenko     · Airstream Duo
   { id: 'cs_r4_loc6',  counselorId: 'c9',  rotationId: 'r4', locationId: 'loc6'  }, // Tali Lindberg       · Stella/Dottie
   { id: 'cs_r4_loc7',  counselorId: 'c26', rotationId: 'r4', locationId: 'loc7'  }, // Michelle Champagne  · Grass by Shuffleboard

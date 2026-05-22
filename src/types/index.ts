@@ -62,6 +62,8 @@ export interface Counselor {
   confirmed: boolean;
   /** Links a panel speaker back to their panel session id (e.g. 's23') */
   panelSessionId?: string;
+  /** Overrides sessionTopic on the featured-session card when the two need to differ (e.g. Amanda Dare) */
+  featuredSessionTitle?: string;
 }
 
 /**

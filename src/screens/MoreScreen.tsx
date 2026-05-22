@@ -11,8 +11,7 @@ const PRIVACY_URL   = 'https://www.womanownedwallet.com/policies/privacy-policy'
 const WOW_URL       = 'https://www.womanownedwallet.com';
 const SHOP_URL      = 'https://www.womanownedwallet.com/collections/shop-all';
 const DIRECTORY_URL = 'https://www.womanownedwallet.com/products/wow-directory-posting?_pos=3&_sid=8de28d22e&_ss=r';
-// TODO: Replace with the real post-camp survey link before the event
-const FEEDBACK_URL  = 'https://forms.gle/REPLACE_WITH_REAL_SURVEY_LINK';
+const FEEDBACK_URL  = 'https://forms.gle/PLzhVCZm6d1LA1bAA';
 
 type Props = NativeStackScreenProps<MoreStackParamList, 'MoreMenu'>;
 
@@ -31,13 +30,12 @@ type ExternalItem = {
 };
 
 const EXTERNAL_ITEMS: ExternalItem[] = [
-  // Commenting out until we have the link ready
-  // {
-  //   label: 'Camp Feedback Survey',
-  //   icon: 'star-outline',
-  //   url: FEEDBACK_URL,
-  //   description: "Share your experience — we'd love your feedback!",
-  // },
+  {
+    label: 'Camp Feedback Survey',
+    icon: 'star-outline',
+    url: FEEDBACK_URL,
+    description: "Share your experience — we'd love your feedback!",
+  },
   {
     label: 'Shop Woman-Owned Wallet',
     icon: 'bag-handle-outline',

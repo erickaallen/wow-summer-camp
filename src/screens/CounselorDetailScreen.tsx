@@ -93,7 +93,7 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
         ) : null}
 
         {/* ── Campfire session topic card — regular counselors only ── */}
-        {!panelSession && (
+        {!panelSession && counselor.sessionDescription?.trim().length ? (
           <View
             style={[styles.topicCard, {
               borderColor: categoryColor,
@@ -120,9 +120,9 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
               </View>
             )}
           </View>
-        )}
+        ) : null}
 
-        {/* ── Panel session link — Racing Louisville players only ── */}
+        {/* ── Panel / featured session link ── */}
         {panelSession && (
           <TouchableOpacity
             style={[styles.panelSessionBtn, { borderColor: categoryColor, shadowColor: categoryColor }]}
@@ -132,8 +132,19 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
             }
           >
             <View style={{ flex: 1 }}>
-              <Text style={[styles.topicLabel, { color: categoryColor }]}>⚽ PLAYER PANEL</Text>
-              <Text style={styles.topicText}>{panelSession.title.replace(' Player Panel', '')}</Text>
+              {counselor.category === 'Racing Louisville' ? (
+                <>
+                  <Text style={[styles.topicLabel, { color: categoryColor }]}>⚽ PLAYER PANEL</Text>
+                  <Text style={styles.topicText}>{panelSession.title.replace(' Player Panel', '')}</Text>
+                </>
+              ) : (
+                <>
+                  <Text style={[styles.topicLabel, { color: categoryColor }]}>🎤 FEATURED SESSION</Text>
+                  <Text style={styles.topicText}>
+                    {counselor.featuredSessionTitle ?? counselor.sessionTopic}
+                  </Text>
+                </>
+              )}
             </View>
             <Ionicons name="chevron-forward" size={20} color={categoryColor} />
           </TouchableOpacity>
@@ -146,7 +157,7 @@ export default function CounselorDetailScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   safe:   { flex: 1, backgroundColor: colors.background },
-  scroll: { padding: spacing.md, paddingTop: 0, paddingBottom: spacing.xxl, gap: spacing.md },
+  scroll: { padding: spacing.md, paddingTop: 0, paddingBottom: 80, gap: spacing.md },
 
   // ── Hero ──
   heroCard: {

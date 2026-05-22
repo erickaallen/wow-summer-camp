@@ -39,7 +39,7 @@ export const sponsors: Sponsor[] = [
     tier: 'pink',
     description: 'Sponsor description coming soon.',
     logo: require('../../assets/images/logos/KaitlinKeanePhotographyLogo.png'),
-    website: 'https://katelinkeanephotography.com/',
+    website: 'https://www.kkpboudoir.com/',
   },
   {
     id: 'sp_pink2',
