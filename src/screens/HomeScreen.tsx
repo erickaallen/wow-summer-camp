@@ -349,6 +349,12 @@ export default function HomeScreen() {
             ══════════════════════════════════════════════════════ */}
         {SHOW_PHASE_DEMO && (
           <>
+            <AnnouncementWindow windowLabel="Before May 26, 9 AM" id="pre1" />
+            <AnnouncementWindow windowLabel="May 26, 9 AM – 6 PM" id="day1_a" />
+            <AnnouncementWindow windowLabel="May 27, 8 AM – 1 PM" id="day2_am" />
+            <AnnouncementWindow windowLabel="May 27, 1 PM – 5:30 PM" id="day2_pm" />
+            <AnnouncementWindow windowLabel="May 27, 5:30 PM onward" id="post1" />
+
             <DemoDivider label="DAY 1 · EVENING KICKOFF  (May 26, 6–9 PM)" />
             <View style={[styles.card, styles.countdownCard]}>
               <Text style={styles.liveText}>🔥 CAMP IS LIVE!</Text>
@@ -381,6 +387,9 @@ export default function HomeScreen() {
 
             <DemoDivider label="DAY 2 · CLOSING CEREMONIES  (5:30–6:00 PM)" />
             <NowNextCard current={DEMO.closing} next={null} onSchedule={goToSchedule} />
+
+            <DemoDivider label="FEEDBACK SURVEY  (May 27, 5 PM – June 3, 6 PM)" />
+            <FeedbackCard />
 
             <DemoDivider label="POST-EVENT  (after May 27, 6 PM)" />
             <DirectoryCard />
@@ -556,6 +565,27 @@ function DemoDivider({ label }: { label: string }) {
       <Text style={styles.demoDividerText}>DEMO · {label}</Text>
       <View style={styles.demoDividerLine} />
     </View>
+  );
+}
+
+function AnnouncementWindow({ windowLabel, id }: { windowLabel: string; id: string }) {
+  const ann = announcements.find(a => a.id === id)!;
+  return (
+    <>
+      <DemoDivider label={windowLabel} />
+      <View style={[styles.card, styles.announcementCard]}>
+        <View style={styles.cardHeader}>
+          <Ionicons name="megaphone-outline" size={14} color={colors.primary} />
+          <Text style={styles.cardTitle}>ANNOUNCEMENTS</Text>
+        </View>
+        <View style={styles.announcementRow}>
+          <View style={styles.announcementBody}>
+            <Text style={styles.announcementTitle}>{ann.title}</Text>
+            <Text style={styles.announcementText}>{ann.body}</Text>
+          </View>
+        </View>
+      </View>
+    </>
   );
 }
 
