@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
   },
   announcementRow:     { flexDirection: 'row', overflow: 'hidden', borderRadius: 0 },
   announcementDivider: { marginBottom: spacing.sm, paddingBottom: spacing.sm, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border },
-  announcementBody:    { flex: 1, paddingLeft: spacing.sm },
+  announcementBody:    { flex: 1 },
   announcementTitle:   { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.md, marginBottom: spacing.xs },
   announcementText:    { fontFamily: fontFamily.body, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 20 },
 

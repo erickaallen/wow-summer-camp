@@ -28,6 +28,14 @@
         "buildType": "app-bundle"
       },
       "channel": "android"
+    },
+    "android-apk": {
+      "distribution": "internal",
+      "autoIncrement": true,
+      "android": {
+        "buildType": "apk"
+      },
+      "channel": "android"
     }
   },
   "submit": {

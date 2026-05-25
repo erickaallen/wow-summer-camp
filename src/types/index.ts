@@ -38,6 +38,8 @@ export interface CampfireLocation {
   mapLabel: string;         // map marker reference, e.g. '33-35'
   primaryCounselorId: string;
   secondaryCounselorId?: string;
+  /** Backup location used if it rains. Omitted when the rain location is the same as the primary. */
+  rainLocation?: string;
 }
 
 export type CounselorCategory =

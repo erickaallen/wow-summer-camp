@@ -142,6 +142,9 @@ const handleCancelReminder = async () => {
             </Text>
           </View>
           <Text style={styles.metaText}>📍 {location?.name ?? 'Campfire'}</Text>
+          {location?.rainLocation && (
+            <Text style={styles.rainText}>☔ If Rain: {location.rainLocation}</Text>
+          )}
         </View>
 
         {/* Agenda / Reminder CTAs */}
@@ -264,6 +267,12 @@ const styles = StyleSheet.create({
   },
   metaRow: { marginBottom: spacing.xs },
   metaText: {
+    fontFamily: fontFamily.bodyBold,
+    color: colors.textMuted,
+    fontSize: fontSize.md,
+    marginBottom: spacing.xs,
+  },
+  rainText: {
     fontFamily: fontFamily.bodyBold,
     color: colors.textMuted,
     fontSize: fontSize.md,

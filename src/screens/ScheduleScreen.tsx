@@ -264,36 +264,56 @@ function CampfireCard({
     >
       {/* <View style={[styles.campfireCardAccent, { backgroundColor: catColor }]} /> */}
       <View style={styles.campfireCardBody}>
-        <View style={styles.campfireCardContent}>
-          <Text style={[styles.campfireCategoryLabel, { color: catColor }]} numberOfLines={1}>
-            {counselor.category.toUpperCase()}
-          </Text>
-          <Text style={styles.campfireTopicText} numberOfLines={2}>
-            {counselor.sessionTopic}
-          </Text>
-          <Text style={styles.campfireCounselorName} numberOfLines={1}>
-            {counselor.name}
-          </Text>
+        <View>
+          <View style={styles.campfireCardTopRow}>
+            <Text style={[styles.campfireCategoryLabel, { color: catColor }]} numberOfLines={1}>
+              {counselor.category.toUpperCase()}
+            </Text>
+            <View style={styles.campfireCardActions}>
+              <TouchableOpacity onPress={handleBell} hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}>
+                <Ionicons
+                  name={reminded ? 'notifications' : 'notifications-outline'}
+                  size={13}
+                  color={reminded ? colors.primary : '#999'}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleBookmark} hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}>
+                <Ionicons
+                  name={saved ? 'bookmark' : 'bookmark-outline'}
+                  size={13}
+                  color={saved ? colors.primary : '#999'}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.campfireCardContent}>
+            <Text style={styles.campfireTopicText} numberOfLines={2}>
+              {counselor.sessionTopic}
+            </Text>
+            <Text style={styles.campfireCounselorName} numberOfLines={1}>
+              {counselor.name}
+            </Text>
+          </View>
         </View>
-        <View style={styles.campfireLocRow}>
-          <Ionicons name="location-outline" size={13} color="#999" />
-          <Text style={styles.campfireLocText} numberOfLines={1}>
-            {' '}{loc?.name ?? '—'}
-          </Text>
-          <TouchableOpacity onPress={handleBell} hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}>
-            <Ionicons
-              name={reminded ? 'notifications' : 'notifications-outline'}
-              size={13}
-              color={reminded ? colors.primary : '#999'}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleBookmark} hitSlop={{ top: 8, bottom: 8, left: 6, right: 6 }}>
-            <Ionicons
-              name={saved ? 'bookmark' : 'bookmark-outline'}
-              size={13}
-              color={saved ? colors.primary : '#999'}
-            />
-          </TouchableOpacity>
+        <View style={{ marginTop: spacing.sm }}>
+          <View style={styles.campfireLocRow}>
+            <View style={styles.campfireIconCell}>
+              <Ionicons name="location-outline" size={13} color="#999" />
+            </View>
+            <Text style={styles.campfireLocText} numberOfLines={1}>
+              {loc?.name ?? '—'}
+            </Text>
+          </View>
+          {loc?.rainLocation && (
+            <View style={styles.campfireRainRow}>
+              <View style={styles.campfireIconCell}>
+                <Text style={styles.campfireRainIcon}>☔</Text>
+              </View>
+              <Text style={styles.campfireRainText} numberOfLines={1}>
+                <Text style={styles.campfireRainLabel}>If Rain: </Text>{loc.rainLocation}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -757,7 +777,7 @@ const styles = StyleSheet.create({
   // ── Campfire card (floating cards in horizontal scroll) ──
   campfireCard: {
     width: 240,
-    height: 120,
+    minHeight: 130,
     backgroundColor: colors.white,
     borderRadius: 0,
     borderWidth: 2,
@@ -768,15 +788,22 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   campfireCardAccent: { width: 4, alignSelf: 'stretch' },
-  campfireCardBody: { flex: 1, padding: spacing.sm, paddingVertical: 8, justifyContent: 'space-between' },
+  campfireCardBody: { flex: 1, padding: spacing.sm, paddingVertical: 12, justifyContent: 'space-between' },
+  campfireCardTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+  campfireCardActions: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   campfireCardContent: { gap: 2 },
-  campfireCategoryLabel: { fontFamily: fontFamily.subheading, fontSize: 9, letterSpacing: 0.5, marginBottom: 3 },
+  campfireCategoryLabel: { fontFamily: fontFamily.subheading, fontSize: 9, letterSpacing: 0.5 },
+  campfireIconCell: { width: 14, alignItems: 'center' },
   campfireCounselorName: { fontFamily: fontFamily.body, color: '#555', fontSize: 12, lineHeight: 16 },
   campfireTopicText: { fontFamily: fontFamily.display, color: colors.textDark, fontSize: fontSize.sm, lineHeight: 17 },
   rowLocRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
   rowLocText: { fontFamily: fontFamily.body, color: '#666', fontSize: 13, flex: 1 },
   campfireLocRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
   campfireLocText: { fontFamily: fontFamily.body, color: '#999', fontSize: 12, flex: 1 },
+  campfireRainRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
+  campfireRainIcon: { fontSize: 13, lineHeight: 16 },
+  campfireRainLabel: { fontFamily: fontFamily.bodyBold, color: '#999', fontSize: 12 },
+  campfireRainText: { fontFamily: fontFamily.body, color: '#999', fontSize: 12, flex: 1 },
 
   // ── Empty state ──
   empty: { alignItems: 'center', paddingTop: spacing.xxl, paddingHorizontal: spacing.xl },
