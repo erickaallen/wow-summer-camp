@@ -2,11 +2,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import React from 'react';
 import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Constants from 'expo-constants';
+import * as Application from 'expo-application';
 import { colors, spacing, fontSize, fontFamily, shadow } from '../theme';
 
-const appVersion = Constants.nativeAppVersion ?? '—';
-const buildNumber = Constants.nativeBuildVersion ?? '—';
+const appVersion = Application.nativeApplicationVersion ?? '—';
+const buildNumber = Application.nativeBuildVersion ?? '—';
 const BUILDER_SITE = 'https://higherrealmsdigital.com';
 const BUILDER_EMAIL = 'upward@higherrealmsdigital.com';
 const BUG_EMAIL = 'support@higherrealmsdigital.com';
