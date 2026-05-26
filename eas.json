@@ -2,7 +2,7 @@
   "cli": {
     "version": ">= 12.0.0",
     "promptToConfigurePushNotifications": false,
-    "appVersionSource": "remote"
+    "appVersionSource": "local"
   },
   "build": {
     "ios-dev": {
@@ -15,7 +15,6 @@
     },
     "ios-prod": {
       "distribution": "store",
-      "autoIncrement": true,
       "ios": {
         "buildConfiguration": "Release"
       },
@@ -23,7 +22,6 @@
     },
     "android": {
       "distribution": "internal",
-      "autoIncrement": true,
       "android": {
         "buildType": "app-bundle"
       },
@@ -31,7 +29,6 @@
     },
     "android-apk": {
       "distribution": "internal",
-      "autoIncrement": true,
       "android": {
         "buildType": "apk"
       },
