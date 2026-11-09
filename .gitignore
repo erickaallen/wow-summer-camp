@@ -39,3 +39,10 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# local tooling / archives
+.claude/
+*.zip
+
+# EAS submit credentials (kept out of the public repo)
+eas.submit.json

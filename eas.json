@@ -34,14 +34,5 @@
       },
       "channel": "android"
     }
-  },
-  "submit": {
-    "ios-prod": {
-      "ios": {
-        "appleId": "ericka@higherrealmsdigital.com",
-        "ascAppId": "6767265853",
-        "appleTeamId": "P39QR5M7WC"
-      }
-    }
   }
 }
